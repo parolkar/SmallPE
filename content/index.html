@@ -2,13 +2,128 @@
 title: Home
 ---
 
-<h1>A Brand New Nanoc Site</h1>
+<!-- Hero Section with Parallax Effect -->
+<section class="relative h-screen flex items-center justify-center overflow-hidden">
+  <div class="absolute w-full h-full bg-gradient-to-b from-black/50 to-black/80 z-10"></div>
+  <div class="parallax absolute w-full h-full bg-cover bg-center" 
+       style="background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');"
+       data-speed="0.15">
+  </div>
+  <div class="container mx-auto px-4 relative z-20 text-center">
+    <h1 class="text-5xl md:text-7xl font-bold text-white mb-6" data-aos="fade-up">
+      AI-First PE Model?
+    </h1>
+    <p class="text-xl md:text-2xl text-white mb-8 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="200">
+      SmallPE is a model of a firm reimagined in the era of AI.
+      <br/>
+      We are a community-led open source initiative building blueprint for a n AI-first PE firm.
+    </p>
+    <div data-aos="fade-up" data-aos-delay="400">
+      <a href="#contribute" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-8 rounded-md text-lg transition-colors duration-300 mx-2">
+        Stay Updated
+      </a>
+      <a href="#about" class="inline-block bg-transparent border-2 border-white hover:bg-white/10 text-white font-medium py-3 px-8 rounded-md text-lg transition-colors duration-300 mx-2">
+        Explore
+      </a>
+    </div>
+  </div>
+  <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20 animate-bounce">
+    <a href="#about" class="text-white">
+      <i class="fas fa-chevron-down text-3xl"></i>
+    </a>
+  </div>
+</section>
 
-<p>You’ve just created a new Nanoc site. The page you are looking at right now is the home page for your site. To get started, consider replacing this default homepage with your own customized homepage. Some pointers on how to do so:</p>
+<!-- About Section -->
+<section id="about" class="py-20 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-bold mb-4" data-aos="fade-up"> A Model of AI-First Private Equity Firm </h2>
+      <div class="w-24 h-1 bg-blue-600 mx-auto"></div>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+      <div data-aos="fade-right">
+        <h3 class="text-2xl font-semibold mb-4">An Open Source Initiative</h3>
+        <p class="text-gray-600 mb-6">
+          SmallPE is an open-source project that explores what an AI-first Private Equity firm could look like. We're reimagining the traditional PE model by harnessing the power of artificial intelligence across all aspects of investment management.
+        </p>
+        <p class="text-gray-600">
+          Our mission is to create a collaborative ecosystem where professionals, researchers, and enthusiasts can contribute to building the future of intelligent capital allocation.
+        </p>
+      </div>
+      <div class="rounded-lg overflow-hidden shadow-xl" data-aos="fade-left">
+        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" 
+             alt="Team collaboration" class="w-full h-auto">
+      </div>
+    </div>
+  </div>
+</section>
 
-<ul>
-  <li><p><strong>Change this page’s content</strong> by editing the “index.html” file in the “content” directory. This is the actual page content, and therefore doesn’t include the header, sidebar or style information (those are part of the layout).</p></li>
-  <li><p><strong>Change the layout</strong>, which is the “default.html” file in the “layouts” directory, and create something unique (and hopefully less bland).</p></li>
-</ul>
+<!-- Philosophy Section with Alternating Background -->
+<section id="philosophy" class="py-20 bg-gray-100">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-bold mb-4" data-aos="fade-up">Our Philosophy</h2>
+      <div class="w-24 h-1 bg-blue-600 mx-auto"></div>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-white p-8 rounded-lg shadow-md" data-aos="fade-up">
+        <div class="text-blue-600 text-4xl mb-4">
+          <i class="fas fa-brain"></i>
+        </div>
+        <h3 class="text-xl font-semibold mb-3">AI-Powered Decision Making</h3>
+        <p class="text-gray-600">
+          We believe that integrating artificial intelligence into the investment process can enhance decision-making, reduce bias, and identify opportunities that human analysis alone might miss.
+        </p>
+      </div>
+      
+      <div class="bg-white p-8 rounded-lg shadow-md" data-aos="fade-up" data-aos-delay="100">
+        <div class="text-blue-600 text-4xl mb-4">
+          <i class="fas fa-handshake"></i>
+        </div>
+        <h3 class="text-xl font-semibold mb-3">Collaborative Innovation</h3>
+        <p class="text-gray-600">
+          SmallPE thrives on the collective intelligence of our volunteer community. We foster an environment where financial experts, technologists, and innovators work together to create cutting-edge solutions.
+        </p>
+      </div>
+      
+      <div class="bg-white p-8 rounded-lg shadow-md" data-aos="fade-up" data-aos-delay="200">
+        <div class="text-blue-600 text-4xl mb-4">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <h3 class="text-xl font-semibold mb-3">Transparent Methodologies</h3>
+        <p class="text-gray-600">
+          We're committed to openness in our approach. By making our research, methodologies, and models available to our community, we create opportunities for continuous improvement and knowledge sharing.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
 
-<p>If you need any help with customizing your Nanoc web site, be sure to check out the documentation (see sidebar), and be sure to subscribe to the discussion group (also see sidebar). Enjoy!</p>
+<!-- Call to Action / Contribute Section with Parallax -->
+<section id="contribute" class="relative py-32 flex items-center">
+  <div class="absolute w-full h-full bg-gradient-to-r from-blue-900/90 to-black/90 z-10"></div>
+  <div class="parallax absolute w-full h-full bg-cover bg-center" 
+       style="background-image: url('https://images.unsplash.com/photo-1551836022-d5d88e9218df?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');"
+       data-speed="0.2">
+  </div>
+  
+  <div class="container mx-auto px-4 relative z-20">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-4xl font-bold text-white mb-6" data-aos="fade-up">Join Our Initiative</h2>
+      <p class="text-xl text-white/90 mb-8" data-aos="fade-up" data-aos-delay="100">
+        SmallPE is driven by volunteers passionate about revolutionizing private equity through AI. Whether you're a developer, financial analyst, data scientist, or just curious about the intersection of AI and finance, there's a place for you in our community.
+      </p>
+      <form class="max-w-md mx-auto" data-aos="fade-up" data-aos-delay="200">
+        <div class="flex flex-col md:flex-row gap-4">
+          <iframe src="https://abhishek.parolkar.com/embed?minimal=true" width="480" height="45" style="border:1px solid #EEE; background:white;" frameborder="0" scrolling="no"></iframe>
+        </div>
+        <p class="text-sm text-white/70 mt-4">
+          Join our mailing list to stay updated on our progress and opportunities to contribute.
+        </p>
+      </form>
+    </div>
+  </div>
+</section>

@@ -2,28 +2,73 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>A Brand New Nanoc Site - <%= @item[:title] %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Abhishek Parolkar" />
+    <meta name="description" content="SmallPE Model Private Equity - A model of Private Equity firm using AI First approach" />
+    <meta content='text/html;charset=UTF-8' http-equiv='content-type' />
+    <meta content='INDEX, NOFOLLOW' name='ROBOTS' />
+    <meta content='Abhishek Parolkar' name='Copyright' />
+    <meta content='General' name='Rating' />
+    <meta content='SmallPE Model Private Equity, Private Equity Model, Private Equity, AI First Private Equity, AI First Private Equity Model' name='Keywords' />
+    <meta content='EN' http-equiv='content-language' />
+    <meta content="SmallPE Model Private Equity - <%= @item[:title] %>" name='Abstract' />
+    <meta content='SmallPE Model Private Equity' name='Title' />
+    <title>SmallPE Model Private Equity - <%= @item[:title] %></title>
+    
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="/stylesheet.css">
-
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    
+    <!-- Animate On Scroll library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Custom JavaScript for Parallax Effect -->
+    <script>
+      // Initialize AOS (Animate On Scroll)
+      document.addEventListener('DOMContentLoaded', function() {
+        AOS.init({
+          duration: 800,
+          easing: 'ease-in-out',
+          once: true
+        });
+        
+        // Simple parallax effect for hero section
+        window.addEventListener('scroll', function() {
+          const scrolled = window.scrollY;
+          const parallaxElements = document.querySelectorAll('.parallax');
+          
+          parallaxElements.forEach(function(element) {
+            const speed = element.dataset.speed || 0.5;
+            element.style.transform = `translateY(${scrolled * speed}px)`;
+          });
+        });
+      });
+    </script>
+    
     <!-- you don't need to keep this, but it's cool for stats! -->
     <meta name="generator" content="Nanoc <%= Nanoc::VERSION %>">
   </head>
-  <body>
-    <div id="main">
+  <body class="text-gray-800 font-sans antialiased">
+    <%= render '/header.*' %>
+    
+    <main>
       <%= yield %>
-    </div>
-    <div id="sidebar">
-      <h2>Documentation</h2>
-      <ul>
-        <li><a href="https://nanoc.app/doc/">Documentation</a></li>
-        <li><a href="https://nanoc.app/doc/tutorial/">Tutorial</a></li>
-      </ul>
-      <h2>Community</h2>
-      <ul>
-        <li><a href="http://groups.google.com/group/nanoc/">Discussion group</a></li>
-        <li><a href="https://gitter.im/nanoc/nanoc">Gitter channel</a></li>
-        <li><a href="https://nanoc.app/contributing/">Contributing</a></li>
-      </ul>
-    </div>
+    </main>
+    
+    <%= render '/footer.*' %>
+    
+    <script>
+      // Initialize all animations and interactive elements
+      document.addEventListener('DOMContentLoaded', function() {
+        // Initialize AOS animations
+        AOS.init();
+      });
+    </script>
   </body>
 </html>
