@@ -1,0 +1,68 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'optparse'
+require 'adsf'
+
+options = {
+  handler: nil,
+  port: 3000,
+  index_filenames: %w[index.html],
+  root: '.',
+  host: '0.0.0.0',
+  live: false,
+}
+
+OptionParser.new do |opts|
+  opts.banner = 'Usage: adsf [options]'
+
+  opts.on('-H', '--handler [handler]', 'Specify the handler to use') do |o|
+    options[:handler] = o
+  end
+
+  opts.on('-h', '--help', 'Display help') do |_o|
+    puts opts
+    exit
+  end
+
+  opts.on('-V', '--version', 'Show version') do |_o|
+    puts "adsf version #{Adsf::VERSION} © 2009–… Denis Defreyne."
+    exit
+  end
+
+  opts.on('-i', '--index-filenames [index-filenames]', 'Specify index filenames (comma-separated)') do |o|
+    options[:index_filenames] = o.split(',')
+  end
+
+  opts.on('-x', '--auto-extensions [extensions]', 'Specify suffixes to automatically apply to requests (comma-separated, including dot)') do |o|
+    options[:auto_extensions] = o.split(',')
+  end
+
+  opts.on('-p', '--port [port]', Integer, 'Specify the port number to use') do |o|
+    options[:port] = o
+  end
+
+  opts.on('-r', '--root [root]', 'Specify the web root to use') do |o|
+    options[:root] = o
+  end
+
+  opts.on('-l', '--local-only', 'Only listen to requests from localhost (short for "-a localhost")') do
+    options[:host] = 'localhost'
+  end
+
+  opts.on('-a', '--listen-address [host]', 'Specify the address to listen to') do |o|
+    options[:host] = o
+  end
+
+  opts.on('-L', '--live-reload', 'Reload on changes (requires adsf-live)') do
+    options[:live] = true
+  end
+end.parse!
+
+server = Adsf::Server.new(**options)
+
+%w[INT TERM].each do |s|
+  Signal.trap(s) { server.stop }
+end
+
+server.run

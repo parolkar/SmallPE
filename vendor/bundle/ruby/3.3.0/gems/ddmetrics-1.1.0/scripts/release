@@ -1,0 +1,115 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'fileutils'
+require 'json'
+require 'netrc'
+require 'octokit'
+require 'shellwords'
+require 'uri'
+
+def run(*args)
+  puts('<exec> ' + args.map { |s| Shellwords.escape(s) }.join(' '))
+  system(*args)
+end
+
+gem_name = 'ddmetrics'
+version_constant = 'DDMetrics::VERSION'
+gem_path = 'ddmetrics'
+
+puts '=== Logging in to GitHub’s API…'
+client = Octokit::Client.new(netrc: true)
+puts
+
+puts '=== Deleting old *.gem files…'
+Dir['*.gem'].each do |fn|
+  puts "deleting #{fn}…"
+  FileUtils.rm_f(fn)
+end
+puts
+
+puts '=== Verifying presence of release date…'
+unless File.readlines('NEWS.md').drop(2).first =~ / \(\d{4}-\d{2}-\d{2}\)$/
+  warn 'No proper release date found!'
+  exit 1
+end
+puts
+
+puts '=== Reading version…'
+require "./lib/#{gem_path}/version"
+version = eval(version_constant) # rubocop:disable Security/Eval
+puts "Version = #{version}"
+puts
+
+puts '=== Building new gem…'
+run('gem', 'build', 'ddmetrics.gemspec')
+puts
+
+puts '=== Verifying that gems were built properly…'
+gem_filename = "#{gem_name}-#{version}.gem"
+unless File.file?(gem_filename)
+  warn "Error: Could not find gem: #{gem_filename}"
+  exit 1
+end
+puts
+
+puts '=== Verifying that gem version does not yet exist…'
+url = URI.parse("https://rubygems.org/api/v1/versions/#{gem_name}.json")
+response = Net::HTTP.get_response(url)
+existing_versions =
+  case response.code
+  when '404'
+    []
+  when '200'
+    JSON.parse(response.body).map { |e| e.fetch('number') }
+  else
+    warn "Error: Couldn’t fetch version information for #{gem_name} (status #{response.code})"
+    exit 1
+  end
+if existing_versions.include?(version)
+  warn "Error: #{gem_name} v#{version} already exists"
+  exit 1
+end
+puts
+
+puts '=== Verifying that release does not yet exist…'
+releases = client.releases('ddfreyne/ddmetrics')
+release = releases.find { |r| r.tag_name == DDMetrics::VERSION }
+if release
+  warn 'Release already exists!'
+  warn 'ABORTED!'
+  exit 1
+end
+puts
+
+puts '=== Creating Git tag…'
+run('git', 'tag', '--sign', '--annotate', DDMetrics::VERSION, '--message', "Version #{DDMetrics::VERSION}")
+puts
+
+puts '=== Pushing Git data…'
+run('git', 'push', 'origin', '--tags')
+puts
+
+puts '=== Pushing gem…'
+run('gem', 'push', "ddmetrics-#{DDMetrics::VERSION}.gem")
+puts
+
+puts '=== Reading release notes…'
+release_notes =
+  File.readlines('NEWS.md')
+      .drop(4)
+      .take_while { |l| l !~ /^## / }
+      .join
+puts
+
+puts '=== Creating release on GitHub…'
+sleep 3 # Give GitHub some time to detect the new tag
+is_prerelease = DDMetrics::VERSION =~ /a|b|rc/ || DDMetrics::VERSION =~ /^0/
+client.create_release(
+  'ddfreyne/ddmetrics', DDMetrics::VERSION,
+  prerelease: !is_prerelease.nil?,
+  body: release_notes
+)
+puts
+
+puts 'DONE!'

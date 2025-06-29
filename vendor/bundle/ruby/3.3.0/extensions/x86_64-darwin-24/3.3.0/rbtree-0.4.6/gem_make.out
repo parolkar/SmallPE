@@ -1,0 +1,27 @@
+current directory: /Users/parolkar/workspace/smallpe/vendor/bundle/ruby/3.3.0/gems/rbtree-0.4.6
+/Users/parolkar/.rvm/rubies/ruby-3.3.4/bin/ruby extconf.rb
+checking for ruby/version.h... yes
+checking for rb_exec_recursive() in ruby.h... yes
+checking for rb_exec_recursive_paired() in ruby.h... yes
+checking for rb_proc_lambda_p() in ruby.h... yes
+checking for rb_ary_resize() in ruby.h... yes
+checking for rb_obj_hide() in ruby.h... yes
+checking for rb_safe_level() in ruby.h... no
+checking for rb_cData() in ruby.h... no
+creating Makefile
+
+current directory: /Users/parolkar/workspace/smallpe/vendor/bundle/ruby/3.3.0/gems/rbtree-0.4.6
+make DESTDIR\= sitearchdir\=./.gem.20250629-17598-kjgtni sitelibdir\=./.gem.20250629-17598-kjgtni clean
+
+current directory: /Users/parolkar/workspace/smallpe/vendor/bundle/ruby/3.3.0/gems/rbtree-0.4.6
+make DESTDIR\= sitearchdir\=./.gem.20250629-17598-kjgtni sitelibdir\=./.gem.20250629-17598-kjgtni
+compiling dict.c
+compiling rbtree.c
+linking shared-object rbtree.bundle
+
+current directory: /Users/parolkar/workspace/smallpe/vendor/bundle/ruby/3.3.0/gems/rbtree-0.4.6
+make DESTDIR\= sitearchdir\=./.gem.20250629-17598-kjgtni sitelibdir\=./.gem.20250629-17598-kjgtni install
+/usr/local/opt/coreutils/bin/ginstall -c -m 0755 rbtree.bundle ./.gem.20250629-17598-kjgtni
+
+current directory: /Users/parolkar/workspace/smallpe/vendor/bundle/ruby/3.3.0/gems/rbtree-0.4.6
+make DESTDIR\= sitearchdir\=./.gem.20250629-17598-kjgtni sitelibdir\=./.gem.20250629-17598-kjgtni clean
