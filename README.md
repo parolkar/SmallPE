@@ -28,6 +28,12 @@ To start the development server:
 bundle exec nanoc view
 ```
 
+or
+
+```bash
+bundle exec nanoc live
+```
+
 This will start a local server and automatically rebuild the site when files change.
 
 ## Building for Production
