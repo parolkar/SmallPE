@@ -2,6 +2,9 @@
 
 This is @parolkar's new ambiitious project to create a model Private Equity investment done in the AI-first way.
 
+## Demo Video
+
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/Lsmp7YlOhm8?si=KHCFdA_np38clRed" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Requirements
 
@@ -56,6 +59,3 @@ The generated files will be in the 'output' directory (this is the one that is d
 ```bash
 % ./bin/start_agentic_team
 ```
-
-
-

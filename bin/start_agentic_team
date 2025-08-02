@@ -1,6 +1,16 @@
 #!/bin/bash
 
 set -e
+
+# Print SmallPE ASCII Art Banner
+echo "   _____                 _ _ _____  ______ "
+echo "  / ____|               | | |  __ \|  ____|"
+echo " | (___  _ __ ___   __ _| | | |__) | |__   "
+echo "  \___ \| '_ \` _ \ / _\` | | |  ___/|  __|  "
+echo "  ____) | | | | | | (_| | | | |    | |____ "
+echo " |_____/|_| |_| |_|\__,_|_|_|_|    |______|"
+echo "                                            "
+echo ""
 echo "Setting up SmallPE environment"
 
 # Install dependencies
