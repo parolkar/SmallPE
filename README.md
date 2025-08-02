@@ -4,7 +4,7 @@ This is @parolkar's new ambiitious project to create a model Private Equity inve
 
 ## Demo Video
 
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/Lsmp7YlOhm8?si=KHCFdA_np38clRed" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[Watch the SmallPE Demo Video](https://www.youtube.com/watch?v=Lsmp7YlOhm8)
 
 ## Requirements
 
