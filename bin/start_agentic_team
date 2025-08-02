@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -e
+echo "Setting up SmallPE environment"
+
+# Install dependencies
+echo "Let's begin the work..."
+bundle exec claude-swarm start agentic-team-for-private-equity/smallpe-agent-swarm.yml

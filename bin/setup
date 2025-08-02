@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -e
+echo "Setting up SmallPE environment..."
+
+# Check if Claude CLI is installed
+if ! command -v claude >/dev/null 2>&1; then
+    echo "Claude CLI is not installed. Installing now..."
+    npm install -g @anthropic-ai/claude-code
+else
+    echo "✅ Claude CLI is already installed"
+fi
+
+# Install dependencies
+echo "Installing dependencies..."
+bundle install
+

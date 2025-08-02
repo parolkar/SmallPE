@@ -2,6 +2,7 @@
 
 This is @parolkar's new ambiitious project to create a model Private Equity investment done in the AI-first way.
 
+
 ## Requirements
 
 - Ruby 3.3.4
@@ -22,7 +23,8 @@ This is @parolkar's new ambiitious project to create a model Private Equity inve
 
 ## Development
 
-To start the development server:
+### For the public-facing content and website
+The content is managed via nanoc To start the development server:
 
 ```bash
 bundle exec nanoc view
@@ -36,7 +38,7 @@ bundle exec nanoc live
 
 This will start a local server and automatically rebuild the site when files change.
 
-## Building for Production
+#### Building for Production
 
 To build the static site:
 
@@ -44,9 +46,16 @@ To build the static site:
 bundle exec nanoc 
 ```
 
-The generated files will be in the 'output' directory.
+The generated files will be in the 'output' directory (this is the one that is deployed for the website).
 
-## Deployment
+### For testing and launching agents
+
+
+#### Start the agent swarm 
+
+```bash
+% ./bin/start_agentic_team
+```
 
 
 
