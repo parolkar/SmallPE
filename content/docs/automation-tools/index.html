@@ -1,0 +1,110 @@
+---
+title: VC/PE Automation Tools
+---
+
+<!-- Hero Section -->
+<section class="relative h-96 flex items-center justify-center overflow-hidden">
+  <div class="absolute w-full h-full bg-gradient-to-b from-blue-900/80 to-black/90 z-10"></div>
+  <div class="parallax absolute w-full h-full bg-cover bg-center" 
+       style="background-image: url('https://images.unsplash.com/photo-1518186285589-2f7649de83e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=2074&q=80');"
+       data-speed="0.15">
+  </div>
+  <div class="container mx-auto px-4 relative z-20 text-center">
+    <h1 class="text-4xl md:text-6xl font-bold text-white mb-6" data-aos="fade-up">
+      VC/PE Automation Tools
+    </h1>
+    <p class="text-lg md:text-xl text-white mb-8 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="200">
+      Collection of <span id="totalCount">160+</span> free automation templates tailored for Venture Capital and Private Equity workflows
+    </p>
+  </div>
+</section>
+
+<!-- Filter and Cart Section -->
+<section class="py-8 bg-gray-50 sticky top-0 z-30 border-b">
+  <div class="container mx-auto px-4">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <!-- Search and Filters -->
+      <div class="flex flex-wrap items-center gap-4">
+        <input type="text" id="searchInput" placeholder="Search automations..." 
+               class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        
+        <select id="categoryFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+          <option value="">All Categories</option>
+        </select>
+        
+        <select id="departmentFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+          <option value="">All Departments</option>
+        </select>
+      </div>
+      
+      <!-- Cart -->
+      <div class="flex items-center gap-4">
+        <button id="cartToggle" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+          <i class="fas fa-shopping-cart"></i>
+          <span id="cartButtonText">Selected for Export (<span id="cartCount">0</span>)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Cart Sidebar -->
+<div id="cartSidebar" class="fixed right-0 top-0 h-full w-96 bg-white shadow-xl transform translate-x-full transition-transform duration-300 z-40">
+  <div class="p-6 border-b">
+    <div class="flex items-center justify-between">
+      <h3 class="text-xl font-semibold">Selected Automations</h3>
+      <button id="closeCart" class="text-gray-500 hover:text-gray-700">
+        <i class="fas fa-times text-xl"></i>
+      </button>
+    </div>
+  </div>
+  <div id="cartItems" class="p-6 overflow-y-auto h-full pb-32">
+    <p class="text-gray-500">No automations selected</p>
+  </div>
+  <div class="absolute bottom-0 left-0 right-0 p-6 bg-white border-t">
+    <button id="exportFromCart" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg disabled:opacity-50" disabled>
+      Export All (<span id="cartTotal">0</span>)
+    </button>
+  </div>
+</div>
+
+<!-- Overlay -->
+<div id="cartOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden"></div>
+
+<!-- Automations Grid -->
+<section class="py-12">
+  <div class="container mx-auto px-4">
+    <div class="mb-8">
+      <div class="flex items-center justify-between">
+        <h2 class="text-2xl font-bold">n8n Automation Templates</h2>
+        <div class="text-gray-600">
+          Showing <span id="resultCount">0</span> of <span id="totalAutomations">0</span> automations
+        </div>
+      </div>
+    </div>
+    
+    <div id="automationsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Automation cards will be populated by JavaScript -->
+    </div>
+    
+    <div id="noResults" class="text-center py-12 hidden">
+      <i class="fas fa-search text-4xl text-gray-400 mb-4"></i>
+      <h3 class="text-xl font-semibold text-gray-600 mb-2">No automations found</h3>
+      <p class="text-gray-500">Try adjusting your search or filter criteria</p>
+    </div>
+  </div>
+</section>
+
+<!-- Disclaimer -->
+<section class="py-8 bg-gray-100">
+  <div class="container mx-auto px-4 text-center">
+    <p class="text-xs text-gray-600 max-w-4xl mx-auto">
+      <strong>Disclaimer:</strong> These automation templates may not be fully tested and have been made available without any guarantee. 
+      Users must do appropriate analysis before using in mission-critical situations. SmallPE and its contributors are not responsible 
+      for any issues arising from the use of these templates.
+    </p>
+  </div>
+</section>
+
+<script src="/assets/js/automation-data.js"></script>
+<script src="/assets/js/automation-tools.js"></script>

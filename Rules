@@ -25,6 +25,16 @@ end
 #  end
 #end
 
+# Handle assets (CSS, JS, images, etc.)
+compile '/assets/**/*' do
+  # Don't filter or layout assets
+end
+
+route '/assets/**/*' do
+  # Keep the same path for assets
+  item.identifier.to_s
+end
+
 passthrough '/**/*'
 
 layout '/**/*', :erb
