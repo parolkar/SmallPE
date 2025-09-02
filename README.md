@@ -4,7 +4,7 @@ This is @parolkar's new ambiitious project to create a model Private Equity inve
 
 ## Demo Video
 
-[Watch the SmallPE Demo Video](https://www.youtube.com/watch?v=Lsmp7YlOhm8)
+[Watch the SmallPE Demo Video](https://smallpe.com/#demo)
 
 ## Requirements
 
@@ -23,6 +23,11 @@ This is @parolkar's new ambiitious project to create a model Private Equity inve
    ```bash
    bundle  install
    ```
+
+## Quick Start with Replit
+
+The easiest way to start using the Agentic Team is via the Replit Template:
+[SmallPE Replit Template](https://replit.com/@inloop/SmallPE-replit?v=1#README.md)
 
 ## Development
 
@@ -59,3 +64,4 @@ The generated files will be in the 'output' directory (this is the one that is d
 ```bash
 % ./bin/start_agentic_team
 ```
+
