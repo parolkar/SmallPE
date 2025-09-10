@@ -1,0 +1,40 @@
+modules = ["nodejs-20", "web", "ruby-3.2", "bash"]
+run = "bin/start_agentic_team"
+
+[nix]
+channel = "stable-25_05"
+packages = ["pandoc"]
+
+[deployment]
+run = ["sh", "-c", "bin/start_agentic_team"]
+
+[agent]
+expertMode = true
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "agentic-team"
+
+[[workflows.workflow]]
+name = "agentic-team"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bin/start_agentic_team"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
