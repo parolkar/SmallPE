@@ -3,7 +3,8 @@ run = "bin/start_agentic_team"
 
 [nix]
 channel = "stable-25_05"
-packages = ["pandoc"]
+packages = ["pandoc", "texliveBasic", "texliveSmall", "wkhtmltopdf"]
+
 
 [deployment]
 run = ["sh", "-c", "bin/start_agentic_team"]
