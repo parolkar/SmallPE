@@ -3,7 +3,7 @@ run = "bin/start_agentic_team"
 
 [nix]
 channel = "stable-25_05"
-packages = ["pandoc", "texliveBasic", "texliveSmall", "wkhtmltopdf"]
+packages = ["pandoc", "texliveBasic", "texliveSmall", "wkhtmltopdf", "poppler", "poppler-utils"]
 
 
 [deployment]
