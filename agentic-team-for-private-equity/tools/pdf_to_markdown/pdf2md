@@ -1,0 +1,216 @@
+#!/usr/bin/env ruby
+
+require 'thor'
+require 'colorize'
+require_relative 'lib/pdf_to_markdown'
+
+class Pdf2MDCli < Thor
+  desc "convert FILE [OPTIONS]", "Convert PDF file to Markdown"
+  option :output, aliases: "-o", type: :string, desc: "Output file path (default: input_file.md)"
+  option :verbose, aliases: "-v", type: :boolean, default: false, desc: "Verbose output"
+  option :page, aliases: "-p", type: :numeric, desc: "Convert specific page number"
+  option :extract_images, aliases: "-i", type: :string, desc: "Extract images (embed|separate|none)"
+  option :extract_tables, aliases: "-t", type: :boolean, default: true, desc: "Detect and format tables"
+  option :preserve_formatting, aliases: "-f", type: :boolean, default: true, desc: "Preserve text formatting"
+  def convert(file_path)
+    begin
+      unless File.exist?(file_path)
+        puts "Error: File '#{file_path}' not found!".red
+        exit 1
+      end
+
+      unless file_path.downcase.end_with?('.pdf')
+        puts "Error: File must be a PDF file (.pdf)".red
+        exit 1
+      end
+
+      output_file = options[:output] || file_path.gsub(/\.pdf$/i, '.md')
+
+      puts "Converting '#{file_path}' to Markdown...".cyan if options[:verbose]
+
+      converter = PdfToMarkdown.new(file_path, options)
+      converter.convert_to_markdown(output_file)
+
+      puts "✓ Successfully converted to '#{output_file}'".green
+
+      if options[:verbose]
+        puts "  Pages processed: #{converter.page_count}".light_black
+        puts "  Text blocks extracted: #{converter.total_text_blocks}".light_black
+        puts "  Images extracted: #{converter.images_extracted}".light_black if options[:extract_images]
+      end
+
+    rescue StandardError => e
+      puts "Error: #{e.message}".red
+      puts e.backtrace.join("\n").light_black if options[:verbose]
+      exit 1
+    end
+  end
+
+  desc "info FILE", "Display information about PDF file"
+  def info(file_path)
+    begin
+      unless File.exist?(file_path)
+        puts "Error: File '#{file_path}' not found!".red
+        exit 1
+      end
+
+      converter = PdfToMarkdown.new(file_path)
+      info = converter.file_info
+
+      puts "\nPDF File Information".cyan.bold
+      puts "=" * 40
+      puts "File: #{file_path}".light_white
+      puts "Pages: #{info[:pages]}".light_white
+      puts "PDF Version: #{info[:pdf_version]}".light_white if info[:pdf_version]
+      puts "Encrypted: #{info[:encrypted] ? 'Yes' : 'No'}".light_white
+
+      puts "\nMetadata:".cyan
+      puts "  Title: #{info[:metadata][:title] || 'N/A'}".light_white
+      puts "  Author: #{info[:metadata][:author] || 'N/A'}".light_white
+      puts "  Subject: #{info[:metadata][:subject] || 'N/A'}".light_white
+      puts "  Creation Date: #{info[:metadata][:creation_date] || 'N/A'}".light_white
+      puts "  Modification Date: #{info[:metadata][:modification_date] || 'N/A'}".light_white
+
+      puts "\nContent Features:".cyan
+      puts "  Has Forms: #{info[:has_forms] ? 'Yes' : 'No'}".light_white
+      puts "  Has Images: #{info[:has_images] ? 'Yes' : 'No'}".light_white
+
+      puts "\nProduction Info:".cyan if info[:producer] || info[:creator]
+      puts "  Producer: #{info[:producer] || 'N/A'}".light_black if info[:producer]
+      puts "  Creator: #{info[:creator] || 'N/A'}".light_black if info[:creator]
+
+    rescue StandardError => e
+      puts "Error: #{e.message}".red
+      exit 1
+    end
+  end
+
+  desc "extract FILE [OPTIONS]", "Extract specific content from PDF"
+  option :type, aliases: "-t", type: :string, required: true, desc: "Content type (text|images|tables|metadata)"
+  option :output, aliases: "-o", type: :string, desc: "Output directory or file"
+  option :page, aliases: "-p", type: :numeric, desc: "Extract from specific page"
+  def extract(file_path)
+    begin
+      unless File.exist?(file_path)
+        puts "Error: File '#{file_path}' not found!".red
+        exit 1
+      end
+
+      case options[:type]
+      when 'text'
+        extract_text(file_path)
+      when 'images'
+        extract_images(file_path)
+      when 'tables'
+        extract_tables(file_path)
+      when 'metadata'
+        extract_metadata(file_path)
+      else
+        puts "Error: Unknown content type '#{options[:type]}'".red
+        puts "Valid types: text, images, tables, metadata"
+        exit 1
+      end
+
+    rescue StandardError => e
+      puts "Error: #{e.message}".red
+      exit 1
+    end
+  end
+
+  desc "batch DIR [OPTIONS]", "Convert all PDFs in a directory"
+  option :output, aliases: "-o", type: :string, desc: "Output directory (default: same as input)"
+  option :recursive, aliases: "-r", type: :boolean, default: false, desc: "Process subdirectories"
+  option :verbose, aliases: "-v", type: :boolean, default: false, desc: "Verbose output"
+  def batch(directory)
+    begin
+      unless Dir.exist?(directory)
+        puts "Error: Directory '#{directory}' not found!".red
+        exit 1
+      end
+
+      pattern = options[:recursive] ? "**/*.pdf" : "*.pdf"
+      pdf_files = Dir.glob(File.join(directory, pattern), File::FNM_CASEFOLD)
+
+      if pdf_files.empty?
+        puts "No PDF files found in '#{directory}'".yellow
+        exit 0
+      end
+
+      puts "Found #{pdf_files.length} PDF files to convert".cyan
+      output_dir = options[:output] || directory
+
+      pdf_files.each_with_index do |pdf_file, index|
+        relative_path = pdf_file.sub(directory, '').sub(/^\//, '')
+        output_file = File.join(output_dir, relative_path.gsub(/\.pdf$/i, '.md'))
+
+        # Create output directory if needed
+        FileUtils.mkdir_p(File.dirname(output_file))
+
+        puts "\n[#{index + 1}/#{pdf_files.length}] Converting: #{relative_path}".light_white
+
+        begin
+          converter = PdfToMarkdown.new(pdf_file, options)
+          converter.convert_to_markdown(output_file)
+          puts "  ✓ Saved to: #{output_file}".green
+        rescue StandardError => e
+          puts "  ✗ Failed: #{e.message}".red
+        end
+      end
+
+      puts "\nBatch conversion complete!".green.bold
+
+    rescue StandardError => e
+      puts "Error: #{e.message}".red
+      exit 1
+    end
+  end
+
+  desc "version", "Display version information"
+  def version
+    puts "pdf2md version 1.0.0"
+  end
+
+  default_task :convert
+
+  private
+
+  def extract_text(file_path)
+    converter = PdfToMarkdown.new(file_path, options)
+    output_file = options[:output] || file_path.gsub(/\.pdf$/i, '.txt')
+
+    # Extract plain text
+    pdf = PDF::Reader.new(file_path)
+    text = if options[:page]
+             pdf.pages[options[:page] - 1].text
+           else
+             pdf.pages.map(&:text).join("\n\n" + "="*50 + "\n\n")
+           end
+
+    File.write(output_file, text)
+    puts "✓ Text extracted to '#{output_file}'".green
+  end
+
+  def extract_images(file_path)
+    puts "Image extraction requires additional tools (pdfimages)".yellow
+    puts "This feature is under development".yellow
+  end
+
+  def extract_tables(file_path)
+    converter = PdfToMarkdown.new(file_path, extract_tables: true)
+    output_file = options[:output] || file_path.gsub(/\.pdf$/i, '_tables.md')
+    converter.convert_to_markdown(output_file)
+    puts "✓ Tables extracted to '#{output_file}'".green
+  end
+
+  def extract_metadata(file_path)
+    converter = PdfToMarkdown.new(file_path)
+    info = converter.file_info
+    output_file = options[:output] || file_path.gsub(/\.pdf$/i, '_metadata.json')
+
+    require 'json'
+    File.write(output_file, JSON.pretty_generate(info))
+    puts "✓ Metadata extracted to '#{output_file}'".green
+  end
+end
+
+Pdf2MDCli.start(ARGV)

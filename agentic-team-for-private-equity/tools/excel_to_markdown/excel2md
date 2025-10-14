@@ -1,0 +1,78 @@
+#!/usr/bin/env ruby
+
+require 'thor'
+require 'colorize'
+require_relative 'lib/excel_to_markdown'
+
+class Excel2MDCli < Thor
+  desc "convert FILE [OPTIONS]", "Convert Excel file to Markdown"
+  option :output, aliases: "-o", type: :string, desc: "Output file path (default: input_file.md)"
+  option :verbose, aliases: "-v", type: :boolean, default: false, desc: "Verbose output"
+  option :sheet, aliases: "-s", type: :string, desc: "Specific sheet name to convert (default: all sheets)"
+  def convert(file_path)
+    begin
+      unless File.exist?(file_path)
+        puts "Error: File '#{file_path}' not found!".red
+        exit 1
+      end
+
+      unless file_path.downcase.end_with?('.xlsx', '.xls')
+        puts "Error: File must be an Excel file (.xlsx or .xls)".red
+        exit 1
+      end
+
+      output_file = options[:output] || file_path.gsub(/\.(xlsx?|xls)$/i, '.md')
+
+      puts "Converting '#{file_path}' to Markdown...".cyan if options[:verbose]
+
+      converter = ExcelToMarkdown.new(file_path, options)
+      converter.convert_to_markdown(output_file)
+
+      puts "✓ Successfully converted to '#{output_file}'".green
+      puts "  Total sheets processed: #{converter.sheet_count}".light_black if options[:verbose]
+      puts "  Total rows processed: #{converter.total_rows}".light_black if options[:verbose]
+
+    rescue StandardError => e
+      puts "Error: #{e.message}".red
+      puts e.backtrace.join("\n").light_black if options[:verbose]
+      exit 1
+    end
+  end
+
+  desc "info FILE", "Display information about Excel file"
+  def info(file_path)
+    begin
+      unless File.exist?(file_path)
+        puts "Error: File '#{file_path}' not found!".red
+        exit 1
+      end
+
+      converter = ExcelToMarkdown.new(file_path)
+      info = converter.file_info
+
+      puts "\nExcel File Information".cyan.bold
+      puts "=" * 40
+      puts "File: #{file_path}".light_white
+      puts "Sheets: #{info[:sheets].count}".light_white
+      puts "\nSheet Details:".cyan
+      info[:sheets].each_with_index do |sheet, index|
+        puts "  #{index + 1}. #{sheet[:name]}".light_white
+        puts "     Rows: #{sheet[:rows]}".light_black
+        puts "     Columns: #{sheet[:columns]}".light_black
+      end
+
+    rescue StandardError => e
+      puts "Error: #{e.message}".red
+      exit 1
+    end
+  end
+
+  desc "version", "Display version information"
+  def version
+    puts "excel2md version 1.0.0"
+  end
+
+  default_task :convert
+end
+
+Excel2MDCli.start(ARGV)

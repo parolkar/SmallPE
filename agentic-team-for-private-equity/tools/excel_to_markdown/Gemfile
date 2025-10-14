@@ -1,0 +1,5 @@
+source 'https://rubygems.org'
+
+gem 'roo', '~> 2.10'      # For reading Excel files
+gem 'thor', '~> 1.3'      # For CLI framework
+gem 'colorize', '~> 1.1'  # For colored terminal output
