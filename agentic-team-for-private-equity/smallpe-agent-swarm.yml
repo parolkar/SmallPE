@@ -380,7 +380,6 @@ swarm:
       description: "Evidence Verifier specialist ensuring all business evaluation claims are backed by documented evidence with rigorous reference tracking"
       directory: ./agentic-team-for-private-equity/evidence-verification
       model: sonnet
-      connections: [prometheus]
       allowed_tools:
         - Read
         - Edit
