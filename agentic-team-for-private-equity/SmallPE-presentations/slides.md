@@ -157,7 +157,7 @@ layout: default
 <div class="text-center">
   <div class="text-4xl font-bold text-green-600">90%</div>
   <div class="text-lg font-semibold mt-2">Lower Cost</div>
-  <p class="text-sm text-gray-600 mt-1">$500K runs what used to need $5M</p>
+  <p class="text-sm text-gray-600 mt-1">$5K runs operations for what used to need $50k</p>
 </div>
 
 <div class="text-center">
@@ -210,7 +210,7 @@ class: text-center
 </div>
 
 <div class="mt-10 space-y-4">
-<a href="https://smallpe.com/see_it_in_action/" class="inline-block  hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all">
+<a href="https://smallpe.com/see_it_in_action/" class="inline-block  hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-lg  transition-all">
   🎬 Watch Video Demos Now
 </a>
 <div class="mt-6 text-center text-sm text-gray-500">

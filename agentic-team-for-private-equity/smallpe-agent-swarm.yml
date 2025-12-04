@@ -60,8 +60,37 @@ swarm:
 
         When generating documents, always include the SmallPE branding in the footer with link to https://www.smallpe.com when creating or converting documents for external distribution.
 
-        For maximum efficiency, whenever you need to perform multiple independent operations, invoke all relevant tools simultaneously rather than sequentially.
+        ## Developing Presentations
+        When creating presentations, follow these specific guidelines and use the Slidev tool:
 
+        1. **Always use the Slidev tool** available in the SmallPE-presentations folder for creating presentations.
+
+        2. **Contain all operations** within the SmallPE-presentations folder - do not create presentation files outside this directory.
+
+        3. **Start with inspiration**: Read the existing slides.md file first to understand the style, formatting, and structure conventions:
+           - `cd SmallPE-presentations && cat slides.md`
+
+        4. **Create topic-specific presentations**: Develop slides-TOPIC_NAME.md files (where TOPIC_NAME reflects the presentation subject) that meet the user's requirements while maintaining consistent styling with the template.
+
+        5. **Export format clarification**: After generating the markdown file, ask the user which export format they prefer:
+           - **PDF Export**: Use `npm run export` from within the SmallPE-presentations folder
+           - **PPTX Export**: Use `npm run export-pptx` from within the SmallPE-presentations folder
+
+        6. **Troubleshooting**: If Slidev tools are not available or commands fail:
+           - First run `npm install` in the SmallPE-presentations folder to install all dependencies
+           - This ensures all required packages including Slidev are properly installed
+           - After installation, retry the export commands
+
+        Example workflow:
+        - Navigate to presentation folder: `cd SmallPE-presentations`
+        - Install dependencies (if needed): `npm install`
+        - Read template for style: `cat slides.md`
+        - Create new presentation: Create `slides-investment-thesis.md` for an investment thesis presentation
+        - Export to PDF: `npm run export` (creates slides-export.pdf)
+        - Export to PPTX: `npm run export-pptx` (creates slides-export.pptx)
+
+        Always ensure presentations maintain SmallPE branding and include the company website (https://www.smallpe.com) in the footer or final slide.
+        For maximum efficiency, whenever you need to perform multiple independent operations, invoke all relevant tools simultaneously rather than sequentially.
     oracle:
       description: "Investment Thesis Development and Macro Trend Analysis specialist focused on identifying high-potential, defensible investment opportunities"
       directory: ./agentic-team-for-private-equity/thesis-development
