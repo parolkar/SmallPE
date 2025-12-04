@@ -1,0 +1,45 @@
+{
+  "name": "@inloopstudio/slidev-theme-inloopstudio",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "slidev build",
+    "dev": "slidev --open",
+    "export": "slidev export"
+  },
+  "keywords": [
+    "slidev-theme",
+    "slidev",
+    "inloop",
+    "brand"
+  ],
+  "files": [
+    "layouts",
+    "styles",
+    "components",
+    "assets",
+    "layoutHelper.ts",
+    "README.md",
+    "package.json"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "slidev": {
+    "defaults": {
+      "fonts": {
+        "sans": "Inter",
+        "serif": "Instrument Serif",
+        "mono": "Fira Code",
+        "italic": true,
+        "weights": "300,400,500,600,700"
+      }
+    }
+  },
+  "dependencies": {
+    "@slidev/cli": "^52.6.0",
+    "@slidev/theme-default": "latest",
+    "@slidev/theme-seriph": "latest",
+    "vue": "^3.5.22"
+  }
+}

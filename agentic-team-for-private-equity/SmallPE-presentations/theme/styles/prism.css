@@ -1,0 +1,30 @@
+/* Minimal code highlight adjustments to fit Inloop palette */
+:root {
+  --prism-foreground: #030012; /* Jaguar (dark text) */
+  --prism-background: #F5F5FF; /* Alice Blue (light surface) */
+  --prism-comment: #9197A0; /* Spanish Gray */
+  --prism-string: #EE5F19; /* Papaya Orange */
+  --prism-keyword: #7147FF; /* Aztec Purple */
+  --prism-function: #000032; /* Midnight Blue */
+}
+
+pre, code[class*="language-"] {
+  color: var(--prism-foreground);
+  background: var(--prism-background);
+}
+
+.token.comment,
+.token.block-comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: var(--prism-comment);
+}
+
+.token.punctuation { color: var(--prism-foreground); }
+.token.property, .token.tag, .token.constant, .token.symbol, .token.deleted { color: var(--prism-keyword); }
+.token.boolean, .token.number { color: var(--prism-keyword); }
+.token.selector, .token.attr-name, .token.string, .token.char, .token.builtin, .token.inserted { color: var(--prism-string); }
+.token.operator, .token.entity, .token.url { color: var(--prism-foreground); }
+.token.atrule, .token.attr-value, .token.keyword { color: var(--prism-keyword); }
+.token.function, .token.class-name { color: var(--prism-function); }

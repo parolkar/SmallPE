@@ -1,0 +1,300 @@
+/* Inloop Theme Base Styles */
+
+:root {
+  /* Fonts */
+  --font-sans: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  --font-serif: "Instrument Serif", Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+
+  /* Brand Colors */
+  --color-aztec-purple: #7147FF;
+  --color-pastel-violet: #B1B1FF;
+  --color-midnight-blue: #000032;
+  --color-jaguar: #030012;
+  --color-papaya-orange: #EE5F19;
+  --color-alice-blue: #F5F5FF;
+  --color-blue-chalk: #EBEBFF;
+  --color-white: #FFFFFF;
+  --color-ghost-white: #FAFAFB;
+  --color-spanish-gray: #9197A0;
+  --color-davy-gray: #505967;
+
+  /* Semantic tokens (Inloop brand) */
+  /* Keep in sync with analysis/inloop-public-web/src/styles/tokens.css */
+  --color-primary: var(--color-aztec-purple);
+  --color-secondary: var(--color-midnight-blue);
+  --color-accent: var(--color-papaya-orange);
+  --color-bg-light: var(--color-alice-blue);
+  --color-bg-dark: var(--color-midnight-blue);
+  /* Per brand CSS starter: primary text maps to Midnight Blue */
+  --color-text-primary: var(--color-midnight-blue);
+  --color-text-inverse: var(--color-white);
+
+  /* Slidev + theme bindings */
+  --slidev-theme-primary: var(--color-primary);
+  --inloop-text: var(--color-text-primary); /* dark text for light background */
+  --inloop-text-inverse: var(--color-text-inverse);
+  --inloop-bg: var(--color-bg-light); /* light background */
+  --inloop-bg-dark: var(--color-bg-dark);
+
+  /* Public Web tokens (kept in sync with inloop-public-web/src/styles/tokens.css) */
+  --ink-900: var(--color-jaguar);
+  --graphite-800: var(--color-davy-gray);
+  --slate-700: var(--color-spanish-gray);
+  --lavender-400: var(--color-aztec-purple);
+  --orange-600: var(--color-papaya-orange);
+  --sky-400: var(--color-pastel-violet);
+  --moss-600: var(--color-midnight-blue);
+  --sand-200: var(--color-blue-chalk);
+  --aztec-purple: var(--color-aztec-purple);
+  --ghost-white: var(--color-ghost-white);
+  --cloud-50: var(--color-ghost-white);
+
+  /* Background art (vector dotted canvas, like inloop-public-web home) */
+  --inloop-dot-color: rgba(3, 0, 18, 0.08); /* Jaguar @ 8% */
+  --inloop-dot-size: 1px;
+  --inloop-dot-gap: 16px 16px;
+  --inloop-background-image: radial-gradient(var(--inloop-dot-color) var(--inloop-dot-size), transparent var(--inloop-dot-size));
+  --inloop-background-size: var(--inloop-dot-gap);
+  --inloop-background-opacity: 0.12; /* subtle white overlay */
+
+  /* Display tracking */
+  --display-tight-tracking: -0.04em;
+  --display-tighter-tracking: -0.05em;
+
+  /* Display size tokens (Inter, Bold) */
+  --display-300-size: 32px;
+  --display-400-size: 48px;
+  --display-500-size: 64px;
+  --display-600-size: 84px;
+  --display-700-size: 114px;
+
+  /* Serif heading size tokens (Instrument Serif) */
+  --heading-200-size: 20px;
+  --heading-300-size: 24px;
+  --heading-400-size: 32px;
+  --heading-500-size: 40px;
+  --heading-600-size: 48px;
+}
+
+/* Local font faces (copy fonts into assets/fonts/) */
+/* Inter */
+@font-face {
+  font-family: "Inter";
+  src: url('../assets/fonts/inter/Inter_18pt-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url('../assets/fonts/inter/Inter_18pt-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url('../assets/fonts/inter/Inter_18pt-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url('../assets/fonts/inter/Inter_18pt-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url('../assets/fonts/inter/Inter_18pt-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url('../assets/fonts/inter/Inter_18pt-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url('../assets/fonts/inter/Inter_18pt-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url('../assets/fonts/inter/Inter_18pt-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Instrument Serif */
+@font-face {
+  font-family: "Instrument Serif";
+  src: url('../assets/fonts/instrument-serif/InstrumentSerif-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Instrument Serif";
+  src: url('../assets/fonts/instrument-serif/InstrumentSerif-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Fira Code */
+@font-face {
+  font-family: "Fira Code";
+  src: url('../assets/fonts/fira-code/FiraCode-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Fira Code";
+  src: url('../assets/fonts/fira-code/FiraCode-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Fira Code";
+  src: url('../assets/fonts/fira-code/FiraCode-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Fira Code";
+  src: url('../assets/fonts/fira-code/FiraCode-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Fira Code";
+  src: url('../assets/fonts/fira-code/FiraCode-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Base text */
+html, body {
+  font-family: var(--font-sans);
+  color: var(--inloop-text);
+}
+
+.slidev-layout {
+  color: var(--inloop-text);
+}
+
+/* Inloop default background */
+.slidev-layout.inloop-bg {
+  background-color: var(--inloop-bg);
+  background-image:
+    linear-gradient(rgba(255,255,255,var(--inloop-background-opacity)), rgba(255,255,255,var(--inloop-background-opacity))),
+    var(--inloop-background-image);
+  background-repeat: no-repeat, repeat; /* overlay + tiled dots */
+  background-position: center, 0 0;    /* start tiling from top-left */
+  background-size: 100% 100%, var(--inloop-background-size);
+}
+
+/* Slide-level background helpers removed (vector dots are default) */
+
+/* Headings and typography scale */
+.slidev-layout h1 {
+  font-family: var(--font-serif);
+  letter-spacing: var(--display-tight-tracking);
+}
+.slidev-layout h2,
+.slidev-layout h3,
+.slidev-layout h4,
+.slidev-layout h5,
+.slidev-layout h6 {
+  font-family: var(--font-serif);
+}
+
+/* Ensure bold renders clearly */
+.slidev-layout strong,
+.slidev-layout b {
+  font-weight: 700;
+}
+
+/* Serif option for narrative headings */
+.serif h1,
+.serif h2,
+.serif h3 {
+  font-family: var(--font-serif);
+}
+
+/* Display tokens (Inter, Bold) */
+.display-300 { font: 700 var(--display-300-size)/0.97 var(--font-sans); letter-spacing: var(--display-tight-tracking); }
+.display-400 { font: 700 var(--display-400-size)/0.97 var(--font-sans); letter-spacing: var(--display-tight-tracking); }
+.display-500 { font: 700 var(--display-500-size)/0.96 var(--font-sans); letter-spacing: var(--display-tighter-tracking); }
+.display-600 { font: 700 var(--display-600-size)/0.93 var(--font-sans); letter-spacing: var(--display-tighter-tracking); }
+.display-700 { font: 700 var(--display-700-size)/0.97 var(--font-sans); letter-spacing: var(--display-tight-tracking); }
+
+/* Serif heading tokens (Instrument Serif, Regular) */
+.heading-200 { font: 400 var(--heading-200-size)/0.97 var(--font-serif); letter-spacing: -0.015em; }
+.heading-300 { font: 400 var(--heading-300-size)/0.97 var(--font-serif); letter-spacing: -0.015em; }
+.heading-400 { font: 400 var(--heading-400-size)/0.97 var(--font-serif); letter-spacing: -0.015em; }
+.heading-500 { font: 400 var(--heading-500-size)/0.95 var(--font-serif); letter-spacing: -0.02em; }
+.heading-600 { font: 400 var(--heading-600-size)/0.95 var(--font-serif); letter-spacing: -0.025em; }
+
+/* Optional italic variants for serif headings */
+.heading-200-italic { font: italic 400 var(--heading-200-size)/0.97 var(--font-serif); letter-spacing: -0.015em; }
+.heading-300-italic { font: italic 400 var(--heading-300-size)/0.97 var(--font-serif); letter-spacing: -0.015em; }
+.heading-400-italic { font: italic 400 var(--heading-400-size)/0.97 var(--font-serif); letter-spacing: -0.015em; }
+.heading-500-italic { font: italic 400 var(--heading-500-size)/0.95 var(--font-serif); letter-spacing: -0.02em; }
+.heading-600-italic { font: italic 400 var(--heading-600-size)/0.95 var(--font-serif); letter-spacing: -0.025em; }
+
+/* Eyebrow labels */
+.eyebrow {
+  color: var(--color-aztec-purple);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500; /* 450 approximated using 500 */
+  line-height: normal;
+  letter-spacing: 1.92px;
+  text-transform: uppercase;
+}
+
+/* Make primary color used across default elements */
+.slidev-layout a { color: var(--slidev-theme-primary); text-decoration: underline; text-underline-offset: 2px; }
+/* Let headings inherit the current text color (white in dark base) */
+.slidev-layout h1 { color: inherit; }
+
+/* Brand header positioning */
+.inloop-header {
+  position: absolute;
+  top: 16px;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 1000; /* ensure always on top of content */
+  opacity: 0.95;
+  pointer-events: none; /* don't block interactions with content */
+}
+.inloop-header img { height: 28px; }
+
+/* Toggle light/dark logo automatically based on dark mode */
+.inloop-header .logo-dark { display: none; }
+.dark .inloop-header .logo-light { display: none; }
+.dark .inloop-header .logo-dark { display: block; }
+
+/* (Removed override that disabled background grid globally) */
+
+/* Removed deprecated background helpers: bg-grid-dots, bg-grid-squares, bg-grid-dots-multi, bg-dot-canvas */
