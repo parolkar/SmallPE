@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<% html_items = @items.select { |i| i.identifier =~ '/**/*.html' && !i.identifier.to_s.start_with?('/assets/') }
+   html_items.sort_by { |i| i.identifier.to_s }.each do |item| %>
+  <url>
+    <loc><%= @config[:base_url] %><%= item.path %></loc>
+    <changefreq>weekly</changefreq>
+    <priority><%= item.identifier.to_s == '/index.html' ? '1.0' : '0.8' %></priority>
+  </url>
+<% end %>
+</urlset>

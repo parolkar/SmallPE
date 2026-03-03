@@ -35,6 +35,11 @@ route '/assets/**/*' do
   item.identifier.to_s
 end
 
+compile '/sitemap.*' do
+  filter :erb
+  write '/sitemap.xml'
+end
+
 passthrough '/**/*'
 
 layout '/**/*', :erb

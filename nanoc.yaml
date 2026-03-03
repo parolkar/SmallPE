@@ -6,6 +6,8 @@ text_extensions: [ 'adoc', 'asciidoc', 'atom', 'coffee', 'css', 'erb', 'haml', '
 prune:
   auto_prune: true
 
+base_url: https://www.smallpe.com
+
 data_sources:
   - type: filesystem
     encoding: utf-8
