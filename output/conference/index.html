@@ -1,0 +1,339 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Abhishek Parolkar" />
+    <meta name="description" content="SmallPE Model Private Equity - A model of Private Equity firm using AI First approach" />
+    <meta content='text/html;charset=UTF-8' http-equiv='content-type' />
+    <meta content='INDEX, NOFOLLOW' name='ROBOTS' />
+    <meta content='Abhishek Parolkar' name='Copyright' />
+    <meta content='General' name='Rating' />
+    <meta content='SmallPE Model Private Equity, Private Equity Model, Private Equity, AI First Private Equity, AI First Private Equity Model' name='Keywords' />
+    <meta content='EN' http-equiv='content-language' />
+    <meta content="SmallPE Model Private Equity - Conference" name='Abstract' />
+    <meta content='SmallPE Model Private Equity' name='Title' />
+    <title>SmallPE Model Private Equity - Conference</title>
+    
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/stylesheet.css">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    
+    <!-- Animate On Scroll library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KMNQ171NC4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-KMNQ171NC4');
+</script>
+    
+    <!-- Custom JavaScript for Parallax Effect -->
+    <script>
+      // Initialize AOS (Animate On Scroll)
+      document.addEventListener('DOMContentLoaded', function() {
+        AOS.init({
+          duration: 800,
+          easing: 'ease-in-out',
+          once: true
+        });
+        
+        // Simple parallax effect for hero section
+        window.addEventListener('scroll', function() {
+          const scrolled = window.scrollY;
+          const parallaxElements = document.querySelectorAll('.parallax');
+          
+          parallaxElements.forEach(function(element) {
+            const speed = element.dataset.speed || 0.5;
+            element.style.transform = `translateY(${scrolled * speed}px)`;
+          });
+        });
+      });
+    </script>
+    
+    <!-- you don't need to keep this, but it's cool for stats! -->
+    <meta name="generator" content="Nanoc 4.13.5">
+  </head>
+  <body class="text-gray-800 font-sans antialiased">
+    <header class="bg-gray-800 text-white">
+  <nav class="container mx-auto px-4 py-3">
+    <div class="flex justify-between items-center">
+      <a href="/" class="text-xl font-bold">SmallPE</a>
+      
+      <!-- Mobile menu button -->
+      <div class="md:hidden">
+        <button id="mobile-menu-button" class="text-white focus:outline-none">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Desktop Navigation -->
+      <div class="hidden md:flex space-x-8">
+        <a href="/" class="hover:text-gray-300 transition">Home</a>
+        <a href="/#about" class="hover:text-gray-300 transition">About</a>
+        <a href="/#philosophy" class="hover:text-gray-300 transition">Philosophy</a>
+        <a href="/docs/" class="hover:text-gray-300 transition">Docs</a>
+        <a href="/#contribute" class="hover:text-gray-300 transition">Contribute</a>
+        <a href="https://www.meetup.com/smallpe/" target="_blank" rel="noopener noreferrer" class="hover:text-gray-300 transition">Community</a>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div id="mobile-menu" class="hidden md:hidden mt-4 pb-2">
+      <div class="flex flex-col space-y-2">
+        <a href="/" class="hover:text-gray-300 transition py-1">Home</a>
+        <a href="#about" class="hover:text-gray-300 transition py-1">About</a>
+        <a href="#philosophy" class="hover:text-gray-300 transition py-1">Philosophy</a>
+        <a href="/docs/" class="hover:text-gray-300 transition py-1">Docs</a>
+        <a href="#contribute" class="hover:text-gray-300 transition py-1">Contribute</a>
+        <a href="https://www.meetup.com/smallpe/" target="_blank" rel="noopener noreferrer" class="hover:text-gray-300 transition py-1">Community</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<script>
+  // Mobile menu toggle
+  document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    mobileMenuButton.addEventListener('click', function() {
+      mobileMenu.classList.toggle('hidden');
+    });
+  });
+</script>
+
+    
+    <main>
+      <style>
+  /* Password overlay */
+  #password-gate {
+    position: fixed; inset: 0; z-index: 9999;
+    background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+    display: flex; align-items: center; justify-content: center;
+  }
+  #password-gate.hidden { display: none; }
+  #password-gate .gate-box {
+    background: white; border-radius: 1rem; padding: 2.5rem; max-width: 400px; width: 90%;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.3); text-align: center;
+  }
+  #password-gate input {
+    width: 100%; padding: 0.75rem 1rem; border: 2px solid #e2e8f0; border-radius: 0.5rem;
+    font-size: 1rem; margin: 1rem 0; outline: none; transition: border-color 0.2s;
+  }
+  #password-gate input:focus { border-color: #3b82f6; }
+  #password-gate button {
+    width: 100%; padding: 0.75rem; background: #2563eb; color: white; border: none;
+    border-radius: 0.5rem; font-size: 1rem; font-weight: 600; cursor: pointer;
+    transition: background 0.2s;
+  }
+  #password-gate button:hover { background: #1d4ed8; }
+  #gate-error { color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem; display: none; }
+
+  /* Hero collage grid */
+  .collage-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 0;
+    width: 100%; height: 100%;
+    position: absolute; inset: 0;
+  }
+  .collage-grid img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+</style>
+
+<!-- Password Gate -->
+<div id="password-gate">
+  <div class="gate-box">
+    <i class="fas fa-lock text-4xl text-blue-600 mb-4"></i>
+    <h2 class="text-2xl font-bold text-gray-800 mb-1">SmallPE Conference</h2>
+    <p class="text-gray-500 text-sm mb-4">Enter the access code to view this page</p>
+    <input type="password" id="gate-password" placeholder="Password" autofocus
+           onkeydown="if(event.key==='Enter') checkPassword()">
+    <button onclick="checkPassword()">Enter</button>
+    <p id="gate-error">Incorrect password. Please try again.</p>
+  </div>
+</div>
+
+<script>
+function checkPassword() {
+  var pw = document.getElementById('gate-password').value;
+  if (pw === 'secret') {
+    document.getElementById('password-gate').classList.add('hidden');
+  } else {
+    document.getElementById('gate-error').style.display = 'block';
+    document.getElementById('gate-password').value = '';
+    document.getElementById('gate-password').focus();
+  }
+}
+</script>
+
+<!-- Hero Section with Photo Collage -->
+<section class="relative h-[70vh] flex items-center justify-center overflow-hidden">
+  <div class="absolute w-full h-full bg-gradient-to-b from-black/60 to-black/80 z-10"></div>
+  <div class="collage-grid">
+    <img src="/assets/conference/collage1.png" alt="Conference moments">
+    <img src="/assets/conference/collage2.png" alt="Conference moments">
+    <img src="/assets/conference/collage3.png" alt="Conference moments">
+    <img src="/assets/conference/collage4.png" alt="Conference moments">
+  </div>
+  <div class="container mx-auto px-4 relative z-20 text-center">
+    <p class="text-blue-300 uppercase tracking-widest text-sm font-semibold mb-3" data-aos="fade-up">Save the Date</p>
+    <h1 class="text-5xl md:text-7xl font-bold text-white mb-4" data-aos="fade-up" data-aos-delay="100">
+      SmallPE Conference
+    </h1>
+    <p class="text-2xl text-white/90 mb-2" data-aos="fade-up" data-aos-delay="200">
+      9th July 2026
+    </p>
+    <p class="text-lg text-white/70" data-aos="fade-up" data-aos-delay="300">
+      One day. Big ideas. The future of AI-first Private Equity.
+    </p>
+  </div>
+</section>
+
+<!-- Agenda Section -->
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4 max-w-3xl">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl font-bold mb-3" data-aos="fade-up">Agenda</h2>
+      <div class="w-16 h-1 bg-blue-600 mx-auto"></div>
+    </div>
+
+    <div class="space-y-0" data-aos="fade-up" data-aos-delay="100">
+      <!-- Agenda items -->
+      <div class="flex border-b border-gray-100 py-4">
+        <div class="w-28 flex-shrink-0 text-sm font-semibold text-blue-600">09:00 AM</div>
+        <div>
+          <h3 class="font-semibold text-gray-800">Registration & Coffee</h3>
+        </div>
+      </div>
+      <div class="flex border-b border-gray-100 py-4">
+        <div class="w-28 flex-shrink-0 text-sm font-semibold text-blue-600">09:30 AM</div>
+        <div>
+          <h3 class="font-semibold text-gray-800">Opening Keynote</h3>
+          <p class="text-gray-500 text-sm">The AI-First PE Thesis &mdash; Why Now?</p>
+        </div>
+      </div>
+      <div class="flex border-b border-gray-100 py-4">
+        <div class="w-28 flex-shrink-0 text-sm font-semibold text-blue-600">10:30 AM</div>
+        <div>
+          <h3 class="font-semibold text-gray-800">Panel Discussion</h3>
+          <p class="text-gray-500 text-sm">Agentic Teams in Private Equity Operations</p>
+        </div>
+      </div>
+      <div class="flex border-b border-gray-100 py-4">
+        <div class="w-28 flex-shrink-0 text-sm font-semibold text-blue-600">11:30 AM</div>
+        <div>
+          <h3 class="font-semibold text-gray-800">Live Demo</h3>
+          <p class="text-gray-500 text-sm">SmallPE Agents &mdash; From Deal Sourcing to IC Decisions</p>
+        </div>
+      </div>
+      <div class="flex border-b border-gray-100 py-4 bg-gray-50 -mx-4 px-4 rounded">
+        <div class="w-28 flex-shrink-0 text-sm font-semibold text-gray-400">12:30 PM</div>
+        <div>
+          <h3 class="font-semibold text-gray-500">Lunch & Networking</h3>
+        </div>
+      </div>
+      <div class="flex border-b border-gray-100 py-4">
+        <div class="w-28 flex-shrink-0 text-sm font-semibold text-blue-600">01:30 PM</div>
+        <div>
+          <h3 class="font-semibold text-gray-800">Workshop</h3>
+          <p class="text-gray-500 text-sm">Building Your Own AI GP Agent</p>
+        </div>
+      </div>
+      <div class="flex border-b border-gray-100 py-4">
+        <div class="w-28 flex-shrink-0 text-sm font-semibold text-blue-600">03:00 PM</div>
+        <div>
+          <h3 class="font-semibold text-gray-800">Fireside Chat</h3>
+          <p class="text-gray-500 text-sm">Impact Investing Meets AI</p>
+        </div>
+      </div>
+      <div class="flex border-b border-gray-100 py-4">
+        <div class="w-28 flex-shrink-0 text-sm font-semibold text-blue-600">04:00 PM</div>
+        <div>
+          <h3 class="font-semibold text-gray-800">Closing Remarks & Community Roadmap</h3>
+        </div>
+      </div>
+      <div class="flex py-4">
+        <div class="w-28 flex-shrink-0 text-sm font-semibold text-blue-600">04:30 PM</div>
+        <div>
+          <h3 class="font-semibold text-gray-800">Drinks & Networking</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-12 bg-gray-900 text-center">
+  <div class="container mx-auto px-4">
+    <p class="text-white/70 text-lg mb-4" data-aos="fade-up">Stay tuned for speaker announcements and registration.</p>
+    <a href="/#contribute" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-8 rounded-md text-lg transition-colors duration-300" data-aos="fade-up" data-aos-delay="100">
+      Join the Mailing List
+    </a>
+  </div>
+</section>
+
+    </main>
+    
+    <footer class="bg-gray-800 text-white py-12">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div>
+        <h3 class="text-xl font-bold mb-4">SmallPE</h3>
+        <p class="text-gray-300">
+          An open-source initiative reimagining what an AI-first Private Equity firm could be.
+        </p>
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+        <ul class="space-y-2">
+          <li><a href="/#about" class="text-gray-300 hover:text-white transition">About</a></li>
+          <li><a href="/#philosophy" class="text-gray-300 hover:text-white transition">Philosophy</a></li>
+          <li><a href="/#contribute" class="text-gray-300 hover:text-white transition">Contribute</a></li>
+        </ul>
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-semibold mb-4">Get Involved</h3>
+        <p class="text-gray-300 mb-4">
+          Join our community and help shape the future of AI in private equity.
+        </p>
+        <a href="https://www.meetup.com/smallpe/" target="_blank" rel="noopener noreferrer" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition">
+          Join Our Meetup
+        </a>
+      </div>
+    </div>
+    
+    <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+      <p>© 2026 SmallPE Model community. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+    
+    <script>
+      // Initialize all animations and interactive elements
+      document.addEventListener('DOMContentLoaded', function() {
+        // Initialize AOS animations
+        AOS.init();
+      });
+    </script>
+  </body>
+</html>
