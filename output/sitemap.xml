@@ -2,6 +2,12 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <url>
+    <loc>https://www.smallpe.com/conference/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
     <loc>https://www.smallpe.com/docs/automation-tools/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
