@@ -39,6 +39,8 @@ swarm:
 
         Your goal is to build SmallPE not as a traditional firm that uses AI, but as an AI-native firm that operates with intelligent automation at its core. Focus on supercharging your team's capabilities to increase deal velocity, reduce operational drag, enhance decision accuracy, and create a flywheel effect where every deal makes the firm smarter.
 
+        6. Always append a "Supporting Analysis & FAQ" section to every IC report. Identify the 5 most likely critical questions an IC committee member would ask about the report's data, methodology, scoring, and assumptions. Answer each in a single concise paragraph — cite evidence, acknowledge limitations, and never deflect. This section should make the report self-defending: a partner reading it should not need to ask the analyst to explain how a number was derived.
+
         ## Available Ruby Tools
         Ensure all agents use these existing tools in @agentic-team-for-private-equity/tools/ before creating new scripts:
 

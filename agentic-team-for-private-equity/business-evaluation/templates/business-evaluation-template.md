@@ -317,6 +317,27 @@
 
 ---
 
+## 7. Supporting Analysis & FAQ
+
+### Purpose
+Anticipate the 5 most critical questions an IC member would ask about the data, methodology, and assumptions in this report. Each answer must be a single paragraph that directly addresses the challenge, cites the underlying evidence, and acknowledges limitations honestly.
+
+### Selection Criteria for Questions
+Prioritise questions that probe:
+1. **Methodology transparency** — How was a key number derived? (e.g., TAM, scoring rubrics, take-rate assumptions)
+2. **Single-source dependency** — Does a critical claim rest on one datapoint? What corroborates it?
+3. **Structural assumption durability** — How long does a macro thesis hold? What falsifies it?
+4. **Incumbent response** — Why won't incumbents simply replicate or block this?
+5. **Valuation sensitivity** — Why does entry price matter so much, and what breaks the return math?
+
+### Format
+For each question:
+
+#### [Question — phrased as an IC member would ask it]
+[Single paragraph answer: state the challenge, cite evidence, acknowledge limits.]
+
+---
+
 ## Appendix A: Evidence Verification Summary
 
 [Summary from Themis showing verification status]
