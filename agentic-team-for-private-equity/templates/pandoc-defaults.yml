@@ -1,0 +1,38 @@
+# SmallPE Pandoc Defaults
+#
+# Usage:
+#   sed 's/→/-->/g' report.md | pandoc --defaults=templates/pandoc-defaults.yml -o report.pdf
+#
+# Override header text per-report:
+#   pandoc --defaults=templates/pandoc-defaults.yml \
+#     -V header-includes='\fancyhead[L]{\textcolor{smallpegray}{\small\sffamily Due Diligence}}' \
+#     -o report.pdf
+#
+# All paths are relative to the agentic-team-for-private-equity/ directory.
+
+from: markdown
+pdf-engine: xelatex
+include-in-header: templates/smallpe-report.latex
+
+# --- Typography ---
+variables:
+  mainfont: "Charter"
+  sansfont: "Inter 18pt"
+  monofont: "Fira Code"
+  fontsize: "10pt"
+  linestretch: 1.25
+  geometry:
+    - margin=1in
+  classoption:
+    - twoside
+  colorlinks: true
+  linkcolor: "[HTML]{1a1a2e}"
+  urlcolor: "[HTML]{2563eb}"
+  toccolor: "[HTML]{1a1a2e}"
+
+# --- Table of Contents ---
+table-of-contents: true
+toc-depth: 2
+
+# --- Standalone document ---
+standalone: true
