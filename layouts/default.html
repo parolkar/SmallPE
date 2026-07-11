@@ -61,6 +61,25 @@
       });
     </script>
     
+    <!-- Open Graph / Social sharing -->
+    <% og_title       = @item[:og_title]       || "SmallPE Model Private Equity - #{@item[:title]}" %>
+    <% og_description = @item[:og_description] || "SmallPE is a community-led open source initiative building a blueprint for an AI-first PE firm." %>
+    <% og_url         = @item[:og_url]         || "https://www.smallpe.com" %>
+    <% og_image       = @item[:og_image]       || "https://www.smallpe.com/assets/images/SmallPE_Fund_01.png" %>
+    <meta property="og:type"        content="website" />
+    <meta property="og:site_name"   content="SmallPE" />
+    <meta property="og:title"       content="<%= og_title %>" />
+    <meta property="og:description" content="<%= og_description %>" />
+    <meta property="og:url"         content="<%= og_url %>" />
+    <meta property="og:image"       content="<%= og_image %>" />
+    <meta property="og:image:width"  content="1200" />
+    <meta property="og:image:height" content="630" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content="<%= og_title %>" />
+    <meta name="twitter:description" content="<%= og_description %>" />
+    <meta name="twitter:image"       content="<%= og_image %>" />
+
     <!-- you don't need to keep this, but it's cool for stats! -->
     <meta name="generator" content="Nanoc <%= Nanoc::VERSION %>">
   </head>
