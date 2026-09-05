@@ -24,10 +24,12 @@ This is @parolkar's new ambiitious project to create a model Private Equity inve
    bundle  install
    ```
 
-## Quick Start with Replit
+## Quick Start
 
 The easiest way to start using the Agentic Team is via the Replit Template:
 [SmallPE Replit Template](https://replit.com/@inloop/SmallPE-replit?v=1#README.md)
+
+Or add the [SmallPE Grok Bot](https://x.ai/bot/Opp17hS9gyOg8xEsQIcU8) to get started in seconds.
 
 ## Development
 
