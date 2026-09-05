@@ -1,0 +1,13 @@
+{
+  "name": "smallpe",
+  "displayName": "SmallPE - AI-First Private Equity Team",
+  "version": "0.1.0",
+  "description": "AI-first private equity agent team: a Managing Partner orchestrating 7 specialist agents for thesis development, deal sourcing, due diligence, financial modeling, deal closing, and impact investing.",
+  "author": {
+    "name": "SmallPE.com",
+    "email": "abhishek+smallpe@parolkar.com"
+  },
+  "license": "FSL-1.1-Apache-2.0",
+  "keywords": ["private-equity", "investment", "due-diligence", "deal-sourcing", "financial-modeling", "ai-agents"],
+  "logo": "https://smallpe.com/assets/images/smallpe_logo.jpg"
+}
