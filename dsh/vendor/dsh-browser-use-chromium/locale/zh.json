@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "浏览器使用（Chrome DevTools）",
+    "description": "为每个活动会话提供一个可导航和操作的 Chromium 浏览器，其页面状态在多个回合之间保留。"
+  }
+}

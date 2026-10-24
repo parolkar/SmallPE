@@ -1,0 +1,43 @@
+# Your patch layer for this dsh profile, applied after every bundle layer:
+# a top-level YAML array of loader patch entries (id-targeted config
+# overrides, disables, and insert lists; `!!js` expressions allowed).
+#
+# SmallPE localisation. A config override replaces the row's whole config, so
+# every value a row needs is restated here. Nothing in this file names an LLM
+# provider, a credential, an endpoint, a network address or a model identifier:
+# the active model stays the shipped DSH default until the user configures
+# their own.
+
+# The DS Bot team workspace is the SmallPE team folder inside this repo. The
+# absolute path is computed at run time because the repo can be cloned to any
+# directory: run.sh exports SMALLPE_TEAM_WORKSPACE, and when it is unset we
+# derive the folder from DSH_HOME ($ROOT/dsh/home -> $ROOT/agentic-team-for-
+# private-equity). The `bot` row carries no other config in the bundles, and
+# its remaining fields keep their built-in defaults.
+- id: bot
+  name: ds-bot
+  config:
+    workspace: !!js "process.env.SMALLPE_TEAM_WORKSPACE || process.getBuiltinModule('node:path').resolve(process.env.DSH_HOME || '.', '..', '..', 'agentic-team-for-private-equity')"
+
+# NOTE: the `plugin-manager` row is deliberately left untouched. Its config
+# schema requires `registry` with no default, and a config override replaces the
+# row's whole config, so a partial override would fail validation. pnpm is found
+# through PATH instead: install.sh and run.sh prepend
+# $ROOT/dsh/node_modules/.bin, which covers both the `dsh plugin` CLI (bare
+# `pnpm` from PATH) and the in-process installer (`pnpmCommand` defaults to
+# "pnpm", also resolved from PATH).
+
+- id: ui-theme
+  name: "@deepseek-ai/dsh-client-ui-theme"
+  config:
+    preference: system
+
+# The official DeepSeek brand mark stays off so the SmallPE sidebar brand wins.
+- id: ui-brand-official
+  name: '@deepseek-ai/dsh-client-ui-brand-official'
+  disabled: true
+
+- id: locale
+  name: "@deepseek-ai/dsh-client-locale"
+  config:
+    preference: en

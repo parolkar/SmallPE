@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "main": "agentic-team-for-private-equity",
+  "workspaces": {
+    "Managing Partner": "agentic-team-for-private-equity",
+    "Oracle": "agentic-team-for-private-equity/thesis-development",
+    "Helios": "agentic-team-for-private-equity/deal-sourcing",
+    "Athena": "agentic-team-for-private-equity/due-diligence",
+    "Prometheus": "agentic-team-for-private-equity/business-evaluation",
+    "Themis": "agentic-team-for-private-equity/evidence-verification",
+    "Logos": "agentic-team-for-private-equity/financial-modeling",
+    "Hermes": "agentic-team-for-private-equity/deal-closing",
+    "Iris": "agentic-team-for-private-equity/impact-investing"
+  }
+}

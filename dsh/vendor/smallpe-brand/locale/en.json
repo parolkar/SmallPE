@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "SmallPE Branding",
+    "description": "Draws the SmallPE logo served by dsh-custom-logo in the sidebar brand row, in place of the shell and DS Bot marks."
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "DS Bot gateway bridge",
+    "description": "Admits DS Bot's own POST /api/bot route through the dsh-ui-auth gateway, so the DS Bot interface can reach its host, list the models DSH serves and create Bots."
+  }
+}

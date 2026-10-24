@@ -26,6 +26,24 @@ This is @parolkar's new ambiitious project to create a model Private Equity inve
 
 ## Quick Start
 
+### Option A — DeepSeek Harness (recommended, no Ruby needed)
+
+Run the whole agent team as a local web workspace. Requires only **Node.js ≥ 22.19**.
+
+```bash
+./install.sh    # one time: installs the harness, SmallPE branding and the 9 agents
+./run.sh        # start it, then open http://127.0.0.1:3080
+```
+
+Everything installs inside this folder — the harness, its packages, the agents and their
+conversations. Delete the folder and it is all gone. The Managing Partner and all eight
+specialist agents are created for you on first install, each working in its own folder.
+
+See **[DSH-README.md](DSH-README.md)** for setup details, adding your model key, enabling a
+login before exposing it publicly, and troubleshooting.
+
+### Option B — the Replit template or Grok Bot
+
 The easiest way to start using the Agentic Team is via the Replit Template:
 [SmallPE Replit Template](https://replit.com/@inloop/SmallPE-replit?v=1#README.md)
 

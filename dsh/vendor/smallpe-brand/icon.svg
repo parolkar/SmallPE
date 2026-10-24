@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="SmallPE brand mark">
+  <g transform="translate(-49.92,-14.88) scale(0.32)">
+    <g fill="none" stroke="#2563eb" stroke-width="6.875" stroke-linecap="round">
+      <line x1="172" y1="175" x2="196" y2="148"/>
+      <line x1="196" y1="148" x2="222" y2="128"/>
+      <line x1="222" y1="128" x2="249" y2="118"/>
+      <line x1="249" y1="118" x2="263" y2="118"/>
+      <line x1="263" y1="118" x2="290" y2="128"/>
+      <line x1="290" y1="128" x2="316" y2="148"/>
+      <line x1="316" y1="148" x2="340" y2="175"/>
+    </g>
+    <g fill="#2563eb">
+      <circle cx="172" cy="175" r="4.5"/>
+      <circle cx="196" cy="148" r="4.5"/>
+      <circle cx="222" cy="128" r="4.5"/>
+      <circle cx="249" cy="118" r="5.5"/>
+      <circle cx="263" cy="118" r="5.5"/>
+      <circle cx="290" cy="128" r="4.5"/>
+      <circle cx="316" cy="148" r="4.5"/>
+      <circle cx="340" cy="175" r="4.5"/>
+    </g>
+  </g>
+</svg>

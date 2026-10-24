@@ -1,0 +1,11 @@
+packages:
+  - .
+
+nodeLinker: hoisted
+autoInstallPeers: false
+
+# Keep pnpm's content-addressable store inside the repo. On pnpm 12.11.2 this
+# is the only honoured knob: `PNPM_STORE_DIR`/`--store-dir` env and `.npmrc`
+# settings are ignored for the profile install. Resolved against this profile
+# directory, so it lands in $ROOT/dsh/.pnpm-store.
+storeDir: ../../../.pnpm-store
