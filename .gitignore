@@ -1,6 +1,49 @@
 Gemfile.lock
 .sass-cache
-output
-vendor
+/output
+/vendor
 .DS_Store
 tmp
+
+# ---------------------------------------------------------------------------
+# SmallPE x DeepSeek Harness — generated or machine-local, never committed.
+#
+# NOTE: the rules above are anchored (/output, /vendor) on purpose. An unanchored
+# `vendor` or `output` would also match dsh/vendor and dsh/.../output and silently
+# drop the vendored harness plugins from the repository.
+# ---------------------------------------------------------------------------
+
+# The locally installed harness runtime and pnpm store (~1.2 GB).
+/dsh/node_modules/
+/dsh/.pnpm-store/
+
+# The vendored document toolchain: uv/uvx, pandoc and tectonic (~260 MB of
+# third-party binaries). Fetched by dsh/scripts/install-tools.sh, and deleted
+# with the folder like everything else here.
+/dsh/bin/
+
+# Its caches, redirected out of $HOME by bin/run.sh: uv's package cache, the
+# Python uv manages for uvx, and tectonic's LaTeX packages.
+/dsh/.uv-cache/
+/dsh/.uv-python/
+/dsh/.tectonic-cache/
+
+# $DSH_HOME — the whole harness home: profiles, sessions, agent roster, memory,
+# credentials. This is the user's data and must never be committed.
+/dsh/home/
+
+# Plugin-manager scratch logs.
+/dsh/**/.plugin-manager/
+
+# Web-UI auth session/audit artefacts (written next to the launch directory).
+dsh-ui-auth-sessions.json
+dsh-ui-auth-audit.jsonl
+dsh-ui-auth-bootstrap.txt
+
+# Local environment files may hold API keys.
+.env
+**/.env
+
+# Generated at install time by dsh/scripts/install-tools.sh: absolute font paths
+# for the branded PDF pipeline. Machine-local; regenerate with ./bin/install.sh.
+agentic-team-for-private-equity/templates/brand-fonts.tex

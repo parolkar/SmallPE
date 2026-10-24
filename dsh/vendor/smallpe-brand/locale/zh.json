@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "SmallPE 品牌标识",
+    "description": "在侧边栏品牌区域显示由 dsh-custom-logo 提供的 SmallPE 标识，替代外壳与 DS Bot 的标识。"
+  }
+}

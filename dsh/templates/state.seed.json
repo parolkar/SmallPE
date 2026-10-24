@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "mainBotIds": [],
+  "bots": {},
+  "rooms": {},
+  "agents": {},
+  "capabilities": {
+    "items": {}
+  },
+  "exchanges": [],
+  "exchangeTurns": {},
+  "works": {},
+  "questions": {},
+  "views": {},
+  "prefs": {},
+  "switching": {},
+  "revision": 0
+}

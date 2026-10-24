@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Zapier MCP",
+    "description": "Connects your hosted Zapier MCP server so its exposed tools become agent tools (mcp__zapier__*). Adds a Zapier MCP page to Settings, directly below Models, for the Zapier MCP token."
+  }
+}

@@ -1,0 +1,183 @@
+# Your patch layer for this dsh profile, applied after every bundle layer:
+# a top-level YAML array of loader patch entries (id-targeted config
+# overrides, disables, and insert lists; `!!js` expressions allowed).
+#
+# SmallPE localisation. A config override replaces the row's whole config, so
+# every value a row needs is restated here.
+
+# ---------------------------------------------------------------------------
+# One entry point for the whole team
+# ---------------------------------------------------------------------------
+# The DS Bot team workspace is the SmallPE team folder inside this repo. The
+# absolute path is computed at run time because the repo can be cloned to any
+# directory: bin/run.sh exports SMALLPE_TEAM_WORKSPACE, and when it is unset we
+# derive the folder from DSH_HOME ($ROOT/dsh/home -> $ROOT/agentic-team-for-
+# private-equity). The `bot` row carries no other config in the bundles, and
+# its remaining fields keep their built-in defaults.
+- id: bot
+  name: ds-bot
+  config:
+    workspace: !!js "process.env.SMALLPE_TEAM_WORKSPACE || process.getBuiltinModule('node:path').resolve(process.env.DSH_HOME || '.', '..', '..', 'agentic-team-for-private-equity')"
+
+# ---------------------------------------------------------------------------
+# Two model providers, and no vendor sign-in
+# ---------------------------------------------------------------------------
+# The harness ships pointing at DeepSeek's own account/API-key providers, and
+# the account feature greets a fresh install with a "Get started / Sign in to
+# your DeepSeek account" modal before anything can be done. This install is
+# provider-neutral and local-first, so:
+#   * the DeepSeek account, its API-key provider and that modal are disabled
+#     (below), and
+#   * exactly two providers are configured here instead — a local
+#     OpenAI-compatible server, and OpenRouter.
+- id: llm-deepseek
+  name: '@deepseek-ai/dsh-llm-deepseek-api-key'
+  disabled: true
+
+- id: llm-deepseek-account
+  name: '@deepseek-ai/dsh-llm-deepseek-account'
+  disabled: true
+
+# The account settings surface owns the sign-in modal. Disabling it removes the
+# modal with it; there is no account to manage on a local-only install.
+- id: ui-settings-account
+  name: '@deepseek-ai/dsh-client-ui-settings-account'
+  disabled: true
+
+- id: llm-pi-ai
+  name: '@deepseek-ai/dsh-llm-pi-ai'
+  config:
+    providers:
+      # A model server running on this machine (LM Studio, Ollama's
+      # OpenAI-compatible endpoint, llama.cpp, vLLM, MLX, …). Point it anywhere
+      # without editing this file:
+      #   SMALLPE_LOCAL_BASE_URL=http://127.0.0.1:11434/v1 ./bin/run.sh
+      # The API key is a placeholder: bin/run.sh defaults SMALLPE_LOCAL_API_KEY
+      # to "local" because OpenAI-compatible clients insist on sending one.
+      local:
+        displayName: Local
+        apiKeyEnv: SMALLPE_LOCAL_API_KEY
+        api: openai-completions
+        baseURL: !!js "process.env.SMALLPE_LOCAL_BASE_URL || 'http://127.0.0.1:1234/v1'"
+        # Nothing describes a local server's models but you, so this is the one
+        # route that needs a number. Both defaults are deliberately conservative:
+        # overshooting makes the harness overflow upstream with a confusing
+        # provider error instead of compacting in time. Override them without
+        # editing this file:
+        #   SMALLPE_LOCAL_CONTEXT=131072 SMALLPE_LOCAL_MAX_TOKENS=8192 ./bin/run.sh
+        # Settings -> Models can also interrogate the endpoint and fill them in.
+        defaultContextWindow: !!js "Number(process.env.SMALLPE_LOCAL_CONTEXT || 32768)"
+        defaultMaxTokens: !!js "Number(process.env.SMALLPE_LOCAL_MAX_TOKENS || 8192)"
+        models:
+          - id: !!js "process.env.SMALLPE_LOCAL_MODEL || 'local-model'"
+            name: Local model
+            input: [text]
+            reasoningEfforts: false
+
+      # OpenRouter: one API key and every model they carry. Set OPENROUTER_API_KEY,
+      # or add the key in Settings -> Models.
+      openrouter:
+        displayName: OpenRouter
+        apiKeyEnv: OPENROUTER_API_KEY
+        api: openai-completions
+        baseURL: https://openrouter.ai/api/v1
+        # Three recommended starters, so a new user picks from three models rather
+        # than from four hundred. Declaring any models here REPLACES the served
+        # catalog for this route, which is what keeps the picker short.
+        #
+        # Only the ids are given on purpose. A declared entry inherits everything
+        # else from the catalog entry with the same id — context window, output
+        # limit, input modalities, thinking levels and display name — so there are
+        # still no numbers in this file to keep up to date, and a model's context
+        # length stays automatic.
+        #
+        # Want something else? Add it in Settings -> Models; the endpoint remains
+        # discoverable there and existing choices are untouched.
+        #
+        # If you do spell a model out here, never declare a thinking level
+        # `off: null` on an OpenRouter route: DSH reads that as an explicit disable
+        # and pi-ai serialises it as `reasoning: { effort: "none" }`, which
+        # endpoints whose reasoning is mandatory reject with
+        #   400 "Reasoning is mandatory for this endpoint and cannot be disabled."
+        # Omitting `off` — or omitting `reasoningEfforts` entirely, as here — is safe.
+        models:
+          - id: anthropic/claude-opus-5.5
+          - id: openai/gpt-6-astra
+          - id: deepseek/deepseek-v4.1-flash
+
+# The shipped default names the DeepSeek account provider we just disabled, so
+# it has to be repointed or the team starts with a model that does not exist.
+# Change it in the UI, or here, once you have a provider working.
+- id: agent-default-model
+  name: '@deepseek-ai/dsh-agent-default-model'
+  config:
+    provider: openrouter
+    model: deepseek/deepseek-v4.1-flash
+
+# ---------------------------------------------------------------------------
+# SmallPE look and language
+# ---------------------------------------------------------------------------
+# NOTE: the `plugin-manager` row is deliberately left untouched. Its config
+# schema requires `registry` with no default, and a config override replaces the
+# row's whole config, so a partial override would fail validation. pnpm is found
+# through PATH instead: bin/install.sh and bin/run.sh prepend
+# $ROOT/dsh/node_modules/.bin, which covers both the `dsh plugin` CLI (bare
+# `pnpm` from PATH) and the in-process installer (`pnpmCommand` defaults to
+# "pnpm", also resolved from PATH).
+
+- id: ui-theme
+  name: "@deepseek-ai/dsh-client-ui-theme"
+  config:
+    preference: system
+
+# The official DeepSeek brand mark stays off so the SmallPE sidebar brand wins.
+- id: ui-brand-official
+  name: '@deepseek-ai/dsh-client-ui-brand-official'
+  disabled: true
+
+- id: locale
+  name: "@deepseek-ai/dsh-client-locale"
+  config:
+    preference: en
+
+# Pre-acknowledge the harness "Preview Notice" so a first run opens straight into
+# the team instead of a modal. The notice compares the stored acknowledgement
+# with the shipped notice version for exact equality, so recording the current
+# version here is the supported way to treat it as already read. If a future DSH
+# release changes the notice materially it bumps this value and the notice
+# returns — delete this entry (or press Continue) if you would rather see it.
+- id: ui-settings-general
+  name: "@deepseek-ai/dsh-client-ui-settings-general"
+  config:
+    welcomeNoticeVersion: "2026-09-28.1"
+
+# ---------------------------------------------------------------------------
+# MCP servers
+# ---------------------------------------------------------------------------
+# Pandoc, mounted as an MCP server, so every agent and every session gets its
+# document-conversion tools. They reach the model as `mcp__pandoc__<tool>`.
+#
+# DSH has no MCP settings screen and reads no mcp.json: an MCP server is a plugin
+# row in a patch layer, which is what this is. The repository root still carries
+# an mcp.json in Claude/Cursor format for editors that want it; DSH ignores that
+# file entirely, and this row is its DSH equivalent.
+#
+# REQUIREMENTS — neither ships with this repository:
+#   * `uvx` on PATH, which comes from uv: https://docs.astral.sh/uv/
+#   * `pandoc` on PATH, plus a PDF engine (xelatex, or the single-binary
+#     tectonic) if you want PDF output. The SmallPE PDF pipeline in the agent
+#     prompts shells out to pandoc directly, so it needs the binary regardless.
+#
+# failOnStartupError is left false deliberately: without uvx the harness still
+# boots and every other tool works — only the mcp__pandoc__* tools are absent,
+# and the reason appears in the startup log. Set it true if a missing Pandoc
+# should stop the harness instead.
+- insert:
+    - id: mcp-pandoc
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        transport: stdio
+        serverName: pandoc
+        command: uvx
+        args: ["mcp-pandoc"]
+        failOnStartupError: false

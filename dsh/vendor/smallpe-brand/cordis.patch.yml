@@ -1,0 +1,7 @@
+# Brand the sidebar with the SmallPE logo served by dsh-custom-logo.
+#
+# The Client half occupies the sidebar's brand seats at a priority below the
+# one DS Bot uses (-100), because for a single slot the lowest priority wins.
+- insert:
+    - id: smallpe-brand
+      name: '@local/smallpe-brand'

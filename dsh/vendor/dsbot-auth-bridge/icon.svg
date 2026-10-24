@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" role="img" aria-label="DS Bot gateway bridge">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4D6BFE"/>
+      <stop offset="1" stop-color="#2E9EF7"/>
+    </linearGradient>
+  </defs>
+  <rect x="3" y="3" width="42" height="42" rx="11" fill="url(#g)"/>
+  <path d="M24 10l11 4.5v9.2c0 6.9-4.6 12.1-11 14.3-6.4-2.2-11-7.4-11-14.3v-9.2L24 10z"
+        fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linejoin="round"/>
+  <path d="M17 25.5h6.5l2.5-5 2.5 8 2-3h3.5"
+        fill="none" stroke="#ffffff" stroke-width="2.4"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

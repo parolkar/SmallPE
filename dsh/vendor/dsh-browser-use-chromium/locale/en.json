@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Browser Use (Chrome DevTools)",
+    "description": "Gives each live Session a Chromium browser it can navigate and operate, retaining its page state across turns."
+  }
+}

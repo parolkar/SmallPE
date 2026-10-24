@@ -1,0 +1,10 @@
+# Browser use: one named provider slot plus the Chrome DevTools MCP provider.
+# Mounted rows must load before a Session is created or resumed; see README.md.
+- insert:
+    - id: browser-use
+      name: '@deepseek-ai/dsh-browser-use'
+    - id: browser-use-chrome-devtools-mcp
+      name: '@deepseek-ai/dsh-experimental-browser-use-chrome-devtools-mcp'
+      config:
+        mode: launch
+        headless: true

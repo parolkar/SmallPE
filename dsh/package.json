@@ -1,0 +1,18 @@
+{
+  "name": "smallpe-dsh",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Localised DeepSeek Harness runtime for the SmallPE AI-first private equity team. Everything lives inside this folder; delete the folder to remove the whole install.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "scripts": {
+    "provision": "node scripts/provision-bots.mjs",
+    "verify": "bash scripts/verify-install.sh"
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh": "0.2.1-rc.2",
+    "pnpm": "12.11.2"
+  }
+}

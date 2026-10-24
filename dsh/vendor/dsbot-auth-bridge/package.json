@@ -1,0 +1,23 @@
+{
+  "name": "@local/dsbot-auth-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Admits DS Bot's own POST /api/bot route through the dsh-ui-auth gateway.",
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

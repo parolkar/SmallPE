@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "main": "agentic-team-for-private-equity",
+  "workspace": "agentic-team-for-private-equity",
+  "workspaces": {
+    "Managing Partner": "",
+    "Oracle": "thesis-development",
+    "Helios": "deal-sourcing",
+    "Athena": "due-diligence",
+    "Prometheus": "business-evaluation",
+    "Themis": "evidence-verification",
+    "Logos": "financial-modeling",
+    "Hermes": "deal-closing",
+    "Iris": "impact-investing"
+  }
+}

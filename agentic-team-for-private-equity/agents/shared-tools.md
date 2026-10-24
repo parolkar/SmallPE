@@ -29,7 +29,7 @@ Converts PDF documents to structured Markdown. Extracts metadata, tables, and pr
 
 ## PDF Generation (Markdown to PDF)
 
-SmallPE has a standardised PDF pipeline using pandoc + xelatex with branded templates.
+SmallPE has a standardised PDF pipeline using pandoc + tectonic with branded templates.
 
 **Standard command (one-liner):**
 ```
@@ -38,7 +38,7 @@ sed 's/-->/-->/g' path/to/report.md | pandoc --defaults=templates/pandoc-default
 ```
 
 **Template files (do not modify per-deal):**
-- `templates/pandoc-defaults.yml` -- pandoc settings: fonts (Charter body, Inter headings, Fira Code mono), geometry, TOC, xelatex engine
+- `templates/pandoc-defaults.yml` -- pandoc settings: fonts (Charter body, Inter headings, Fira Code mono), geometry, TOC, tectonic engine
 - `templates/smallpe-report.latex` -- LaTeX header: SmallPE colors, fancyhdr (header/footer), titlesec styling, last-page attribution footer
 
 **Override header text per-report** (e.g., for due diligence vs. IC report):
