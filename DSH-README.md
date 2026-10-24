@@ -148,17 +148,26 @@ configured for you:**
 | **Local** | Any OpenAI-compatible model server on this machine (LM Studio, Ollama, llama.cpp, vLLM, MLX…) at `http://127.0.0.1:1234/v1` | Point it at your server and name your model — see below |
 | **OpenRouter** | One key, hundreds of models ([openrouter.ai/keys](https://openrouter.ai/keys)) | Set `OPENROUTER_API_KEY`, or add the key in Settings → Models |
 
-**OpenRouter is catalog-driven.** Every model OpenRouter carries — 400+ of them, always
-current — appears in **Settings → Models**, with its context window, output limit, image
-support and thinking levels taken from the harness's own catalog rather than from numbers
-written in this repository. There is nothing to keep up to date and no context length to
-maintain: when OpenRouter ships a new model it shows up. Until an OpenRouter key exists the
-provider has no models to offer, which is expected.
+Three models are **recommended** and appear in the model picker, so choosing one is a
+three-way decision rather than a four-hundred-way one:
 
-The default model is **`deepseek/deepseek-v4.1-flash`** (1M context). Change it in
-**Settings → Models** or in `dsh/home/profiles/web/cordis.patch.yml`; pick any of
-`anthropic/claude-opus-5.5`, `openai/gpt-6-astra`, `deepseek/deepseek-v4.1-flash` or anything
-else in the catalog.
+| Model | Context |
+|---|---|
+| `deepseek/deepseek-v4.1-flash` *(the default)* | 1,048,576 |
+| `anthropic/claude-opus-5.5` | 1,000,000 |
+| `openai/gpt-6-astra` | 1,050,000 |
+
+Only their ids are written down. Everything else about each one — context window, output
+limit, image support, display name and thinking levels — is taken from the harness's own
+catalog, so there are still no numbers to maintain and a model's context length stays
+automatic.
+
+**Want another model?** Open **Settings → Models** and add it. The OpenRouter endpoint stays
+discoverable there — **all 401 models** are listed — and adding one leaves your existing
+choices alone. Until an OpenRouter key exists the provider has no models to offer, which is
+expected.
+
+Change the default in **Settings → Models**, or in `dsh/home/profiles/web/cordis.patch.yml`.
 
 ### Using a local model server
 

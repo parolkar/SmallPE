@@ -76,27 +76,34 @@
 
       # OpenRouter: one API key and every model they carry. Set OPENROUTER_API_KEY,
       # or add the key in Settings -> Models.
-      #
-      # No models are listed here ON PURPOSE. DSH ships a catalog for this route,
-      # generated from OpenRouter's own data, so an empty list means "use the
-      # catalog": the picker offers every current model, and each model's context
-      # window, output limit, modalities and reasoning support come from the catalog
-      # instead of from numbers written here. Nothing in this file goes stale when
-      # OpenRouter ships a new model, and there are no context lengths to maintain.
-      #
-      # If you ever DO list a model here by hand, note this pitfall: never declare a
-      # thinking level `off: null` on an OpenRouter route. DSH reads that as an
-      # explicit disable and pi-ai serialises it as `reasoning: { effort: "none" }`,
-      # which endpoints whose reasoning is mandatory reject with
-      #   400 "Reasoning is mandatory for this endpoint and cannot be disabled."
-      # Omit `off` instead, or use `reasoningEfforts: false` for a model that does
-      # not reason at all.
       openrouter:
         displayName: OpenRouter
         apiKeyEnv: OPENROUTER_API_KEY
         api: openai-completions
         baseURL: https://openrouter.ai/api/v1
-        models: []
+        # Three recommended starters, so a new user picks from three models rather
+        # than from four hundred. Declaring any models here REPLACES the served
+        # catalog for this route, which is what keeps the picker short.
+        #
+        # Only the ids are given on purpose. A declared entry inherits everything
+        # else from the catalog entry with the same id — context window, output
+        # limit, input modalities, thinking levels and display name — so there are
+        # still no numbers in this file to keep up to date, and a model's context
+        # length stays automatic.
+        #
+        # Want something else? Add it in Settings -> Models; the endpoint remains
+        # discoverable there and existing choices are untouched.
+        #
+        # If you do spell a model out here, never declare a thinking level
+        # `off: null` on an OpenRouter route: DSH reads that as an explicit disable
+        # and pi-ai serialises it as `reasoning: { effort: "none" }`, which
+        # endpoints whose reasoning is mandatory reject with
+        #   400 "Reasoning is mandatory for this endpoint and cannot be disabled."
+        # Omitting `off` — or omitting `reasoningEfforts` entirely, as here — is safe.
+        models:
+          - id: anthropic/claude-opus-5.5
+          - id: openai/gpt-6-astra
+          - id: deepseek/deepseek-v4.1-flash
 
 # The shipped default names the DeepSeek account provider we just disabled, so
 # it has to be repointed or the team starts with a model that does not exist.
