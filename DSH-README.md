@@ -244,6 +244,20 @@ Prefer the UI? Open <http://127.0.0.1:3080>, go to **Settings → Models**, and 
 there. Keys entered that way land in `dsh/home/.credentials.yaml` — never in this repository.
 DSH also reads keys from the launch environment, `./.env` and `dsh/home/.env`.
 
+## Zapier
+
+The hosted Zapier MCP server is wired in and enabled by default: its row mounts at the harness
+root, so Zapier's tools are available to **every** agent and session — including DS Bot. You
+need a Zapier token from your [hosted MCP server](https://mcp.zapier.com/):
+
+1. Open **Settings → Zapier MCP** and paste the token. It is stored in the harness credential
+   store (`dsh/home/.credentials.yaml`) — never in a config file — and the page re-connects
+   immediately, reporting how many tools it found.
+2. Until a token exists the plugin is idle: the harness boots normally and everything else
+   works; only Zapier's tools are absent.
+
+Advanced (self-hosted endpoint) options live on the same page.
+
 ---
 
 ## Optional: put a login in front of it

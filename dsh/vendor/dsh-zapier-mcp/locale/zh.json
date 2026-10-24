@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Zapier MCP",
+    "description": "连接你在 mcp.zapier.com 上托管的 Zapier MCP 服务器，其已启用的工具会作为 Agent 工具（mcp__zapier__*）出现。并在“设置”中、Models 下方新增一个 Zapier MCP 页面，用于保存 Zapier MCP Token。"
+  }
+}

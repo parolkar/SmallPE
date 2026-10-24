@@ -1,0 +1,17 @@
+# Zapier MCP — one Host row owning both halves of this bundle.
+#
+# The Host half (`dsh-zapier-mcp`) connects to the hosted Zapier MCP server at
+# `endpoint` with the token stored under `credentialRef`, and re-connects
+# whenever that credential changes. The Client half renders the
+# "Zapier MCP" page in Settings, directly below Models.
+#
+# The token itself is NEVER stored in this file: it lives in the profile's
+# credential store (~/.dsh/.credentials.yaml) and is written from the settings
+# page. Only its reference *name* appears here.
+- insert:
+    - id: zapier-mcp
+      name: 'dsh-zapier-mcp'
+      config:
+        serverName: zapier
+        endpoint: https://mcp.zapier.com/api/v1/connect
+        credentialRef: ZAPIER_MCP_TOKEN

@@ -22,10 +22,13 @@ importers:
         version: 0.28.0
       dsh-browser-use-chromium:
         specifier: file:../../../vendor/dsh-browser-use-chromium
-        version: file:../../../vendor/dsh-browser-use-chromium
+        version: file:../../../vendor/dsh-browser-use-chromium(@deepseek-ai/dsh-mcp-client@0.2.1-rc.2)
       dsh-custom-logo:
         specifier: ^1.0.2
         version: 1.0.2
+      dsh-zapier-mcp:
+        specifier: file:../../../vendor/dsh-zapier-mcp
+        version: file:../../../vendor/dsh-zapier-mcp
 
 packages:
 
@@ -141,6 +144,29 @@ packages:
       '@deepseek-ai/dsh-tools': 0.2.1-rc.2
       '@deepseek-ai/dsh-working-directory': 0.2.1-rc.2
 
+  '@deepseek-ai/dsh-mcp-client@0.2.1-rc.2':
+    resolution: {integrity: sha512-H5nwrx+krm9nBYKC176bB08Z0Z/+vAuQg0yv9cMpaTUEDvsnM2bBTY5paVaD6Z4YPym4XMNmgoQIpn8CUlNFLw==}
+    peerDependencies:
+      '@deepseek-ai/cordis': ~4.0.5
+      '@deepseek-ai/dsh-attachment': 0.2.1-rc.2
+      '@deepseek-ai/dsh-llm': 0.2.1-rc.2
+      '@deepseek-ai/dsh-mcp-resources': 0.2.1-rc.2
+      '@deepseek-ai/dsh-scope': 0.2.1-rc.2
+      '@deepseek-ai/dsh-subprocess': 0.2.1-rc.2
+      '@deepseek-ai/dsh-system-prompt': 0.2.1-rc.2
+      '@deepseek-ai/dsh-timeout': 0.2.1-rc.2
+      '@deepseek-ai/dsh-tools': 0.2.1-rc.2
+    peerDependenciesMeta:
+      '@deepseek-ai/dsh-mcp-resources':
+        optional: true
+      '@deepseek-ai/dsh-system-prompt':
+        optional: true
+
+  '@deepseek-ai/dsh-util-values@0.2.1-rc.2':
+    resolution: {integrity: sha512-mgnByPadOgZtoBxbwMI184li494O6sNn66/NvdqN0RIrzAJmFGpFxpjFkQtQN/yetwWhlx7Ic17+6p7eKl8DNg==}
+    peerDependencies:
+      '@deepseek-ai/cordis': ~4.0.5
+
   '@deepseek-ai/schemastery@3.18.5':
     resolution: {integrity: sha512-Mnobvqf9rHsZYv4g5edj5ddxS1oF1kIdSlz0DunUgnY3LWG5F26MqvH3YOOsSaodCgyzJ16OMN9O99/s5Crtdw==}
 
@@ -206,6 +232,14 @@ packages:
 
   '@mermaid-js/parser@1.2.1':
     resolution: {integrity: sha512-n12NohV3mrUyUL2o93IgG/ifeW9FTyeJn3zDxkhwa8MJ9Fxg3HQMlA3RiGmD/3UnJvheztkjjQAjA2T4LmUcpw==}
+
+  '@modelcontextprotocol/client@2.2.0':
+    resolution: {integrity: sha512-LxCou/CSYQ6dwEnjhLZY0KnEuc8V4UJ3IEQCl/uR2yHobSQIEdJKUlKLRYRF5i5FqRGHy1eK7une3aAWDHLtig==}
+    engines: {node: '>=20'}
+
+  '@modelcontextprotocol/core@2.2.0':
+    resolution: {integrity: sha512-iLhmprRmWI8EcosOA3wVvww22z02NkgqhV4fBH6f/odQBsi7xnJc0HGmi21yWO+/iKw2yzqVE127Zhna5/+JXw==}
+    engines: {node: '>=20'}
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
@@ -351,6 +385,10 @@ packages:
 
   crelt@1.0.7:
     resolution: {integrity: sha512-aK6BbWfhf4U/wCcLHKPJl/xa6VkVstRaPywWtMKGwuOLc/wZTyQYuoxgvZnNsBvv7Kg3YTBQYYBCggcviQczuA==}
+
+  cross-spawn@7.0.6:
+    resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
+    engines: {node: '>= 8'}
 
   cytoscape-cose-bilkent@4.1.0:
     resolution: {integrity: sha512-wgQlVIUJF13Quxiv5e1gstZ08rnZj2XaLHGoFMYXz7SkNfCDOOteKBE6SYRfA9WxxI/iBc3ajfDoc6hb/MRAHQ==}
@@ -558,8 +596,20 @@ packages:
   dsh-custom-logo@1.0.2:
     resolution: {integrity: sha512-1O5YKCGcKehAfjTp273ALTshs3sSPittr/NTI8mswE4cIZUpL5JBnvTfDZf347O8W+DLUJ+WSxOdwC7bfsrEUw==}
 
+  dsh-zapier-mcp@file:../../../vendor/dsh-zapier-mcp:
+    resolution: {directory: ../../../vendor/dsh-zapier-mcp, type: directory}
+    engines: {node: '>=22.19.0'}
+
   es-toolkit@1.52.0:
     resolution: {integrity: sha512-XTNEJQh1tY1ZJVcf6ayP/2n4ZPyaHlW2FWs7xvw5ddPuhUVjLD3olQVQS7kf58JbAB48iL0uL/jerTrjtV3lDA==}
+
+  eventsource-parser@3.1.1:
+    resolution: {integrity: sha512-EKN1vKAMcZ8MlYMpaNuxN6R9yakzH6uajHcHVTqWJzvu5pWw9DyhbP35HH8MVBQ+dZjAfDxk+A8NiR9KWaXiyQ==}
+    engines: {node: '>=18.0.0'}
+
+  eventsource@3.0.7:
+    resolution: {integrity: sha512-CRT1WTyuQoD771GW56XEZFQ/ZoSfWid1alKGDYMmkt2yl8UXrVR4pspqWNEcqKvVIzg6PAltWjxcSSPrboA4iA==}
+    engines: {node: '>=18.0.0'}
 
   fastdom@1.0.12:
     resolution: {integrity: sha512-LB+xjSTEbjHE1cWsxu+tN2Xqr1kpi+V9aADI7sVM5ZMaXyYGPHULQMzpJMYqOTULK/73pUkWVzzObFRBkPr+hg==}
@@ -580,6 +630,12 @@ packages:
   internmap@2.0.3:
     resolution: {integrity: sha512-5Hh7Y1wQbvY5ooGgPbDaL5iYLAPzMTUrjMulskHLH6wnv/A+1q5rgEaiuqEjB+oxGXIVZs1FF+R/KPN3ZSQYYg==}
     engines: {node: '>=12'}
+
+  isexe@2.0.0:
+    resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
+
+  jose@6.2.13:
+    resolution: {integrity: sha512-7TIg10ZE1x82YediN+lcrPNvGMKge9yFHQD+Qho/b8y2adfugU3AsvvHfxV0fzyFllT6l9xCjf4RWY9g/Z9PJQ==}
 
   katex@0.16.47:
     resolution: {integrity: sha512-Eeo8Ys1doU1z+x8AZsPpQu+p/QcZBI5PeOo7QGQdy2x2m0MU/hYagBbGOmXwr5KVbEfVuWv9LpnQWeehogurjg==}
@@ -611,6 +667,14 @@ packages:
   path-data-parser@0.1.0:
     resolution: {integrity: sha512-NOnmBpt5Y2RWbuv0LMzsayp3lVylAHLPUTut412ZA3l+C4uw4ZVkQbjShYCQ8TCpUMdPapr4YjUqLYD6v68j+w==}
 
+  path-key@3.1.1:
+    resolution: {integrity: sha512-ojmeN0qd+y0jszEtoY48r0Peq5dwMEkIlCOu6Q5f41lfkswXuKtYrhgoTpLnyIcHm24Uhqx+5Tqm2InSwLhE6Q==}
+    engines: {node: '>=8'}
+
+  pkce-challenge@5.0.1:
+    resolution: {integrity: sha512-wQ0b/W4Fr01qtpHlqSqspcj3EhBvimsdh0KlHhH8HRZnMsEa0ea2fTULOXOS9ccQr3om+GcGRk4e+isrZWV8qQ==}
+    engines: {node: '>=16.20.0'}
+
   points-on-curve@0.2.0:
     resolution: {integrity: sha512-0mYKnYYe9ZcqMCWhUjItv/oHjvgEsfKvnUTg8sAtnHr3GVy7rGkXCb6d5cSyqrWqL4k81b9CPg3urd+T7aop3A==}
 
@@ -636,6 +700,14 @@ packages:
 
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
+
+  shebang-command@2.0.0:
+    resolution: {integrity: sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA==}
+    engines: {node: '>=8'}
+
+  shebang-regex@3.0.0:
+    resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
+    engines: {node: '>=8'}
 
   strictdom@1.0.1:
     resolution: {integrity: sha512-cEmp9QeXXRmjj/rVp9oyiqcvyocWab/HaoN4+bwFeZ7QzykJD6L3yD4v12K1x0tHpqRqVpJevN3gW7kyM39Bqg==}
@@ -664,6 +736,11 @@ packages:
   w3c-keyname@2.2.8:
     resolution: {integrity: sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==}
 
+  which@2.0.2:
+    resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
+    engines: {node: '>= 8'}
+    hasBin: true
+
   ws@8.22.0:
     resolution: {integrity: sha512-Ydggc987+RO0AnWtZ/7Wq9FtNvcrL1b/RO0ud9mWjUPgDrsAAwQSF51sm2hm1XofbU/4jkpGEsLFsZZxU+1DOg==}
     engines: {node: '>=10.0.0'}
@@ -680,6 +757,9 @@ packages:
     resolution: {integrity: sha512-3NxN8+78OdzbT7C/WjGsyfPAtJaN3FNDsWxv7Y7mcDsT/oOmgW8BpyQQFFBnvZE3j9Y2Sdz1ULFLezL7Eb2yFw==}
     engines: {node: '>= 14.6'}
     hasBin: true
+
+  zod@4.6.7:
+    resolution: {integrity: sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==}
 
 snapshots:
 
@@ -870,10 +950,10 @@ snapshots:
 
   '@deepseek-ai/dsh-browser-use@0.2.1-rc.2': {}
 
-  '@deepseek-ai/dsh-experimental-browser-use-chrome-devtools-mcp@0.2.1-rc.2(@deepseek-ai/dsh-browser-use@0.2.1-rc.2)':
+  '@deepseek-ai/dsh-experimental-browser-use-chrome-devtools-mcp@0.2.1-rc.2(@deepseek-ai/dsh-browser-use@0.2.1-rc.2)(@deepseek-ai/dsh-mcp-client@0.2.1-rc.2)':
     dependencies:
       '@deepseek-ai/dsh-browser-use': 0.2.1-rc.2
-      '@deepseek-ai/dsh-experimental-browser-use-runtime': 0.2.1-rc.2(@deepseek-ai/dsh-browser-use@0.2.1-rc.2)
+      '@deepseek-ai/dsh-experimental-browser-use-runtime': 0.2.1-rc.2(@deepseek-ai/dsh-browser-use@0.2.1-rc.2)(@deepseek-ai/dsh-mcp-client@0.2.1-rc.2)
       chrome-devtools-mcp: 1.9.0
     transitivePeerDependencies:
       - '@blackwell-systems/gcf'
@@ -881,10 +961,19 @@ snapshots:
       - '@deepseek-ai/dsh-scope'
       - '@toon-format/toon'
 
-  '@deepseek-ai/dsh-experimental-browser-use-runtime@0.2.1-rc.2(@deepseek-ai/dsh-browser-use@0.2.1-rc.2)':
+  '@deepseek-ai/dsh-experimental-browser-use-runtime@0.2.1-rc.2(@deepseek-ai/dsh-browser-use@0.2.1-rc.2)(@deepseek-ai/dsh-mcp-client@0.2.1-rc.2)':
     dependencies:
       '@deepseek-ai/dsh-browser-use': 0.2.1-rc.2
+      '@deepseek-ai/dsh-mcp-client': 0.2.1-rc.2
       '@deepseek-ai/schemastery': 3.18.5
+
+  '@deepseek-ai/dsh-mcp-client@0.2.1-rc.2':
+    dependencies:
+      '@deepseek-ai/dsh-util-values': 0.2.1-rc.2
+      '@deepseek-ai/schemastery': 3.18.5
+      '@modelcontextprotocol/client': 2.2.0
+
+  '@deepseek-ai/dsh-util-values@0.2.1-rc.2': {}
 
   '@deepseek-ai/schemastery@3.18.5':
     dependencies:
@@ -993,6 +1082,20 @@ snapshots:
   '@mermaid-js/parser@1.2.1':
     dependencies:
       '@chevrotain/types': 11.1.2
+
+  '@modelcontextprotocol/client@2.2.0':
+    dependencies:
+      '@modelcontextprotocol/core': 2.2.0
+      cross-spawn: 7.0.6
+      eventsource: 3.0.7
+      eventsource-parser: 3.1.1
+      jose: 6.2.13
+      pkce-challenge: 5.0.1
+      zod: 4.6.7
+
+  '@modelcontextprotocol/core@2.2.0':
+    dependencies:
+      zod: 4.6.7
 
   '@standard-schema/spec@1.1.0': {}
 
@@ -1144,6 +1247,12 @@ snapshots:
       layout-base: 2.0.1
 
   crelt@1.0.7: {}
+
+  cross-spawn@7.0.6:
+    dependencies:
+      path-key: 3.1.1
+      shebang-command: 2.0.0
+      which: 2.0.2
 
   cytoscape-cose-bilkent@4.1.0(cytoscape@3.34.4):
     dependencies:
@@ -1380,10 +1489,10 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  dsh-browser-use-chromium@file:../../../vendor/dsh-browser-use-chromium:
+  dsh-browser-use-chromium@file:../../../vendor/dsh-browser-use-chromium(@deepseek-ai/dsh-mcp-client@0.2.1-rc.2):
     dependencies:
       '@deepseek-ai/dsh-browser-use': 0.2.1-rc.2
-      '@deepseek-ai/dsh-experimental-browser-use-chrome-devtools-mcp': 0.2.1-rc.2(@deepseek-ai/dsh-browser-use@0.2.1-rc.2)
+      '@deepseek-ai/dsh-experimental-browser-use-chrome-devtools-mcp': 0.2.1-rc.2(@deepseek-ai/dsh-browser-use@0.2.1-rc.2)(@deepseek-ai/dsh-mcp-client@0.2.1-rc.2)
     transitivePeerDependencies:
       - '@blackwell-systems/gcf'
       - '@deepseek-ai/cordis'
@@ -1398,7 +1507,28 @@ snapshots:
 
   dsh-custom-logo@1.0.2: {}
 
+  dsh-zapier-mcp@file:../../../vendor/dsh-zapier-mcp:
+    dependencies:
+      '@deepseek-ai/dsh-mcp-client': 0.2.1-rc.2
+      '@deepseek-ai/schemastery': 3.18.5
+    transitivePeerDependencies:
+      - '@deepseek-ai/cordis'
+      - '@deepseek-ai/dsh-attachment'
+      - '@deepseek-ai/dsh-llm'
+      - '@deepseek-ai/dsh-mcp-resources'
+      - '@deepseek-ai/dsh-scope'
+      - '@deepseek-ai/dsh-subprocess'
+      - '@deepseek-ai/dsh-system-prompt'
+      - '@deepseek-ai/dsh-timeout'
+      - '@deepseek-ai/dsh-tools'
+
   es-toolkit@1.52.0: {}
+
+  eventsource-parser@3.1.1: {}
+
+  eventsource@3.0.7:
+    dependencies:
+      eventsource-parser: 3.1.1
 
   fastdom@1.0.12:
     dependencies:
@@ -1415,6 +1545,10 @@ snapshots:
   internmap@1.0.1: {}
 
   internmap@2.0.3: {}
+
+  isexe@2.0.0: {}
+
+  jose@6.2.13: {}
 
   katex@0.16.47:
     dependencies:
@@ -1459,6 +1593,10 @@ snapshots:
 
   path-data-parser@0.1.0: {}
 
+  path-key@3.1.1: {}
+
+  pkce-challenge@5.0.1: {}
+
   points-on-curve@0.2.0: {}
 
   points-on-path@0.2.1:
@@ -1485,6 +1623,12 @@ snapshots:
 
   safer-buffer@2.1.2: {}
 
+  shebang-command@2.0.0:
+    dependencies:
+      shebang-regex: 3.0.0
+
+  shebang-regex@3.0.0: {}
+
   strictdom@1.0.1: {}
 
   style-mod@4.1.4: {}
@@ -1501,6 +1645,12 @@ snapshots:
 
   w3c-keyname@2.2.8: {}
 
+  which@2.0.2:
+    dependencies:
+      isexe: 2.0.0
+
   ws@8.22.0: {}
 
   yaml@2.9.1: {}
+
+  zod@4.6.7: {}

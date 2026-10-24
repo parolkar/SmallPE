@@ -54,6 +54,7 @@ $ROOT/
     │   └── profiles/web/{package.json,cordis.yml,cordis.patch.yml,pnpm-workspace.yaml,pnpm-lock.yaml}
     ├── vendor/                    # committed local plugins
     │   ├── smallpe-brand/         # sidebar branding
+    │   ├── dsh-zapier-mcp/        # hosted Zapier MCP + its Settings page (token via credential ref ZAPIER_MCP_TOKEN)
     │   ├── dsbot-auth-bridge/     # opens POST /api/bot through the auth gateway (only active with dsh-ui-auth)
     │   └── dsh-browser-use-chromium/  # Chrome DevTools browser tools
     └── scripts/

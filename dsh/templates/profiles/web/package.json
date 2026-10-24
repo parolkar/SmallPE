@@ -7,7 +7,8 @@
     "ds-bot": "0.2.0",
     "dsh-better-sidebar": "^0.28.0",
     "dsh-browser-use-chromium": "file:../../../vendor/dsh-browser-use-chromium",
-    "dsh-custom-logo": "^1.0.2"
+    "dsh-custom-logo": "^1.0.2",
+    "dsh-zapier-mcp": "file:../../../vendor/dsh-zapier-mcp"
   },
   "dsh": {
     "profile": {
@@ -19,6 +20,7 @@
         "ds-bot",
         "@local/dsbot-auth-bridge",
         "dsh-browser-use-chromium",
+        "dsh-zapier-mcp",
         "dsh-better-sidebar",
         "@deepseek-ai/dsh-experimental-agent-team-profile"
       ]
