@@ -107,10 +107,23 @@ fi
 
 # A folder-local pnpm must win over any globally installed one: the `dsh plugin`
 # CLI resolves pnpm from PATH, and a global pnpm would use its own store under \$HOME.
-export PATH="$DSH_DIR/node_modules/.bin:$PATH"
+# The vendored document toolchain (uv/uvx, pandoc, tectonic) comes FIRST, so the
+# Pandoc MCP server and the agents' own `pandoc` calls both find this copy rather
+# than anything installed globally. Then the harness's own binaries, which carry
+# the folder-local pnpm that `dsh plugin` resolves from PATH.
+export PATH="$DSH_DIR/bin:$DSH_DIR/node_modules/.bin:$PATH"
 
 # Keep chrome-devtools-mcp's update check from writing a cache file under \$HOME.
 export CHROME_DEVTOOLS_MCP_NO_UPDATE_CHECKS=1
+
+# The vendored toolchain caches under \$HOME by default — uv's package cache, the
+# Python it manages for uvx, and tectonic's LaTeX packages — which would quietly
+# break the promise that deleting this folder removes everything. Point all three
+# inside it. (These pass through to the Pandoc MCP child, which inherits the
+# environment minus secrets and DSH_* variables.)
+export UV_CACHE_DIR="$DSH_DIR/.uv-cache"
+export UV_PYTHON_INSTALL_DIR="$DSH_DIR/.uv-python"
+export TECTONIC_CACHE_DIR="$DSH_DIR/.tectonic-cache"
 
 ARGS=(--profile web --host "${DSH_HOST:-127.0.0.1}" --port "${DSH_PORT:-3080}")
 

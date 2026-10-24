@@ -200,8 +200,13 @@ function startServer(port) {
     DSH_HOME,
     DSH_AGENTS_HOME: join(DSH_HOME, 'agents'),
     SMALLPE_TEAM_WORKSPACE: TEAM_WORKSPACE,
-    PATH: `${join(DSH_DIR, 'node_modules', '.bin')}:${process.env.PATH ?? ''}`,
+    // Same PATH order as bin/run.sh: the vendored toolchain, then the harness bins.
+    PATH: `${join(DSH_DIR, 'bin')}:${join(DSH_DIR, 'node_modules', '.bin')}:${process.env.PATH ?? ''}`,
     CHROME_DEVTOOLS_MCP_NO_UPDATE_CHECKS: '1',
+    // Same as bin/run.sh: keep the vendored toolchain's caches inside the folder.
+    UV_CACHE_DIR: join(DSH_DIR, '.uv-cache'),
+    UV_PYTHON_INSTALL_DIR: join(DSH_DIR, '.uv-python'),
+    TECTONIC_CACHE_DIR: join(DSH_DIR, '.tectonic-cache'),
   }
   // Never let the child attach to the harness session that launched us.
   for (const key of ['DSH_PROFILE', 'DSH_PROFILE_DIR', 'DSH_SESSION_ID', 'DSH_WEB_URL', 'DSH_SHELL']) {

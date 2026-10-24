@@ -42,10 +42,12 @@ unset DSH_PROFILE DSH_PROFILE_DIR DSH_SESSION_ID DSH_WEB_URL DSH_SHELL
 
 REFRESH_CONFIG=0
 SKIP_PROVISION=0
+SKIP_TOOLS=0
 for arg in "$@"; do
   case "$arg" in
     --refresh-config) REFRESH_CONFIG=1 ;;
     --skip-provision) SKIP_PROVISION=1 ;;
+    --skip-tools) SKIP_TOOLS=1 ;;
     -h|--help)
       sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'
       exit 0 ;;
@@ -192,6 +194,19 @@ if [ -x "$DSH_DIR/node_modules/.bin/dsh" ]; then
     || die "installing the profile plugins failed. Re-run ./bin/install.sh; if it persists, run 'cd \"$DSH_HOME/profiles/web\" && \"$DSH_DIR/node_modules/.bin/pnpm\" install' to see the raw error."
 else
   die "the DSH CLI is not available; cannot install profile plugins."
+fi
+
+# --- 4b. the vendored document toolchain ------------------------------------- #
+# Pandoc is mounted as an MCP server, and the agents' own PDF pipeline calls
+# `pandoc` directly, so ./dsh/bin carries uv/uvx, pandoc and tectonic. They are
+# downloaded rather than committed: ~260 MB of third-party binaries that a clone
+# should not have to hold. bin/run.sh puts ./dsh/bin first on PATH.
+if [ "$SKIP_TOOLS" -eq 1 ]; then
+  warn "skipping the document toolchain (--skip-tools); the Pandoc MCP server will not start."
+else
+  say "Vendoring the document toolchain (uv, pandoc, tectonic) — ~75 MB the first time"
+  "$DSH_DIR/scripts/install-tools.sh" \
+    || warn "the document toolchain did not install (offline?). Everything else works; the mcp__pandoc__* tools stay missing until ./dsh/scripts/install-tools.sh succeeds."
 fi
 
 # --- 5. the agents' working folders ------------------------------------------ #

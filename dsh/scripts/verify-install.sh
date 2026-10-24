@@ -116,8 +116,10 @@ head_ "Secret and identity hygiene (working tree)"
 # upstream content, not something this integration introduced.
 pattern='/Users/parolkar|ai\.parolkar\.com|PAROLKAR_PRIVATE|PAROLKAR_LOCAL|parolkar-private|192\.168\.|LINKEDIN_PASSWORD|inference\.do-ai\.run'
 scan_common=(--exclude-dir=.git --exclude-dir=node_modules --exclude-dir=.pnpm-store
+             --exclude-dir=.uv-cache --exclude-dir=.uv-python --exclude-dir=.tectonic-cache
              --exclude-dir=home --exclude-dir=output --exclude-dir=vendor
-             --exclude=verify-install.sh)
+             --exclude=verify-install.sh
+             --exclude=brand-fonts.tex)
 # Two passes: the repository (the Ruby gems under the ignored top-level `vendor/` are
 # skipped for speed), then our own vendored plugins explicitly, because they carry the
 # same directory name and would otherwise be skipped with them.
