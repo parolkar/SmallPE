@@ -148,23 +148,38 @@ configured for you:**
 | **Local** | Any OpenAI-compatible model server on this machine (LM Studio, Ollama, llama.cpp, vLLM, MLX…) at `http://127.0.0.1:1234/v1` | Point it at your server and name your model — see below |
 | **OpenRouter** | One key, hundreds of models ([openrouter.ai/keys](https://openrouter.ai/keys)) | Set `OPENROUTER_API_KEY`, or add the key in Settings → Models |
 
-Five OpenRouter models are listed to start with (`deepseek/deepseek-chat`,
-`anthropic/claude-sonnet-4.6`, `openai/gpt-5`, `google/gemini-2.5-pro`,
-`meta-llama/llama-3.3-70b-instruct`); add or remove models freely in **Settings → Models**.
-Until an OpenRouter key exists that provider has no models to offer, which is expected.
+**OpenRouter is catalog-driven.** Every model OpenRouter carries — 400+ of them, always
+current — appears in **Settings → Models**, with its context window, output limit, image
+support and thinking levels taken from the harness's own catalog rather than from numbers
+written in this repository. There is nothing to keep up to date and no context length to
+maintain: when OpenRouter ships a new model it shows up. Until an OpenRouter key exists the
+provider has no models to offer, which is expected.
+
+The default model is **`deepseek/deepseek-v4.1-flash`** (1M context). Change it in
+**Settings → Models** or in `dsh/home/profiles/web/cordis.patch.yml`; pick any of
+`anthropic/claude-opus-5.5`, `openai/gpt-6-astra`, `deepseek/deepseek-v4.1-flash` or anything
+else in the catalog.
 
 ### Using a local model server
 
 ```bash
 SMALLPE_LOCAL_BASE_URL=http://127.0.0.1:11434/v1 \
 SMALLPE_LOCAL_MODEL=qwen3:8b \
+SMALLPE_LOCAL_CONTEXT=131072 \
 ./bin/run.sh
 ```
 
-Both are optional: the base URL defaults to `http://127.0.0.1:1234/v1` and the model id to
-`local-model`. A local server usually ignores the API key, but OpenAI-compatible clients insist
-on sending one, so `bin/run.sh` defaults `SMALLPE_LOCAL_API_KEY` to the harmless placeholder
-`local`. You can also edit the base URL, model id and key in **Settings → Models**.
+All optional. Defaults: base URL `http://127.0.0.1:1234/v1`, model id `local-model`, context
+window `32768`, max output `8192`.
+
+A local server is the one case where nothing can be automatic — no catalog describes the
+models you have downloaded — so those two numbers are declared conservatively. **Set
+`SMALLPE_LOCAL_CONTEXT` to your model's real context window**: too high and the harness
+overflows upstream with a confusing provider error instead of compacting in time. **Settings →
+Models** can also interrogate your endpoint and fill them in.
+
+The API key is a placeholder: a local server ignores it, but OpenAI-compatible clients insist
+on sending one, so `bin/run.sh` defaults `SMALLPE_LOCAL_API_KEY` to `local`.
 
 ### Using OpenRouter
 
@@ -175,9 +190,6 @@ OPENROUTER_API_KEY=sk-or-... ./bin/run.sh
 Prefer the UI? Open <http://127.0.0.1:3080>, go to **Settings → Models**, and paste the key
 there. Keys entered that way land in `dsh/home/.credentials.yaml` — never in this repository.
 DSH also reads keys from the launch environment, `./.env` and `dsh/home/.env`.
-
-The default model is `deepseek/deepseek-chat` on OpenRouter. Change it in
-**Settings → Models**, or in `dsh/home/profiles/web/cordis.patch.yml`.
 
 ---
 

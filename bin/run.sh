@@ -22,6 +22,9 @@
 #                                 (default http://127.0.0.1:1234/v1)
 #   SMALLPE_LOCAL_API_KEY=...     key for the local server; defaults to a
 #                                 placeholder because the client always sends one
+#   SMALLPE_LOCAL_MODEL=...        model id your local server serves (default local-model)
+#   SMALLPE_LOCAL_CONTEXT=...      that model's context window (default 32768)
+#   SMALLPE_LOCAL_MAX_TOKENS=...   its max output tokens (default 8192)
 #   OPENROUTER_API_KEY=...        no default — get one at https://openrouter.ai/keys
 
 set -euo pipefail
