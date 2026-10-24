@@ -244,6 +244,12 @@ enables) for anyone exposing the UI publicly.
   and `ui-brand-official: disabled: true`;
 * ship the Mnemon local-only `persistenceStrategy` block **verbatim** if the mnemon bundles are
   included (`allowedProviderIds: [mnemon-native]`, `dataBoundary: local-only`);
+* mount MCP servers as `@deepseek-ai/dsh-mcp-client` rows. There is no MCP settings screen and
+  DSH reads no `mcp.json`; a patch row is the only declarative way in. `serverName` must match
+  `/^[A-Za-z0-9_-]{1,32}$/` and becomes the tool namespace (`mcp__<serverName>__<tool>`), the
+  stdio child gets the parent environment minus secrets and `DSH_*` — so `PATH` survives and a
+  bare `command: uvx` resolves — and `failOnStartupError: false` keeps a missing prerequisite
+  from stopping the boot. The Pandoc row is the worked example.
 * carry **no** credentials, no LAN addresses and no personal identifiers. Model ids and
   provider base URLs that ship are deliberate public defaults (OpenRouter's API host and
   localhost), not the original author's private endpoints — never reintroduce those.

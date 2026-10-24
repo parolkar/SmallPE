@@ -150,3 +150,34 @@
   name: "@deepseek-ai/dsh-client-ui-settings-general"
   config:
     welcomeNoticeVersion: "2026-09-28.1"
+
+# ---------------------------------------------------------------------------
+# MCP servers
+# ---------------------------------------------------------------------------
+# Pandoc, mounted as an MCP server, so every agent and every session gets its
+# document-conversion tools. They reach the model as `mcp__pandoc__<tool>`.
+#
+# DSH has no MCP settings screen and reads no mcp.json: an MCP server is a plugin
+# row in a patch layer, which is what this is. The repository root still carries
+# an mcp.json in Claude/Cursor format for editors that want it; DSH ignores that
+# file entirely, and this row is its DSH equivalent.
+#
+# REQUIREMENTS — neither ships with this repository:
+#   * `uvx` on PATH, which comes from uv: https://docs.astral.sh/uv/
+#   * `pandoc` on PATH, plus a PDF engine (xelatex, or the single-binary
+#     tectonic) if you want PDF output. The SmallPE PDF pipeline in the agent
+#     prompts shells out to pandoc directly, so it needs the binary regardless.
+#
+# failOnStartupError is left false deliberately: without uvx the harness still
+# boots and every other tool works — only the mcp__pandoc__* tools are absent,
+# and the reason appears in the startup log. Set it true if a missing Pandoc
+# should stop the harness instead.
+- insert:
+    - id: mcp-pandoc
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        transport: stdio
+        serverName: pandoc
+        command: uvx
+        args: ["mcp-pandoc"]
+        failOnStartupError: false

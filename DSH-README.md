@@ -101,6 +101,31 @@ Any skill you write locally in `dsh/home/skills/` is yours — the installer lea
 
 ---
 
+## Document conversion (Pandoc)
+
+Pandoc is mounted as an **MCP server**, so every agent gets its document-conversion tools
+(the model sees them as `mcp__pandoc__*`) alongside the PDF pipeline its prompt already
+describes. It is declared as one plugin row in
+`dsh/home/profiles/web/cordis.patch.yml` — DSH has no MCP settings screen and reads no
+`mcp.json`, so a patch row *is* how an MCP server is added.
+
+It needs two things that do **not** ship with this repository, both on `PATH`:
+
+| Needed | For | Get it from |
+|---|---|---|
+| `uvx` | launching the MCP server | [uv](https://docs.astral.sh/uv/) |
+| `pandoc` | doing the conversion | [pandoc.org](https://pandoc.org/installing.html) |
+| a PDF engine — `xelatex` or `tectonic` | PDF output only | `tectonic` is a single small binary; TeX Live is multi-GB |
+
+Without them the harness still starts and everything else works — only the `mcp__pandoc__*`
+tools are missing, and the startup log names the reason (`spawn uvx ENOENT`). Set
+`failOnStartupError: true` on that row if you would rather the harness refuse to start.
+
+The repository root also carries an `mcp.json` in Claude/Cursor format. DSH ignores that file
+completely; it is kept for editors that use it.
+
+---
+
 ## What the install script does
 
 `./bin/install.sh` is safe to re-run. In order it:
