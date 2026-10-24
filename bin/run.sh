@@ -21,7 +21,7 @@
 
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DSH_DIR="$ROOT/dsh"
 
 # The harness home is ALWAYS inside this repository, and is never inherited.
@@ -40,9 +40,21 @@ export SMALLPE_TEAM_WORKSPACE="$ROOT/agentic-team-for-private-equity"
 # process rather than a continuation of whatever launched this script.
 unset DSH_PROFILE DSH_PROFILE_DIR DSH_SESSION_ID DSH_WEB_URL DSH_SHELL
 
-# Keep every relative path a plugin resolves against the working directory inside
-# the repo (dsh-ui-auth writes its session/audit files next to the launch directory).
-cd "$ROOT"
+# Keep plugin-relative writes inside the repository...
+cd "$SMALLPE_TEAM_WORKSPACE"
+
+# ...and make the SmallPE team folder the harness WORKSPACE.
+#
+# DSH treats the invoking directory as the default workspace root: it registers that
+# folder as a workspace and runs sessions there. Starting in
+# agentic-team-for-private-equity/ therefore puts the whole team — the user's own
+# sessions and every agent's — in the one folder that holds the agent definitions,
+# workflows, templates and memory. That folder is the source of truth, so it is also
+# the single place the collaborative work happens.
+#
+# (Any file a plugin writes next to the working directory, such as the optional
+# dsh-ui-auth session/audit files, therefore lands in the team folder too. They are
+# matched by .gitignore and never committed.)
 
 # --- host prerequisite: Node.js -------------------------------------------------
 # DSH's entry point is `if (import.meta.main) await runCli()`, and `import.meta.main`
@@ -65,7 +77,7 @@ node -e '
 
 if [ ! -x "$DSH_DIR/node_modules/.bin/dsh" ]; then
   echo "SmallPE: the local harness is not installed yet." >&2
-  echo "         Run ./install.sh first." >&2
+  echo "         Run ./bin/install.sh first." >&2
   exit 1
 fi
 

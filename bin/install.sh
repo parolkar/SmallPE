@@ -14,11 +14,11 @@
 # overwritten. Use --refresh-config to also re-copy the shipped configuration
 # templates over the ones under ./dsh/home.
 #
-# Usage:  ./install.sh [--refresh-config] [--skip-provision]
+# Usage:  ./bin/install.sh [--refresh-config] [--skip-provision]
 
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DSH_DIR="$ROOT/dsh"
 TEMPLATES="$DSH_DIR/templates"
 
@@ -73,7 +73,7 @@ case "$DSH_HOME/" in
   *) die "refusing to install: the harness home is outside this repository.
        harness home: $DSH_HOME
        repository  : $ROOT
-       Unset DSH_HOME, or unset SMALLPE_DSH_HOME, and run ./install.sh again." ;;
+       Unset DSH_HOME, or unset SMALLPE_DSH_HOME, and run ./bin/install.sh again." ;;
 esac
 if [ -n "${DSH_HOME_ORIGINAL:-}" ] && [ "$DSH_HOME_ORIGINAL" != "$DSH_HOME" ]; then
   warn "ignored an inherited DSH_HOME ($DSH_HOME_ORIGINAL); using $DSH_HOME"
@@ -166,28 +166,33 @@ chmod 600 "$DSH_HOME/.credentials.yaml" "$DSH_HOME/bot/secrets.json" 2>/dev/null
 say "Installing profile plugins (pnpm) — this is ~350 MB the first time"
 if [ -x "$DSH_DIR/node_modules/.bin/dsh" ]; then
   ( cd "$ROOT" && "$DSH_DIR/node_modules/.bin/dsh" plugin --profile web install ) \
-    || die "installing the profile plugins failed. Re-run ./install.sh; if it persists, run 'cd \"$DSH_HOME/profiles/web\" && \"$DSH_DIR/node_modules/.bin/pnpm\" install' to see the raw error."
+    || die "installing the profile plugins failed. Re-run ./bin/install.sh; if it persists, run 'cd \"$DSH_HOME/profiles/web\" && \"$DSH_DIR/node_modules/.bin/pnpm\" install' to see the raw error."
 else
   die "the DSH CLI is not available; cannot install profile plugins."
 fi
 
 # --- 5. the agents' working folders ------------------------------------------ #
 say "Preparing the SmallPE agent workspaces"
-# Each agent works in its own folder inside the repo. The folder must exist before
-# DS Bot accepts it as a working directory, so create them from the seed.
+# The team workspace must exist before DS Bot accepts it as a working directory, and each
+# agent needs its output subfolder inside it (some are empty, so git cannot carry them).
 node -e '
   const { readFileSync, mkdirSync } = require("node:fs");
   const { resolve } = require("node:path");
   const root = process.argv[1];
   const seed = JSON.parse(readFileSync(process.argv[2], "utf8"));
-  const dirs = new Set();
-  for (const bot of seed.bots ?? []) if (bot.workspace) dirs.add(bot.workspace);
-  for (const rel of dirs) {
+  const inside = (rel) => {
     const dir = resolve(root, rel);
-    if (!dir.startsWith(root)) throw new Error(`workspace escapes the repository: ${rel}`);
-    mkdirSync(dir, { recursive: true });
+    if (dir !== root && !dir.startsWith(root + "/")) throw new Error(`path escapes the repository: ${rel}`);
+    return dir;
+  };
+  const dirs = new Set();
+  for (const bot of seed.bots ?? []) {
+    const ws = bot.workspace ?? seed.workspace ?? ".";
+    dirs.add(inside(ws));
+    if (bot.outputs) dirs.add(inside(`${ws}/${bot.outputs}`));
   }
-  console.log(`    ${dirs.size} agent workspace folders ready`);
+  for (const dir of dirs) mkdirSync(dir, { recursive: true });
+  console.log(`    team workspace + ${dirs.size - 1} agent output folders ready`);
 ' "$ROOT" "$TEMPLATES/bots.seed.json"
 
 # --- 6. the SmallPE agent roster --------------------------------------------- #
@@ -196,7 +201,7 @@ if [ "$SKIP_PROVISION" -eq 1 ]; then
 else
   say "Provisioning the SmallPE agent team into DS Bot"
   ( cd "$ROOT" && node "$DSH_DIR/scripts/provision-bots.mjs" ) \
-    || warn "agent provisioning did not complete. The harness still works; re-run ./install.sh to retry, or run 'node dsh/scripts/provision-bots.mjs'."
+    || warn "agent provisioning did not complete. The harness still works; re-run ./bin/install.sh to retry, or run 'node dsh/scripts/provision-bots.mjs'."
 fi
 
 # --- 7. done ----------------------------------------------------------------- #
@@ -204,11 +209,11 @@ echo
 say "Done."
 cat <<EOF
 
-  Start SmallPE:      ./run.sh
+  Start SmallPE:      ./bin/run.sh
   Then open:          http://127.0.0.1:${DSH_PORT:-3080}
 
   Add your model key: open the Web UI -> Settings -> Models, or export the variable
-                      named by your provider before running ./run.sh.
+                      named by your provider before running ./bin/run.sh.
 
   Remove everything:  delete this folder. Nothing was installed outside it.
 

@@ -37,7 +37,7 @@ fi
 
 head_ "Folder-local installation"
 [ -x "$DSH_DIR/node_modules/.bin/dsh" ] && ok "local DSH runtime: dsh/node_modules/.bin/dsh" \
-  || bad "local DSH runtime missing — run ./install.sh"
+  || bad "local DSH runtime missing — run ./bin/install.sh"
 [ -x "$DSH_DIR/node_modules/.bin/pnpm" ] && ok "local pnpm present" \
   || meh "local pnpm missing; profile plugin installs may need a global pnpm"
 case "$DSH_HOME" in
@@ -63,7 +63,7 @@ done
 
 head_ "Agent roster"
 if [ ! -f "$STATE" ]; then
-  bad "no roster yet ($STATE) — run ./install.sh or node dsh/scripts/provision-bots.mjs"
+  bad "no roster yet ($STATE) — run ./bin/install.sh or node dsh/scripts/provision-bots.mjs"
 else
   node - "$STATE" "$TEMPLATES/bots.seed.json" <<'JS'
 const { readFileSync } = require('node:fs')

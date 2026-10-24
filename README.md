@@ -31,8 +31,8 @@ This is @parolkar's new ambiitious project to create a model Private Equity inve
 Run the whole agent team as a local web workspace. Requires only **Node.js ≥ 22.19**.
 
 ```bash
-./install.sh    # one time: installs the harness, SmallPE branding and the 9 agents
-./run.sh        # start it, then open http://127.0.0.1:3080
+./bin/install.sh    # one time: installs the harness and the 9 agents
+./bin/run.sh        # start it, then open http://127.0.0.1:3080
 ```
 
 Everything installs inside this folder — the harness, its packages, the agents and their

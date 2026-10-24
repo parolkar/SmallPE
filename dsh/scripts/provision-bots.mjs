@@ -207,7 +207,11 @@ function startServer(port) {
   for (const key of ['DSH_PROFILE', 'DSH_PROFILE_DIR', 'DSH_SESSION_ID', 'DSH_WEB_URL', 'DSH_SHELL']) {
     delete env[key]
   }
-  return spawn(DSH_BIN, args, { cwd: ROOT, env, stdio: ['ignore', 'pipe', 'pipe'] })
+  // Launch from the team workspace, exactly as bin/run.sh does. DSH records the
+  // invoking directory as the workspace root, so provisioning from here makes the
+  // SmallPE team folder the workspace that every agent and session is created in.
+  // (main() has already created that folder.)
+  return spawn(DSH_BIN, args, { cwd: TEAM_WORKSPACE, env, stdio: ['ignore', 'pipe', 'pipe'] })
 }
 
 async function stopServer(child) {
@@ -220,7 +224,7 @@ async function stopServer(child) {
 
 async function main() {
   if (!existsSync(DSH_BIN)) {
-    throw new Error(`the local DSH runtime is missing: ${DSH_BIN}\nRun ./install.sh first.`)
+    throw new Error(`the local DSH runtime is missing: ${DSH_BIN}\nRun ./bin/install.sh first.`)
   }
   if (!existsSync(SEED_PATH)) throw new Error(`missing roster seed: ${SEED_PATH}`)
 
@@ -228,13 +232,22 @@ async function main() {
   const entries = Array.isArray(seed?.bots) ? seed.bots : []
   if (entries.length === 0) throw new Error(`the roster seed lists no agents: ${SEED_PATH}`)
 
-  // Every agent needs a real, existing working folder before DS Bot will accept it.
-  for (const entry of entries) {
-    const relative = entry.workspace ?? '.'
+  // The shared team workspace must exist before DS Bot accepts it as a working directory,
+  // and each agent needs its output subfolder inside it (git cannot carry empty folders).
+  const workspaceOf = (entry) => {
+    const relative = entry.workspace ?? seed?.workspace ?? '.'
     const dir = isAbsolute(relative) ? relative : resolve(ROOT, relative)
-    await mkdir(dir, { recursive: true })
+    if (dir !== ROOT && !dir.startsWith(ROOT + '/')) {
+      throw new Error(`refusing to use a workspace outside the repository: ${dir}`)
+    }
+    return dir
   }
   await mkdir(TEAM_WORKSPACE, { recursive: true })
+  for (const entry of entries) {
+    const workspace = workspaceOf(entry)
+    await mkdir(workspace, { recursive: true })
+    if (entry.outputs) await mkdir(join(workspace, entry.outputs), { recursive: true })
+  }
 
   const existing = await readExistingBots()
   const existingByName = new Map(Object.values(existing).map((bot) => [bot.name, bot]))
@@ -263,9 +276,7 @@ async function main() {
     const byName = new Map(view.bots.map((bot) => [bot.name, bot]))
 
     for (const entry of entries) {
-      const dir = isAbsolute(entry.workspace)
-        ? entry.workspace
-        : resolve(ROOT, entry.workspace ?? '.')
+      const dir = workspaceOf(entry)
       const existingBot = byName.get(entry.name)
 
       if (existingBot !== undefined) {

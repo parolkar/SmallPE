@@ -1,10 +1,10 @@
 # SmallPE × DeepSeek Harness — integration contract
 
 Reference for anyone maintaining this integration. It records the exact layout and the
-interfaces between `install.sh`, `run.sh`, the profile templates and the `dsh/vendor/`
-plugins — the names and paths below are load-bearing, because the profile's dependency
-specifiers and the branding route all resolve **relatively** and will break if the layout
-moves.
+interfaces between `bin/install.sh`, `bin/run.sh`, the profile templates and the
+`dsh/vendor/` plugins — the names and paths below are load-bearing, because the profile's
+dependency specifiers, the branding route and the workspace root all resolve **relatively**
+and will break if the layout moves.
 
 If you change something here, re-run `./dsh/scripts/verify-install.sh` afterwards.
 
@@ -15,9 +15,10 @@ absolute host path, a username, a hostname, or a port.
 
 ## 1. Goal
 
-Clone `SmallPE` → run `./install.sh` → run `./run.sh` → a locally-installed DeepSeek Harness
-opens in the browser with **SmallPE branding** and the **whole SmallPE agent team already
-present as DS Bot agents** (Managing Partner + 8 specialists), all working inside this repo.
+Clone `SmallPE` → run `./bin/install.sh` → run `./bin/run.sh` → a locally-installed DeepSeek
+Harness opens in the browser and the **whole SmallPE agent team is already present as DS Bot
+agents** (Managing Partner + 8 specialists), all working in the shared workspace inside this
+repo.
 
 Only host prerequisite: **Node.js ≥ 22.19** (and `git`). No global pnpm, no `npx`, no Ruby.
 
@@ -25,11 +26,12 @@ Only host prerequisite: **Node.js ≥ 22.19** (and `git`). No global pnpm, no `n
 
 ```
 $ROOT/
-├── install.sh                     # one-time setup
-├── run.sh                         # launch the web UI
+├── bin/
+│   ├── install.sh                 # one-time setup
+│   └── run.sh                     # launch the web UI (in the team workspace)
 ├── DSH-README.md                  # user documentation
 ├── .gitignore                     # extended for dsh/
-├── agentic-team-for-private-equity/   # EXISTING — personas + workflows (do not restructure)
+├── agentic-team-for-private-equity/   # EXISTING — the DSH workspace: personas + workflows
 └── dsh/                           # the localised harness — remove this and the install is gone
     ├── package.json               # @deepseek-ai/dsh + pnpm, exact pins
     ├── package-lock.json          # committed, from npm install
@@ -61,7 +63,10 @@ $ROOT/
 
 ## 3. `$DSH_HOME` and relative-path rules (critical)
 
-* `install.sh` and `run.sh` both export `DSH_HOME="$ROOT/dsh/home"`.
+* `bin/install.sh` and `bin/run.sh` both **pin** `DSH_HOME="$ROOT/dsh/home"`. It is deliberately
+  never inherited: a nested DSH session exports its own `DSH_HOME`, and honouring that would
+  point the harness at somebody else's home. `SMALLPE_DSH_HOME` is the only override, and
+  `bin/install.sh` refuses to run if the resolved home is outside `$ROOT`.
 * The profile directory is therefore `$ROOT/dsh/home/profiles/web`.
 * Relative `link:`/`file:` specifiers in `templates/profiles/web/package.json` resolve
   **against the profile directory**, so:
@@ -72,8 +77,22 @@ $ROOT/
   so the pnpm content-addressable store stays inside the repo. (Verified: this is the only
   knob pnpm 12.11.2 honours; env vars and `.npmrc` are ignored.)
 * **Never** write an absolute `/Users/...`, `/home/...`, `~/...` path into any committed file.
-* `run.sh` prepends `$ROOT/dsh/node_modules/.bin` to `PATH` — the CLI `dsh plugin` always
+* `bin/run.sh` prepends `$ROOT/dsh/node_modules/.bin` to `PATH` — the CLI `dsh plugin` always
   resolves `pnpm` from `PATH`, so a folder-local pnpm must win over any global one.
+
+## 3b. The workspace (critical)
+
+* `agentic-team-for-private-equity/` is the DeepSeek Harness **workspace**: the source of truth
+  for the team, and the single working directory for the user's sessions and every agent's.
+* DSH treats the **invoking directory** as the default workspace root. So `bin/run.sh` must
+  `cd "$SMALLPE_TEAM_WORKSPACE"` before exec'ing `dsh`, and `provision-bots.mjs` must spawn its
+  throwaway server with the same `cwd` (otherwise the workspace id recorded in `storages/` and
+  in the roster belongs to the wrong folder).
+* Every agent's `workDir` is that same folder, so DS Bot stores no per-agent `workDir` at all
+  (its `workFolder()` returns `undefined` when a path equals the team workspace). Agents keep
+  their domain subfolders as **output conventions only** — see the `outputs` field in §5.
+* Anything a plugin writes next to the working directory (the optional `dsh-ui-auth`
+  session/audit files) therefore lands in the workspace; those names are gitignored.
 
 ## 4. Branding contract
 
@@ -103,6 +122,7 @@ via `POST /api/bot {"action":"create-bot", …}`.
 ```json
 {
   "version": 1,
+  "workspace": "agentic-team-for-private-equity",
   "bots": [
     {
       "name": "Managing Partner",
@@ -110,6 +130,7 @@ via `POST /api/bot {"action":"create-bot", …}`.
       "color": "deepseek",
       "avatar": { "shape": "whale" },
       "workspace": "agentic-team-for-private-equity",
+      "outputs": "",
       "main": true,
       "instructions": "<the agent's full system prompt>"
     }
@@ -117,28 +138,39 @@ via `POST /api/bot {"action":"create-bot", …}`.
 }
 ```
 
-* `workspace` is a path **relative to `$ROOT`**; the installer resolves it to an absolute path
-  and passes it as `workDir` (DS Bot requires an absolute, existing folder — the installer
-  `mkdir -p`s it first).
+* `workspace` is the shared team workspace, a path **relative to `$ROOT`**. All nine agents use
+  the same value, so they all work in one folder and can see each other's files. The installer
+  resolves it to an absolute path and passes it as `workDir`; DS Bot then stores no per-agent
+  `workDir`, because a path equal to the team workspace means "work in the team workspace".
+  The folder must exist first — the installer `mkdir -p`s it.
+* `outputs` is the agent's domain subfolder **inside** that workspace — documentation only. It
+  tells the agent (and the reader) where its artefacts belong; the installer never uses it as a
+  working directory. Managing Partner's is `""` (it works at the workspace root).
 * `main: true` on exactly one entry (Managing Partner). The installer calls
   `{"action":"set-main","id":…,"main":true}` for it.
 * **Do not** include `model`, `id`, `createdAt`, `appliedModel` — ids come from real sessions,
   and the model must fall back to the user's own DSH default.
-* `instructions` is the agent's persona: use the existing
-  `agentic-team-for-private-equity/agents/<agent>/CLAUDE.md` content (and for the Managing
-  Partner, `agentic-team-for-private-equity/CLAUDE.md` + `soul.md`), condensed only where it
-  is pure repetition. Preserve the substantive operating rules, output formats, and the
-  "report to X" relationships. Prepend one line telling the agent its working folder.
+* `instructions` is the agent's persona, and it is derived from **two** sources, in this order
+  of authority:
+  1. `agentic-team-for-private-equity/smallpe-agent-swarm.yml` — the original agent prompts.
+     This is the primary source of truth and must never be edited.
+  2. the per-agent `CLAUDE.md` files (plus `CLAUDE.md`, `soul.md` and `agents/managing-partner.md`
+     for the Managing Partner), which carry the fuller role definitions.
+  Nothing substantive from the swarm prompts may be dropped; keep the `tools/` behaviours, the
+  PDF pipeline, the markdown-for-PDF rules and the Slidev workflow. The first line must state
+  the shared workspace and the agent's `outputs` subfolder.
 
-`templates/bot-workspaces.json` — the agent → folder map used by the installer and docs:
+`templates/bot-workspaces.json` records the same mapping for docs and tooling:
 
 ```json
-{ "version": 1, "main": "agentic-team-for-private-equity",
-  "workspaces": { "Oracle": "agentic-team-for-private-equity/thesis-development", … } }
+{ "version": 1,
+  "workspace": "agentic-team-for-private-equity",
+  "main": "agentic-team-for-private-equity",
+  "workspaces": { "Oracle": "thesis-development", … } }
 ```
 
 All workspace folders live **inside the repo**. Logos needs
-`agentic-team-for-private-equity/financial-modeling/`, which the Lead has created.
+`agentic-team-for-private-equity/financial-modeling/`.
 
 ## 6. Profile contract
 

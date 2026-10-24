@@ -12,8 +12,8 @@ it completely.
 ```bash
 git clone <this-repo> SmallPE
 cd SmallPE
-./install.sh        # one time — installs the harness, branding and agent team
-./run.sh            # start it; open http://127.0.0.1:3080
+./bin/install.sh    # one time — installs the harness and the nine agents
+./bin/run.sh        # start it; open http://127.0.0.1:3080
 ```
 
 ---
@@ -33,42 +33,58 @@ website in `content/`, `layouts/` and `lib/`.
 > **Do not use Node older than 22.19.** DSH's entry point is guarded by
 > `import.meta.main`, which does not exist before Node 22.18. On an older Node the CLI
 > exits successfully having done nothing at all — the most confusing failure mode there is.
-> `install.sh` and `run.sh` both refuse to run rather than let that happen.
+> `bin/install.sh` and `bin/run.sh` both refuse to run rather than let that happen.
 
 ---
 
-## The team
+## The workspace
 
-All nine agents are created inside DeepSeek Harness's **DS Bot** on first install, each with
-its own role, its own system prompt and its own working folder inside this repository.
+**`agentic-team-for-private-equity/` is the workspace.** It is the source of truth for the
+team — the agent definitions, deal workflows, templates, tools and memory all live there —
+and it is where the collaborative work happens.
 
-| Agent | Role | Works in |
+`bin/run.sh` starts the harness *inside* that folder. DeepSeek Harness treats its invoking
+directory as the workspace root, so every session — yours and each agent's — runs there.
+That means:
+
+* you and all nine agents share one working directory and can see each other's files;
+* when an agent hands work to another, the artefacts are already in the same place;
+* a deal's documents, the MRL, the evidence tracker and the models sit together under one
+  folder instead of being scattered.
+
+Each agent still has a **domain subfolder** for its own outputs, which its prompt tells it to
+use. Those subfolders are output conventions inside the shared workspace, not separate
+working directories:
+
+| Agent | Role | Outputs in |
 |---|---|---|
-| **Managing Partner** | Coordinates the whole pipeline, makes investment decisions | `agentic-team-for-private-equity/` |
-| **Oracle** | Investment thesis and macro trend analysis | `…/thesis-development/` |
-| **Helios** | Deal sourcing and screening | `…/deal-sourcing/` |
-| **Athena** | Due diligence orchestration (supervises Prometheus + Themis) | `…/due-diligence/` |
-| **Prometheus** | Business evaluation | `…/business-evaluation/` |
-| **Themis** | Evidence verification | `…/evidence-verification/` |
-| **Logos** | Financial modelling and valuation | `…/financial-modeling/` |
-| **Hermes** | Financing and deal closing | `…/deal-closing/` |
-| **Iris** | Impact investing strategy and accountability | `…/impact-investing/` |
+| **Managing Partner** | Coordinates the pipeline, makes investment decisions | the workspace root |
+| **Oracle** | Investment thesis and macro trend analysis | `thesis-development/` |
+| **Helios** | Deal sourcing and screening | `deal-sourcing/` |
+| **Athena** | Due diligence orchestration (supervises Prometheus + Themis) | `due-diligence/` |
+| **Prometheus** | Business evaluation | `business-evaluation/` |
+| **Themis** | Evidence verification | `evidence-verification/` |
+| **Logos** | Financial modelling and valuation | `financial-modeling/` |
+| **Hermes** | Financing and deal closing | `deal-closing/` |
+| **Iris** | Impact investing strategy and accountability | `impact-investing/` |
 
 The deal pipeline runs **Oracle → Helios → Athena → Logos → Hermes**, with Prometheus and
 Themis working under Athena and Iris engaging cross-functionally. The Managing Partner is the
 co-ordinator and is the team's Main Bot.
 
+Each agent's prompt is derived from the original team definition in
+[`smallpe-agent-swarm.yml`](agentic-team-for-private-equity/smallpe-agent-swarm.yml) and its
+per-agent `CLAUDE.md`, both of which remain in the repository unchanged.
+
 Every agent can read and write files, run shell commands, search the web, and use the
 repository's own tools (`excel_to_markdown`, `pdf_to_markdown`, the pandoc PDF pipeline and
-the Slidev presentation setup) exactly as the original agent definitions intend. Their full
-personas are also still on disk under `agentic-team-for-private-equity/agents/`, so nothing
-about the original project is lost.
+the Slidev presentation setup) exactly as the original agent definitions intend.
 
 ---
 
 ## What the install script does
 
-`./install.sh` is safe to re-run. In order it:
+`./bin/install.sh` is safe to re-run. In order it:
 
 1. checks the Node.js version;
 2. runs `npm ci` inside `dsh/` — installs the pinned DeepSeek Harness runtime and a pinned
@@ -76,19 +92,19 @@ about the original project is lost.
 3. creates the harness home at `dsh/home` and seeds it from `dsh/templates/` — profile
    configuration, the SmallPE logo, an empty credentials store and an empty agent roster;
 4. installs the profile's plugins with the local `pnpm`, into `dsh/home/profiles/web`;
-5. creates each agent's working folder inside the repository;
+5. creates the agent output folders inside the workspace;
 6. **provisions the nine agents** by driving DS Bot's own API, so every agent gets a real
-   session and a real working folder;
+   session in the shared workspace;
 7. prints how to start it.
 
 If step 6 fails (usually a model or network hiccup), the harness itself still works —
-re-run `./install.sh`, or just `node dsh/scripts/provision-bots.mjs`.
+re-run `./bin/install.sh`, or just `node dsh/scripts/provision-bots.mjs`.
 
 Options:
 
 ```bash
-./install.sh --refresh-config     # also re-copy the shipped config over dsh/home
-./install.sh --skip-provision     # install the harness only, no agents
+./bin/install.sh --refresh-config   # also re-copy the shipped config over dsh/home
+./bin/install.sh --skip-provision   # install the harness only, no agents
 node dsh/scripts/provision-bots.mjs --force   # re-apply roles/instructions to existing agents
 ```
 
@@ -98,11 +114,12 @@ node dsh/scripts/provision-bots.mjs --force   # re-apply roles/instructions to e
 
 ```
 SmallPE/
-├── install.sh                  one-time installer
-├── run.sh                      start the harness
-├── agentic-team-for-private-equity/   agent personas, workflows, templates, tools
+├── bin/
+│   ├── install.sh              one-time installer
+│   └── run.sh                  start the harness
+├── agentic-team-for-private-equity/   THE WORKSPACE: personas, workflows, templates, tools
 └── dsh/
-    ├── node_modules/           the DSH runtime + pnpm        (~900 MB, gitignored)
+    ├── node_modules/           the DSH runtime + pnpm        (~890 MB, gitignored)
     ├── .pnpm-store/            pnpm's package store           (gitignored)
     ├── home/                   $DSH_HOME — ALL harness data   (gitignored)
     │   ├── branding/           logo-64.png, logo-128.png, logo-wide.png
@@ -110,7 +127,7 @@ SmallPE/
     │   ├── bot/                the agent roster, their memory and conversations
     │   └── sessions/ storages/ logs/
     ├── templates/              shipped configuration (copied into home/ by install.sh)
-    ├── vendor/                 local plugins: SmallPE branding, auth bridge, Chrome tools
+    ├── vendor/                 local plugins the harness loads
     └── scripts/                provisioning and helper scripts
 ```
 
@@ -125,28 +142,14 @@ committed by accident.
 The agents ship with **no model pinned**. Each one inherits whatever model you configure, so
 the team works with your provider and your key — not the author's.
 
-1. Start the harness: `./run.sh`
+1. Start the harness: `./bin/run.sh`
 2. Open <http://127.0.0.1:3080>
 3. Go to **Settings → Models**, add your provider and API key, and choose a default model.
 4. Open the Managing Partner and start working. The other agents are in the sidebar.
 
 Prefer environment variables? DSH resolves keys from the launch environment, `./.env`, or
-`dsh/home/.env`, so you can `export YOUR_PROVIDER_API_KEY=…` before `./run.sh`. Keys stored
-through the UI land in `dsh/home/.credentials.yaml` — never in this repository.
-
----
-
-## Branding
-
-The sidebar shows the SmallPE logo instead of the default DSH branding. This is delivered by
-two plugins working together:
-
-* **`dsh-custom-logo`** serves images from `dsh/home/branding/` on the `/custom-logo` route.
-  It reads the filenames `logo-64.png`, `logo-128.png` and `logo-wide.png` — to change the
-  logo, replace those files (square mark ≈ 256×256, wide wordmark ≈ 439×126) and reload.
-* **`@local/smallpe-brand`** (`dsh/vendor/smallpe-brand/`) claims the sidebar's brand seats
-  and draws them. It claims at a low priority so it wins over the DS Bot mark, and re-claims
-  if another plugin takes the seat afterwards.
+`dsh/home/.env`, so you can `export YOUR_PROVIDER_API_KEY=…` before `./bin/run.sh`. Keys
+stored through the UI land in `dsh/home/.credentials.yaml` — never in this repository.
 
 ---
 
@@ -158,7 +161,7 @@ If you expose the UI to other people or beyond localhost, enable the auth plugin
 
 ```bash
 ./dsh/scripts/enable-auth.sh
-./run.sh
+./bin/run.sh
 ```
 
 `dsh-ui-auth` then generates an `admin` account and prints a one-time password to the console.
@@ -167,7 +170,7 @@ The `@local/dsbot-auth-bridge` plugin is already installed and opens exactly one
 a reverse proxy, set the public URL explicitly:
 
 ```bash
-DSH_PUBLIC_URL=https://smallpe.example.com/ DSH_TRUSTED_HOST=smallpe.example.com ./run.sh
+DSH_PUBLIC_URL=https://smallpe.example.com/ DSH_TRUSTED_HOST=smallpe.example.com ./bin/run.sh
 ```
 
 Without those variables no external authority is trusted, which is the correct default.
@@ -192,31 +195,28 @@ that is inside `dsh/home`.
 
 **Platform note.** The install is built for the machine it runs on. Some native dependencies
 are platform-specific, so install per platform rather than copying `node_modules` between
-macOS, Linux and Windows or between architectures — `./install.sh` handles that for you.
+macOS, Linux and Windows or between architectures — `./bin/install.sh` handles that for you.
 
 ---
 
 ## Troubleshooting
 
-**`./run.sh` starts but nothing appears in the browser, and nothing is printed.**
+**`./bin/run.sh` starts but nothing appears in the browser, and nothing is printed.**
 Almost always an old Node.js. Run `node --version`; you need ≥ 22.19.
-
-**The sidebar shows the default DeepSeek branding, not the SmallPE logo.**
-Check that `dsh/home/branding/` contains all three PNGs and restart. If they are there, a
-harness upgrade may have changed an upstream CSS class — re-run `./install.sh --refresh-config`.
 
 **No agents in the sidebar.**
 Provisioning did not complete. Run `node dsh/scripts/provision-bots.mjs` and read its output.
-If it reports that the server did not become ready, start `./run.sh` once in another terminal
-and retry — the script reports the server's own log tail on failure.
+If it reports that the server did not become ready, start `./bin/run.sh` once in another
+terminal and retry — the script reports the server's own log tail on failure.
 
-**A plugin install fails during `./install.sh`.**
+**A plugin install fails during `./bin/install.sh`.**
 Run the underlying command to see the raw error:
 `cd dsh/home/profiles/web && ../../node_modules/.bin/pnpm install`.
 
 **"pnpm was not found".**
 The profile's plugins are installed with the local pnpm. Make sure you are running through
-`./install.sh` (which puts `dsh/node_modules/.bin` first on `PATH`), not a bare `dsh` command.
+`./bin/install.sh` (which puts `dsh/node_modules/.bin` first on `PATH`), not a bare `dsh`
+command.
 
 ---
 
@@ -236,7 +236,7 @@ nothing is left behind except the small third-party caches listed above.
 Three properties of DeepSeek Harness make a portable install possible, and one makes the agent
 roster interesting:
 
-* **`$DSH_HOME`** relocates *all* harness state. `run.sh` points it at `dsh/home`, and DSH
+* **`$DSH_HOME`** relocates *all* harness state. `bin/run.sh` points it at `dsh/home`, and DSH
   resolves it ahead of the default `~/.dsh`.
 * **A local `npm install`** of `@deepseek-ai/dsh` gives a relocatable `dsh/node_modules/.bin/dsh`
   with no absolute paths baked in — unlike `npx`, which unpacks into a hash-named cache under
@@ -251,8 +251,9 @@ chat**, and a missing session is a hard error rather than a fresh start. So the 
 shipped as a static file: its ids would only be valid alongside the author's private session
 transcripts, which must never be distributed. Instead the repository ships a declarative seed
 (`dsh/templates/bots.seed.json`) and `dsh/scripts/provision-bots.mjs` recreates the agents on
-your machine through DS Bot's own API. The result is a first-class roster — real sessions, real
-folders, ready to work — with none of the author's conversations, memory or secrets.
+your machine through DS Bot's own API. The result is a first-class roster — real sessions, all
+in the shared workspace, ready to work — with none of the author's conversations, memory or
+secrets.
 
 ---
 
