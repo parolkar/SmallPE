@@ -127,8 +127,8 @@ via `POST /api/bot {"action":"create-bot", …}`.
     {
       "name": "Managing Partner",
       "role": "Managing Partner",
-      "color": "deepseek",
-      "avatar": { "shape": "whale" },
+      "color": "green",
+      "avatar": { "shape": "pebbles" },
       "workspace": "agentic-team-for-private-equity",
       "outputs": "",
       "main": true,
@@ -148,6 +148,15 @@ via `POST /api/bot {"action":"create-bot", …}`.
   working directory. Managing Partner's is `""` (it works at the workspace root).
 * `main: true` on exactly one entry (Managing Partner). The installer calls
   `{"action":"set-main","id":…,"main":true}` for it.
+* `color` + `avatar.shape` together are the agent's look: DS Bot fills the shape's body with
+  the bot's colour, so `"color": "green"` with `"shape": "pebbles"` renders as green pebbles.
+  `shape` must name a character DS Bot actually ships — currently `acorn`, `beacon`, `bunny`,
+  `cushion`, `gem`, `gumdrop`, `kitty`, `magnet`, `peanut`, `pebbles`, `plus`, `ring`,
+  `saucer` (see `CHARACTERS` in ds-bot's client bundle); an unknown name silently falls back
+  to a default shape. A bot with no `avatar` gets a shape derived from its session id, so only
+  agents that should look deliberate need one. `color` must be one of DS Bot's own colour
+  names. `--force` re-applies both, which is how an existing install picks up a changed look —
+  and it needs every other DSH instance closed first, because a running one holds the team lock.
 * **Do not** include `model`, `id`, `createdAt`, `appliedModel` — ids come from real sessions,
   and the model must fall back to the user's own DSH default.
 * `instructions` is the agent's persona, and it is derived from **two** sources, in this order

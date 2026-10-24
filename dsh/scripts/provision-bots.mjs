@@ -289,6 +289,8 @@ async function main() {
           role: entry.role,
           instructions: entry.instructions,
           ...(entry.color ? { color: entry.color } : {}),
+          // The avatar is part of the shipped look, so --force re-applies it too.
+          ...(entry.avatar ? { avatar: entry.avatar } : {}),
           workDir: dir,
         })
         log(`  ~ ${entry.name} (updated)`)

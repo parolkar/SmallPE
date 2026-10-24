@@ -4,9 +4,9 @@
     {
       "name": "Managing Partner",
       "role": "Managing Partner",
-      "color": "deepseek",
+      "color": "green",
       "avatar": {
-        "shape": "whale"
+        "shape": "pebbles"
       },
       "workspace": "agentic-team-for-private-equity",
       "outputs": "",
