@@ -17,7 +17,12 @@
 #   DSH_PUBLIC_URL=https://...    set when serving behind a reverse proxy
 #   DSH_TRUSTED_HOST=example.com  set (can repeat, comma-separated) with DSH_PUBLIC_URL
 #   DSH_OPEN_BROWSER=1            open a browser window on start
-#   DSH_HOME=...                  override the harness home (defaults to ./dsh/home)
+#   SMALLPE_DSH_HOME=...          override the harness home (defaults to ./dsh/home)
+#   SMALLPE_LOCAL_BASE_URL=...    OpenAI-compatible local model server
+#                                 (default http://127.0.0.1:1234/v1)
+#   SMALLPE_LOCAL_API_KEY=...     key for the local server; defaults to a
+#                                 placeholder because the client always sends one
+#   OPENROUTER_API_KEY=...        no default — get one at https://openrouter.ai/keys
 
 set -euo pipefail
 
@@ -35,6 +40,22 @@ DSH_DIR="$ROOT/dsh"
 export DSH_HOME="${SMALLPE_DSH_HOME:-$DSH_DIR/home}"
 export DSH_AGENTS_HOME="$DSH_HOME/agents"
 export SMALLPE_TEAM_WORKSPACE="$ROOT/agentic-team-for-private-equity"
+
+# Two providers are configured by default: "local" and "OpenRouter" (see the
+# profile's cordis.patch.yml). Both need an apiKeyEnv to exist so the harness
+# treats the route as configured.
+#
+#   * The local route talks to an OpenAI-compatible server on this machine,
+#     which normally ignores the key — but OpenAI-compatible clients insist on
+#     sending one, so default it to a harmless placeholder. Point the server
+#     anywhere with SMALLPE_LOCAL_BASE_URL (default http://127.0.0.1:1234/v1).
+#   * OpenRouter deliberately has NO default: export OPENROUTER_API_KEY, or add
+#     the key in Settings -> Models. Without it, that provider simply cannot
+#     authenticate.
+: "${SMALLPE_LOCAL_API_KEY:=local}"
+export SMALLPE_LOCAL_API_KEY
+: "${SMALLPE_LOCAL_BASE_URL:=http://127.0.0.1:1234/v1}"
+export SMALLPE_LOCAL_BASE_URL
 
 # Clear the ambient session identity, so the child harness is a fresh independent
 # process rather than a continuation of whatever launched this script.

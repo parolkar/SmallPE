@@ -139,17 +139,45 @@ committed by accident.
 
 ## Choosing a model
 
-The agents ship with **no model pinned**. Each one inherits whatever model you configure, so
-the team works with your provider and your key — not the author's.
+The agents ship with **no model pinned** to the author's provider, and the harness does not ask
+you to sign in to anything — the vendor sign-in prompt is switched off. **Two providers are
+configured for you:**
 
-1. Start the harness: `./bin/run.sh`
-2. Open <http://127.0.0.1:3080>
-3. Go to **Settings → Models**, add your provider and API key, and choose a default model.
-4. Open the Managing Partner and start working. The other agents are in the sidebar.
+| Provider | What it is | What you do |
+|---|---|---|
+| **Local** | Any OpenAI-compatible model server on this machine (LM Studio, Ollama, llama.cpp, vLLM, MLX…) at `http://127.0.0.1:1234/v1` | Point it at your server and name your model — see below |
+| **OpenRouter** | One key, hundreds of models ([openrouter.ai/keys](https://openrouter.ai/keys)) | Set `OPENROUTER_API_KEY`, or add the key in Settings → Models |
 
-Prefer environment variables? DSH resolves keys from the launch environment, `./.env`, or
-`dsh/home/.env`, so you can `export YOUR_PROVIDER_API_KEY=…` before `./bin/run.sh`. Keys
-stored through the UI land in `dsh/home/.credentials.yaml` — never in this repository.
+Five OpenRouter models are listed to start with (`deepseek/deepseek-chat`,
+`anthropic/claude-sonnet-4.6`, `openai/gpt-5`, `google/gemini-2.5-pro`,
+`meta-llama/llama-3.3-70b-instruct`); add or remove models freely in **Settings → Models**.
+Until an OpenRouter key exists that provider has no models to offer, which is expected.
+
+### Using a local model server
+
+```bash
+SMALLPE_LOCAL_BASE_URL=http://127.0.0.1:11434/v1 \
+SMALLPE_LOCAL_MODEL=qwen3:8b \
+./bin/run.sh
+```
+
+Both are optional: the base URL defaults to `http://127.0.0.1:1234/v1` and the model id to
+`local-model`. A local server usually ignores the API key, but OpenAI-compatible clients insist
+on sending one, so `bin/run.sh` defaults `SMALLPE_LOCAL_API_KEY` to the harmless placeholder
+`local`. You can also edit the base URL, model id and key in **Settings → Models**.
+
+### Using OpenRouter
+
+```bash
+OPENROUTER_API_KEY=sk-or-... ./bin/run.sh
+```
+
+Prefer the UI? Open <http://127.0.0.1:3080>, go to **Settings → Models**, and paste the key
+there. Keys entered that way land in `dsh/home/.credentials.yaml` — never in this repository.
+DSH also reads keys from the launch environment, `./.env` and `dsh/home/.env`.
+
+The default model is `deepseek/deepseek-chat` on OpenRouter. Change it in
+**Settings → Models**, or in `dsh/home/profiles/web/cordis.patch.yml`.
 
 ---
 

@@ -190,17 +190,29 @@ dsh-better-sidebar
 ```
 
 `dsh-ui-auth` is **deliberately NOT in the default profile**: the install is loopback-only and
-must work with zero login friction. `dsh/patches/add-auth.yml` adds it (plus the bridge it
+must work with zero login friction. `dsh/scripts/enable-auth.sh` adds it (plus the bridge it
 enables) for anyone exposing the UI publicly.
 
 `templates/profiles/web/cordis.patch.yml` is the user patch layer. It must:
 * set the `bot` row's `config.workspace` to the team workspace — use
   `!!js` / env so the absolute path is computed at run time, not baked in;
+* configure exactly **two** providers on the `llm-pi-ai` row — `local` (a hand-declared,
+  OpenAI-compatible route whose base URL and model id come from `SMALLPE_LOCAL_BASE_URL` /
+  `SMALLPE_LOCAL_MODEL`) and `openrouter`. A hand-declared route is not in DSH's model catalog,
+  so `local` **must** list at least one model or the route reports a configuration error;
+* disable the vendor's own routes and the modal that fronts them:
+  `llm-deepseek` (API-key provider), `llm-deepseek-account`, and `ui-settings-account` (the
+  account surface that owns the "Get started / Sign in to DeepSeek" dialog), and repoint
+  `agent-default-model` off the provider that disabling removes;
+* pre-acknowledge the harness "Preview Notice" by recording the shipped notice version on
+  `ui-settings-general.welcomeNoticeVersion`, so a first run opens straight into the team;
 * keep `ui-theme: { preference: system }`, `locale: { preference: en }`,
   and `ui-brand-official: disabled: true`;
 * ship the Mnemon local-only `persistenceStrategy` block **verbatim** if the mnemon bundles are
   included (`allowedProviderIds: [mnemon-native]`, `dataBoundary: local-only`);
-* contain **no** provider rows, API keys, baseURLs, LAN IPs or model ids from the original author.
+* carry **no** credentials, no LAN addresses and no personal identifiers. Model ids and
+  provider base URLs that ship are deliberate public defaults (OpenRouter's API host and
+  localhost), not the original author's private endpoints — never reintroduce those.
 
 ## 7. Non-negotiables
 
