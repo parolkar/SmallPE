@@ -82,6 +82,25 @@ the Slidev presentation setup) exactly as the original agent definitions intend.
 
 ---
 
+## Skills
+
+One skill ships with the install, and it is **global** — every agent in DS Bot and every
+session in the profile can see it:
+
+| Skill | What it does |
+|---|---|
+| `inloop-organization-brain` | Query Inloop.Studio's Digital Brain, and submit a conversation as organization learning when you ask for it |
+
+Skills live in **`dsh/home/skills/<name>/SKILL.md`**: one directory per skill, with `name` and
+`description` in the YAML frontmatter. DSH watches that folder, so dropping another one in is
+picked up without a restart. Add one to `dsh/templates/skills/` instead to ship it to everyone
+who clones the repository, and re-run `./bin/install.sh --refresh-config` on an existing
+install to pick it up.
+
+Any skill you write locally in `dsh/home/skills/` is yours — the installer leaves it alone.
+
+---
+
 ## What the install script does
 
 `./bin/install.sh` is safe to re-run. In order it:

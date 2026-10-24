@@ -144,6 +144,29 @@ for logo in logo-64.png logo-128.png logo-wide.png; do
   copy_template "$TEMPLATES/branding/$logo" "$DSH_HOME/branding/$logo"
 done
 
+# Skills: $DSH_HOME/skills is one of the filesystem roots DSH scans for skills, and it
+# is global — every agent in the profile sees what is here, and so does every DS Bot.
+# Each skill is a directory holding a SKILL.md whose YAML frontmatter carries `name`
+# and `description`. Same refresh rule as the other configuration: installed when
+# absent, replaced only by --refresh-config, and the previous copy kept as .bak.
+install_skill() {
+  local src="$1" dst="$2"
+  [ -d "$src" ] || die "missing shipped skill: $src"
+  if [ -d "$dst" ]; then
+    [ "$REFRESH_CONFIG" -ne 1 ] && return 0
+    if ! diff -r -q "$src" "$dst" >/dev/null 2>&1; then
+      rm -rf "$dst.bak"; cp -R "$dst" "$dst.bak"
+      warn "updated skill $(basename "$dst") — previous version kept at $(basename "$dst").bak"
+    fi
+  fi
+  mkdir -p "$(dirname "$dst")"
+  cp -R "$src" "$dst"
+}
+for skill in "$TEMPLATES"/skills/*/; do
+  [ -d "$skill" ] || continue
+  install_skill "$skill" "$DSH_HOME/skills/$(basename "$skill")"
+done
+
 # User state. NEVER overwritten, not even by --refresh-config: this is the live roster,
 # the agent conversations and the user's credentials, and clobbering state.json would
 # silently destroy the team and force a full re-provision with new session ids.

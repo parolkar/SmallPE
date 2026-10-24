@@ -45,6 +45,7 @@ $ROOT/
     │   └── sessions/, storages/, logs/, .credentials.yaml …
     ├── templates/                 # committed source of truth, copied into home/ by install.sh
     │   ├── branding/{logo-64,logo-128,logo-wide}.png
+    │   ├── skills/<name>/SKILL.md # global skills, installed to $DSH_HOME/skills
     │   ├── bots.seed.json         # the agent roster, one entry per DS Bot agent
     │   ├── bot-workspaces.json    # agent -> folder map
     │   ├── state.seed.json        # empty DS Bot state
@@ -113,6 +114,30 @@ The sidebar seats are claimed by `dsh/vendor/smallpe-brand/client.js`, which is 
 `dsbot-custom-brand` bundle rebranded: package name `@local/smallpe-brand`, row id
 `smallpe-brand`, alt text `SmallPE`. It must keep the same slot/priority mechanism
 (`sidebar.brand.mark` + `sidebar.brand.name` at priority −500, i.e. below DS Bot's −100).
+
+## 4b. Skills
+
+Skills go in `$DSH_HOME/skills/<name>/SKILL.md` (shipped from `dsh/templates/skills/`). That root
+is one of the filesystem roots `dsh-skill-filesystem` scans, and it is **global**: every agent in
+the profile and every DS Bot session sees what is there, which is why a skill belongs there and
+not in a bot's inline `capabilities`.
+
+The file needs YAML frontmatter with `name` and `description`; the name must be kebab-case
+(`/^[a-z0-9]+(?:-[a-z0-9]+)*$/`) and the directory name should match it. `disable-model-invocation`
+and `user-invocable` are the invocation switches, and both default to enabled. A malformed or
+frontmatter-less file is ignored with a `skill file ... ignored` warning rather than failing the
+boot, so check the startup log if a skill does not appear.
+
+Only declare a skill under `dsh/templates/skills/` if everyone who clones the repository should
+have it; the installer never touches skills a user adds under `$DSH_HOME/skills/` themselves.
+
+Verify with the harness's own API once it is running — `POST /api/skills/list` with the
+client-request envelope returns the catalog for one session:
+
+```json
+{"type":"client-request","rpcId":"probe","method":"skills/list",
+ "payload":{"args":{"request":{"sessionId":"session-…"}}}}
+```
 
 ## 5. Roster contract
 
