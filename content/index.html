@@ -117,13 +117,12 @@ title: Home
     <!-- Pitch video: thumbnail opens a fullscreen modal player -->
     <div class="mt-12 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="400">
       <button type="button" id="pitch-thumb" class="group relative block w-full rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 focus:outline-none focus:ring-4 focus:ring-blue-500/50" aria-haspopup="dialog" aria-controls="pitch-modal" aria-label="Play the SmallPE pitch video">
-        <img src="/assets/images/pitch-video-poster.svg" alt="SmallPE pitch video" class="w-full h-auto block" width="1280" height="720" loading="lazy">
-        <span class="absolute inset-0 flex items-center justify-center bg-black/25 group-hover:bg-black/40 transition-colors duration-300">
-          <span class="flex items-center justify-center w-20 h-20 rounded-full bg-white/95 shadow-2xl group-hover:scale-110 transition-transform duration-300">
-            <i class="fas fa-play text-blue-600 text-3xl ml-1" aria-hidden="true"></i>
+        <img src="/assets/images/pitch-video-poster.jpg" alt="SmallPE pitch video" class="w-full h-auto block" width="1280" height="720" loading="lazy">
+        <span class="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/30 transition-colors duration-300" aria-hidden="true">
+          <span class="pitch-play relative flex items-center justify-center w-24 h-24 rounded-full bg-white/95">
+            <i class="fas fa-play text-blue-600 text-3xl ml-1"></i>
           </span>
         </span>
-        <span class="absolute bottom-3 left-1/2 -translate-x-1/2 text-white text-sm font-medium bg-black/50 rounded-full px-4 py-1">Watch our pitch</span>
       </button>
     </div>
   </div>
@@ -134,7 +133,7 @@ title: Home
   <button type="button" class="pitch-modal-close" id="pitch-close" aria-label="Close video">&times;</button>
   <div class="pitch-modal-frame">
     <video id="pitch-video" controls playsinline preload="none"
-           poster="/assets/images/pitch-video-poster.svg"
+           poster="/assets/images/pitch-video-poster.jpg"
            src="/assets/videos/smallpe-pitch.mp4"></video>
   </div>
 </div>
@@ -148,6 +147,15 @@ title: Home
   .pitch-modal-close:hover{color:#93c5fd}
   @media (max-width:640px){.pitch-modal{padding:8px}.pitch-modal-frame video{max-height:calc(100dvh - 56px)}.pitch-modal-close{top:4px;right:8px;font-size:34px}}
   body.pitch-modal-open{overflow:hidden}
+
+  /* Glowing, pulsing play button on the pitch thumbnail */
+  @keyframes pitch-pulse{0%{transform:scale(1);opacity:.85}70%{transform:scale(1.9);opacity:0}100%{transform:scale(1.9);opacity:0}}
+  @keyframes pitch-glow{0%,100%{box-shadow:0 0 0 0 rgba(37,99,235,.55),0 10px 30px rgba(0,0,0,.45)}50%{box-shadow:0 0 0 14px rgba(37,99,235,0),0 10px 40px rgba(37,99,235,.65)}}
+  .pitch-play::before,.pitch-play::after{content:"";position:absolute;inset:0;border-radius:9999px;border:3px solid rgba(37,99,235,.75);animation:pitch-pulse 2.4s ease-out infinite}
+  .pitch-play::after{animation-delay:1.2s}
+  .pitch-play{animation:pitch-glow 2.4s ease-in-out infinite;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+  #pitch-thumb:hover .pitch-play{animation-duration:1.4s}
+  @media (prefers-reduced-motion:reduce){.pitch-play,.pitch-play::before,.pitch-play::after{animation:none}.pitch-play::before,.pitch-play::after{display:none}}
 </style>
 
 <script>
