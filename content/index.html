@@ -113,8 +113,54 @@ title: Home
         View detailed demonstrations of SmallPE's AI agents in action
       </p>
     </div>
+
+    <!-- Pitch video: thumbnail opens a fullscreen modal player -->
+    <div class="mt-12 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="400">
+      <button type="button" id="pitch-thumb" class="group relative block w-full rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 focus:outline-none focus:ring-4 focus:ring-blue-500/50" aria-haspopup="dialog" aria-controls="pitch-modal" aria-label="Play the SmallPE pitch video">
+        <img src="/assets/images/pitch-video-poster.svg" alt="SmallPE pitch video" class="w-full h-auto block" width="1280" height="720" loading="lazy">
+        <span class="absolute inset-0 flex items-center justify-center bg-black/25 group-hover:bg-black/40 transition-colors duration-300">
+          <span class="flex items-center justify-center w-20 h-20 rounded-full bg-white/95 shadow-2xl group-hover:scale-110 transition-transform duration-300">
+            <i class="fas fa-play text-blue-600 text-3xl ml-1" aria-hidden="true"></i>
+          </span>
+        </span>
+        <span class="absolute bottom-3 left-1/2 -translate-x-1/2 text-white text-sm font-medium bg-black/50 rounded-full px-4 py-1">Watch our pitch</span>
+      </button>
+    </div>
   </div>
 </section>
+
+<!-- Pitch video modal (fullscreen) -->
+<div id="pitch-modal" class="pitch-modal" role="dialog" aria-modal="true" aria-label="SmallPE pitch video" hidden>
+  <button type="button" class="pitch-modal-close" id="pitch-close" aria-label="Close video">&times;</button>
+  <div class="pitch-modal-frame">
+    <video id="pitch-video" controls playsinline preload="none"
+           poster="/assets/images/pitch-video-poster.svg"
+           src="/assets/videos/smallpe-pitch.mp4"></video>
+  </div>
+</div>
+
+<style>
+  .pitch-modal{position:fixed;inset:0;z-index:9999;background:rgba(10,12,18,.92);display:flex;align-items:center;justify-content:center;padding:16px}
+  .pitch-modal[hidden]{display:none}
+  .pitch-modal-frame{width:100%;max-width:1100px}
+  .pitch-modal-frame video{display:block;width:100%;height:auto;max-height:calc(100vh - 88px);max-height:calc(100dvh - 88px);border-radius:10px;background:#000;box-shadow:0 25px 80px rgba(0,0,0,.6)}
+  .pitch-modal-close{position:absolute;top:12px;right:16px;font-size:40px;line-height:1;color:#fff;background:transparent;border:0;cursor:pointer;padding:8px;z-index:1}
+  .pitch-modal-close:hover{color:#93c5fd}
+  @media (max-width:640px){.pitch-modal{padding:8px}.pitch-modal-frame video{max-height:calc(100dvh - 56px)}.pitch-modal-close{top:4px;right:8px;font-size:34px}}
+  body.pitch-modal-open{overflow:hidden}
+</style>
+
+<script>
+(function(){
+  var modal=document.getElementById('pitch-modal'),video=document.getElementById('pitch-video'),thumb=document.getElementById('pitch-thumb'),close=document.getElementById('pitch-close');
+  function open(){modal.hidden=false;document.body.classList.add('pitch-modal-open');video.play().catch(function(){});close.focus();}
+  function shut(){modal.hidden=true;document.body.classList.remove('pitch-modal-open');video.pause();}
+  thumb.addEventListener('click',open);
+  close.addEventListener('click',shut);
+  modal.addEventListener('click',function(e){if(e.target===modal)shut();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!modal.hidden)shut();});
+})();
+</script>
 
 <!-- Philosophy Section with Alternating Background -->
 <section id="philosophy" class="py-20 bg-gray-100">
