@@ -71,7 +71,7 @@
     <meta property="og:title"       content="SmallPE Model Private Equity - Home" />
     <meta property="og:description" content="SmallPE is a community-led open source initiative building a blueprint for an AI-first PE firm." />
     <meta property="og:url"         content="https://www.smallpe.com" />
-    <meta property="og:image"       content="https://smallpe.com/assets/images/og_image.png" />
+    <meta property="og:image"       content="https://smallpe.com/assets/images/pitch-video-poster.jpg" />
     <meta property="og:image:width"  content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:logo"         content="https://smallpe.com/assets/images/smallpe_logo.jpg" />
@@ -79,7 +79,11 @@
     <meta name="twitter:card"        content="summary_large_image" />
     <meta name="twitter:title"       content="SmallPE Model Private Equity - Home" />
     <meta name="twitter:description" content="SmallPE is a community-led open source initiative building a blueprint for an AI-first PE firm." />
-    <meta name="twitter:image"       content="https://smallpe.com/assets/images/og_image.png" />
+    <meta name="twitter:image"       content="https://smallpe.com/assets/images/pitch-video-poster.jpg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+
 
     <!-- you don't need to keep this, but it's cool for stats! -->
     <meta name="generator" content="Nanoc 4.13.5">
@@ -189,8 +193,14 @@
         </p>
       </div>
       <div class="rounded-lg overflow-hidden shadow-xl" data-aos="fade-left">
-        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" 
-             alt="Team collaboration" class="w-full h-auto">
+        <button type="button" id="pitch-thumb" class="group relative block w-full rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 focus:outline-none focus:ring-4 focus:ring-blue-500/50" aria-haspopup="dialog" aria-controls="pitch-modal" aria-label="Play the SmallPE pitch video">
+        <img src="/assets/images/pitch-video-poster.jpg" alt="SmallPE pitch video" class="w-full h-auto block" width="1280" height="720" loading="lazy">
+        <span class="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/30 transition-colors duration-300" aria-hidden="true">
+          <span class="pitch-play relative flex items-center justify-center w-24 h-24 rounded-full bg-white/95">
+            <i class="fas fa-play text-blue-600 text-3xl ml-1"></i>
+          </span>
+        </span>
+      </button>
       </div>
     </div>
   </div>
@@ -249,8 +259,51 @@
         View detailed demonstrations of SmallPE's AI agents in action
       </p>
     </div>
+
   </div>
 </section>
+
+<!-- Pitch video modal (fullscreen) -->
+<div id="pitch-modal" class="pitch-modal" role="dialog" aria-modal="true" aria-label="SmallPE pitch video" hidden>
+  <button type="button" class="pitch-modal-close" id="pitch-close" aria-label="Close video">&times;</button>
+  <div class="pitch-modal-frame">
+    <video id="pitch-video" controls playsinline preload="none"
+           poster="/assets/images/pitch-video-poster.jpg"
+           src="/assets/videos/smallpe-pitch.mp4"></video>
+  </div>
+</div>
+
+<style>
+  .pitch-modal{position:fixed;inset:0;z-index:9999;background:rgba(10,12,18,.92);display:flex;align-items:center;justify-content:center;padding:16px}
+  .pitch-modal[hidden]{display:none}
+  .pitch-modal-frame{width:100%;max-width:1100px}
+  .pitch-modal-frame video{display:block;width:100%;height:auto;max-height:calc(100vh - 88px);max-height:calc(100dvh - 88px);border-radius:10px;background:#000;box-shadow:0 25px 80px rgba(0,0,0,.6)}
+  .pitch-modal-close{position:absolute;top:12px;right:16px;font-size:40px;line-height:1;color:#fff;background:transparent;border:0;cursor:pointer;padding:8px;z-index:1}
+  .pitch-modal-close:hover{color:#93c5fd}
+  @media (max-width:640px){.pitch-modal{padding:8px}.pitch-modal-frame video{max-height:calc(100dvh - 56px)}.pitch-modal-close{top:4px;right:8px;font-size:34px}}
+  body.pitch-modal-open{overflow:hidden}
+
+  /* Glowing, pulsing play button on the pitch thumbnail */
+  @keyframes pitch-pulse{0%{transform:scale(1);opacity:.85}70%{transform:scale(1.9);opacity:0}100%{transform:scale(1.9);opacity:0}}
+  @keyframes pitch-glow{0%,100%{box-shadow:0 0 0 0 rgba(37,99,235,.55),0 10px 30px rgba(0,0,0,.45)}50%{box-shadow:0 0 0 14px rgba(37,99,235,0),0 10px 40px rgba(37,99,235,.65)}}
+  .pitch-play::before,.pitch-play::after{content:"";position:absolute;inset:0;border-radius:9999px;border:3px solid rgba(37,99,235,.75);animation:pitch-pulse 2.4s ease-out infinite}
+  .pitch-play::after{animation-delay:1.2s}
+  .pitch-play{animation:pitch-glow 2.4s ease-in-out infinite;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+  #pitch-thumb:hover .pitch-play{animation-duration:1.4s}
+  @media (prefers-reduced-motion:reduce){.pitch-play,.pitch-play::before,.pitch-play::after{animation:none}.pitch-play::before,.pitch-play::after{display:none}}
+</style>
+
+<script>
+(function(){
+  var modal=document.getElementById('pitch-modal'),video=document.getElementById('pitch-video'),thumb=document.getElementById('pitch-thumb'),close=document.getElementById('pitch-close');
+  function open(){modal.hidden=false;document.body.classList.add('pitch-modal-open');video.play().catch(function(){});close.focus();}
+  function shut(){modal.hidden=true;document.body.classList.remove('pitch-modal-open');video.pause();}
+  thumb.addEventListener('click',open);
+  close.addEventListener('click',shut);
+  modal.addEventListener('click',function(e){if(e.target===modal)shut();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!modal.hidden)shut();});
+})();
+</script>
 
 <!-- Philosophy Section with Alternating Background -->
 <section id="philosophy" class="py-20 bg-gray-100">
