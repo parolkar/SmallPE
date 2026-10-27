@@ -4,12 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="author" content="Abhishek Parolkar" />
-    <meta name="description" content="SmallPE Model Private Equity - A model of Private Equity firm using AI First approach" />
+    <% meta_description = @item[:description] || "SmallPE Model Private Equity - A model of Private Equity firm using AI First approach" %>
+    <% meta_keywords     = @item[:keywords]    || "SmallPE Model Private Equity, Private Equity Model, Private Equity, AI First Private Equity, AI First Private Equity Model" %>
+    <meta name="description" content="<%= meta_description %>" />
     <meta content='text/html;charset=UTF-8' http-equiv='content-type' />
     <meta content='INDEX, NOFOLLOW' name='ROBOTS' />
     <meta content='Abhishek Parolkar' name='Copyright' />
     <meta content='General' name='Rating' />
-    <meta content='SmallPE Model Private Equity, Private Equity Model, Private Equity, AI First Private Equity, AI First Private Equity Model' name='Keywords' />
+    <meta content='<%= meta_keywords %>' name='Keywords' />
     <meta content='EN' http-equiv='content-language' />
     <meta content="SmallPE Model Private Equity - <%= @item[:title] %>" name='Abstract' />
     <meta content='SmallPE Model Private Equity' name='Title' />
@@ -94,7 +96,8 @@
     <main>
       <%= yield %>
     </main>
-    
+
+    <%= render '/newsletter.*' %>
     <%= render '/footer.*' %>
     
     <script>
