@@ -20,6 +20,18 @@
   </url>
 
   <url>
+    <loc>https://www.smallpe.com/docs/research/agentic/where_are_the_moats_in_AI/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.smallpe.com/docs/research/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
     <loc>https://www.smallpe.com/fund1/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
