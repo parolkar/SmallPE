@@ -67,6 +67,12 @@ unset DSH_PROFILE DSH_PROFILE_DIR DSH_SESSION_ID DSH_WEB_URL DSH_SHELL
 # Keep plugin-relative writes inside the repository...
 cd "$SMALLPE_TEAM_WORKSPACE"
 
+# Name the workspace by its physical path. DSH keeps a workspace's path as given but
+# resolves each session's cwd with realpath, and refuses to attach a session ("its cwd
+# resolves to …") when the two differ — which they do whenever the repository is
+# reached through a symlink (macOS /tmp, a container volume).
+SMALLPE_TEAM_WORKSPACE="$(pwd -P)"
+
 # ...and make the SmallPE team folder the harness WORKSPACE.
 #
 # DSH treats the invoking directory as the default workspace root: it registers that

@@ -1,4 +1,6 @@
 Gemfile.lock
+# Bundler's per-machine settings (e.g. `bundle config set --local path vendor/bundle`).
+/.bundle/
 .sass-cache
 /output
 /vendor

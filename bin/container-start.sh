@@ -95,6 +95,16 @@ link_to_volume "$DSH_DIR/.tectonic-cache" "$DATA/cache/tectonic"
 say "harness home: $DSH_DIR/home -> $DATA/home"
 say "workspace   : $WORKSPACE -> $DATA/workspace"
 
+# The agents were provisioned in the image, where the workspace was the real folder
+# $WORKSPACE; DSH stored that path for the workspace and for each session. It is a
+# link now, and DSH compares a session's realpath with the stored path, so new
+# sessions and bots failed with "cannot attach session … its cwd resolves to
+# $DATA/workspace". Point the stored references at the real location. Matching on
+# the quoted path keeps *.dist and longer names untouched; after the first boot
+# nothing matches. grep -r does not follow the profiles/branding links.
+{ grep -rlIZ -e "\"$WORKSPACE\"" -e "\"$WORKSPACE/" "$DATA/home" 2>/dev/null || true; } \
+  | xargs -0 -r sed -i -e "s#\"$WORKSPACE\"#\"$DATA/workspace\"#g" -e "s#\"$WORKSPACE/#\"$DATA/workspace/#g"
+
 # --- serving ------------------------------------------------------------------- #
 # DSH binds loopback only (wildcards are rejected); forward-port.mjs publishes it.
 export DSH_HOST=127.0.0.1
