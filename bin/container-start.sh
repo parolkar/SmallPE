@@ -73,9 +73,27 @@ rm -f "$DATA/home/bot/state.lock"
 # --- the team workspace -------------------------------------------------------- #
 copy_missing "$WORKSPACE.dist" "$DATA/workspace"
 
-ln -sfn "$DATA/home" "$DSH_DIR/home"
-ln -sfn "$DATA/workspace" "$WORKSPACE"
-ln -sfn "$DATA/cache/tectonic" "$DSH_DIR/.tectonic-cache"
+# link_to_volume <path> <target> — make <path> a symlink to <target> on the volume.
+# The Dockerfile moves these paths to *.dist, but some image builders (Railway's among
+# them) still ship the directory a later layer moved away. Left in place, `ln` would
+# only drop a link inside it and the harness would write to the container's throwaway
+# filesystem, so remove it (the pristine copy is the .dist one) and verify the result.
+link_to_volume() {
+  local path="$1" target="$2"
+  if [ -e "$path" ] && [ ! -L "$path" ]; then
+    rm -rf "$path"
+  fi
+  ln -sfn "$target" "$path"
+  if [ "$(readlink -f "$path")" != "$(readlink -f "$target")" ]; then
+    say "ERROR: $path does not lead to $target; refusing to run off the volume." >&2
+    exit 1
+  fi
+}
+link_to_volume "$DSH_DIR/home" "$DATA/home"
+link_to_volume "$WORKSPACE" "$DATA/workspace"
+link_to_volume "$DSH_DIR/.tectonic-cache" "$DATA/cache/tectonic"
+say "harness home: $DSH_DIR/home -> $DATA/home"
+say "workspace   : $WORKSPACE -> $DATA/workspace"
 
 # --- serving ------------------------------------------------------------------- #
 # DSH binds loopback only (wildcards are rejected); forward-port.mjs publishes it.
@@ -94,6 +112,9 @@ fi
 
 if [ -f "$DATA/workspace/dsh-ui-auth-bootstrap.txt" ]; then
   say "the initial admin password has not been changed yet; it is in $DATA/workspace/dsh-ui-auth-bootstrap.txt"
+else
+  # dsh-ui-auth logs only in Chinese. When it has no account yet it creates one.
+  say "if a [dsh-ui-auth] block follows, it is the first admin account: 用户名 = username, 密码 = one-time password."
 fi
 
 node "$DSH_DIR/scripts/forward-port.mjs" &
