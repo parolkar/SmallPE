@@ -100,6 +100,8 @@ say "workspace   : $WORKSPACE -> $DATA/workspace"
 export DSH_HOST=127.0.0.1
 export DSH_PORT="${DSH_PORT:-3080}"
 export PORT="${PORT:-8080}"
+# Where dsh-ui-auth reconnects the UI's live channel (see the Dockerfile).
+export DSH_AUTH_MUX_UPSTREAM="127.0.0.1:$DSH_PORT"
 
 # Behind Railway's HTTPS edge: advertise and trust its public domain, and let
 # dsh-ui-auth read the client address and scheme from the edge's X-Forwarded-*.
