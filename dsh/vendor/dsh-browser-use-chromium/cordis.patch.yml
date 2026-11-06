@@ -8,3 +8,6 @@
       config:
         mode: launch
         headless: true
+        # Unset, chrome-devtools-mcp discovers Chrome itself. The container image
+        # points this at Debian's Chromium, which that discovery does not look for.
+        executablePath: !!js "process.env.SMALLPE_CHROMIUM_PATH || undefined"

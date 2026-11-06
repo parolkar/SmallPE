@@ -284,6 +284,58 @@ Without those variables no external authority is trusted, which is the correct d
 
 ---
 
+## Deploying to Railway
+
+The repository root carries a `Dockerfile`, so Railway builds it with no other
+configuration: **New Project → Deploy from GitHub repo → this repository**. The image is a
+finished `./bin/install.sh` — the harness, its plugins, the document toolchain, Chromium for
+the browser tools, the nine provisioned agents — with the login switched on.
+
+Then set three things on the service, once:
+
+| Setting | Value | Why |
+|---|---|---|
+| **Volume** | mount path `/data` | conversations, the agent roster, logins, keys and everything the agents write live here. Without it, every redeploy starts from scratch (the log says so). |
+| **Networking → Generate Domain** | | the start script trusts `RAILWAY_PUBLIC_DOMAIN` automatically. |
+| **Healthcheck path** *(optional)* | `/auth/login` | the one page that answers 200 before anyone signs in. |
+
+**First sign-in.** On the first boot the deploy log prints a `[dsh-ui-auth]` block with the
+`admin` username (用户名) and a one-time password (密码). Sign in at the public domain and change
+it; until you do, it also sits in `/data/workspace/dsh-ui-auth-bootstrap.txt`.
+
+**Model key.** Add `OPENROUTER_API_KEY` as a service variable, or paste the key in
+**Settings → Models** after signing in (it is stored on the volume).
+
+**A custom domain** needs the two variables from the section above, for example
+`DSH_PUBLIC_URL=https://smallpe.example.com/` and `DSH_TRUSTED_HOST=smallpe.example.com`.
+
+The same image runs anywhere Docker does:
+
+```bash
+docker build -t smallpe .
+docker run -p 8080:8080 -v smallpe-data:/data smallpe   # open http://localhost:8080
+```
+
+### How the container is put together
+
+* **The login is always on.** A public URL with no login would hand anyone a shell in the
+  container. The agents are provisioned *before* `dsh-ui-auth` is enabled, because provisioning
+  cannot pass the login gateway.
+* **`dsh web` binds loopback only**: `--host` rejects wildcard addresses, and a platform routes
+  traffic to `$PORT` on all interfaces. `dsh/scripts/forward-port.mjs` forwards raw TCP from
+  `$PORT` to `127.0.0.1:3080`, so headers and WebSockets reach DSH untouched.
+* **State lives on the volume.** `bin/container-start.sh` seeds `/data/home` (`$DSH_HOME`) and
+  `/data/workspace` (the team workspace) on first boot and links `dsh/home` and
+  `agentic-team-for-private-equity/` to them, so every path in [CONTRACT.md](dsh/CONTRACT.md)
+  still holds.
+* **The profile comes from the image.** Configuration and plugins are refreshed on every deploy,
+  so a new image never runs against stale plugins — and a plugin added through the UI does not
+  survive a redeploy. Add it to `dsh/templates/profiles/web/package.json` instead.
+* **Workspace files a later commit adds** are copied onto the volume on the next boot. Files
+  already there are never overwritten, so the agents' edits are kept.
+
+---
+
 ## What is *not* folder-local
 
 The harness keeps essentially all of its state in `dsh/home`. A few third-party components
