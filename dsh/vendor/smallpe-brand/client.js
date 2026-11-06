@@ -38,6 +38,10 @@ window.__ModuleLoader__.load({
     /** Wide lockup — expanded sidebar top in dsh-custom-logo. */
     const WIDE_SRC = '/custom-logo/logo-wide.png';
 
+    /** The product name DSH puts in the tab title, and ours. */
+    const SHIPPED_TITLE = 'DeepSeek Harness';
+    const PRODUCT_TITLE = 'SmallPE';
+
     /** Lowest priority wins a single seat; DS Bot occupies these at -100. */
     const BRAND_PRIORITY = -500;
 
@@ -233,6 +237,21 @@ window.__ModuleLoader__.load({
             if (tag !== null) tag.remove();
           };
         }, 'smallpe-brand: brand styles');
+
+        // DSH writes `<session> — DeepSeek Harness` into the tab title whenever the
+        // active session changes, with the product name hard-coded in its layout.
+        // Swap the product name back each time it does.
+        ctx.effect(() => {
+          const rename = () => {
+            if (document.title.includes(SHIPPED_TITLE)) {
+              document.title = document.title.split(SHIPPED_TITLE).join(PRODUCT_TITLE);
+            }
+          };
+          rename();
+          const observer = new MutationObserver(rename);
+          observer.observe(document.head, { childList: true, subtree: true, characterData: true });
+          return () => observer.disconnect();
+        }, 'smallpe-brand: tab title');
 
         ctx.slots.inject('sidebar.brand.mark', () =>
           claimSeat(ctx, 'sidebar.brand.mark', BrandMark),
