@@ -30,6 +30,16 @@ RUN ./bin/install.sh --skip-provision --skip-tools \
  && node dsh/scripts/provision-bots.mjs \
  && ./dsh/scripts/enable-auth.sh
 
+# dsh-ui-auth proxies the UI's live connection (/api/remote.mux) back to DSH at the
+# browser's Host header. Behind Railway's edge, or any port mapping, that is not where
+# DSH listens, so the upstream fails, the socket is closed at once and the UI sits on
+# "Reconnecting…". Let DSH_AUTH_MUX_UPSTREAM (set by container-start.sh) name DSH's own
+# listener instead. The grep fails the build if a dsh-ui-auth release moves that line.
+RUN f=dsh/home/profiles/web/node_modules/dsh-ui-auth/lib/modern-gateway.js \
+ && grep -q 'ws://${info.host}/api/remote.mux' "$f" \
+ && sed -i 's#ws://${info.host}/api/remote.mux#ws://${process.env.DSH_AUTH_MUX_UPSTREAM || info.host}/api/remote.mux#' "$f" \
+ && grep -q 'DSH_AUTH_MUX_UPSTREAM' "$f"
+
 # Warm uvx's cache with the Pandoc MCP server, so each boot does not fetch it again.
 # Best effort: without it the server is simply fetched on first use.
 RUN PATH="/app/dsh/bin:$PATH" UV_CACHE_DIR=/app/dsh/.uv-cache UV_PYTHON_INSTALL_DIR=/app/dsh/.uv-python \
