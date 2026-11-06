@@ -24,17 +24,16 @@ const targetHost = '127.0.0.1'
 
 const server = net.createServer((client) => {
   const upstream = net.connect(targetPort, targetHost)
-  client.pipe(upstream).pipe(client)
-  // Either side failing or closing tears down both; until DSH is listening, a
-  // connection is simply refused and the platform's health check retries.
-  const close = () => {
-    client.destroy()
-    upstream.destroy()
-  }
-  for (const socket of [client, upstream]) {
-    socket.on('error', close)
-    socket.on('close', close)
-  }
+  // When one side finishes, pipe() ends the other only after flushing what is still
+  // buffered for it. Destroying both on 'close' instead dropped that buffer, which cut
+  // off responses whose end is marked by the connection closing (no Content-Length)
+  // whenever the reader was slower than localhost — e.g. behind Railway's edge.
+  client.pipe(upstream)
+  upstream.pipe(client)
+  // A failed side has nothing more to deliver; until DSH is listening a connection is
+  // simply refused, and the platform's health check retries.
+  client.on('error', () => upstream.destroy())
+  upstream.on('error', () => client.destroy())
 })
 
 server.on('error', (error) => {
