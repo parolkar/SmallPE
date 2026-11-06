@@ -42,6 +42,10 @@ specialist agents are created for you on first install, each working in its own 
 See **[DSH-README.md](DSH-README.md)** for setup details, adding your model key, enabling a
 login before exposing it publicly, and troubleshooting.
 
+To host it for a team instead, deploy this repository on Railway: the `Dockerfile` at the root
+builds the same harness with a login in front. See
+**[Deploying to Railway](DSH-README.md#deploying-to-railway)**.
+
 ### Option B — the Replit template or Grok Bot
 
 The easiest way to start using the Agentic Team is via the Replit Template:

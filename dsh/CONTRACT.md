@@ -28,7 +28,9 @@ Only host prerequisite: **Node.js ≥ 22.19** (and `git`). No global pnpm, no `n
 $ROOT/
 ├── bin/
 │   ├── install.sh                 # one-time setup
-│   └── run.sh                     # launch the web UI (in the team workspace)
+│   ├── run.sh                     # launch the web UI (in the team workspace)
+│   └── container-start.sh         # container entry point: state onto the volume, then run.sh
+├── Dockerfile, .dockerignore      # the container image (Railway builds this)
 ├── DSH-README.md                  # user documentation
 ├── .gitignore                     # extended for dsh/
 ├── agentic-team-for-private-equity/   # EXISTING — the DSH workspace: personas + workflows
@@ -60,6 +62,7 @@ $ROOT/
     └── scripts/
         ├── provision-bots.mjs     # creates the roster through the DS Bot API
         ├── enable-auth.sh         # opt-in: adds dsh-ui-auth to the profile
+        ├── forward-port.mjs       # container: publishes the loopback UI on $PORT
         └── verify-install.sh      # acceptance checks
 ```
 

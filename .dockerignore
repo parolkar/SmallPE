@@ -1,0 +1,28 @@
+# Keep the build context to what the harness needs. The image runs
+# ./bin/install.sh itself, so nothing machine-local may leak in.
+.git
+.DS_Store
+**/.env
+.env
+
+# Locally installed harness state: platform-specific binaries and user data.
+dsh/node_modules
+dsh/.pnpm-store
+dsh/bin
+dsh/home
+dsh/.uv-cache
+dsh/.uv-python
+dsh/.tectonic-cache
+dsh/**/.plugin-manager
+dsh-ui-auth-*
+agentic-team-for-private-equity/templates/brand-fonts.tex
+
+# The Nanoc website is not part of the harness.
+output
+content
+layouts
+lib
+vendor
+Gemfile
+Gemfile.lock
+nanoc.yaml

@@ -51,8 +51,10 @@ detect_platform() {
   case "$os/$arch" in
     Darwin/arm64)  UV_TARGET=aarch64-apple-darwin ; PANDOC_TARGET=arm64-macOS      ; TECTONIC_TARGET=aarch64-apple-darwin ;;
     Darwin/x86_64) UV_TARGET=x86_64-apple-darwin  ; PANDOC_TARGET=x86_64-macOS     ; TECTONIC_TARGET=x86_64-apple-darwin ;;
-    Linux/x86_64)  UV_TARGET=x86_64-unknown-linux-gnu ; PANDOC_TARGET=linux-amd64  ; TECTONIC_TARGET=x86_64-unknown-linux-gnu ;;
-    Linux/aarch64) UV_TARGET=aarch64-unknown-linux-gnu; PANDOC_TARGET=linux-arm64  ; TECTONIC_TARGET=aarch64-unknown-linux-gnu ;;
+    # tectonic's glibc builds need glibc >= 2.38 (newer than Debian 12 or Ubuntu 22.04),
+    # and there is none at all for aarch64; its static musl build runs on any Linux.
+    Linux/x86_64)  UV_TARGET=x86_64-unknown-linux-gnu ; PANDOC_TARGET=linux-amd64  ; TECTONIC_TARGET=x86_64-unknown-linux-musl ;;
+    Linux/aarch64) UV_TARGET=aarch64-unknown-linux-gnu; PANDOC_TARGET=linux-arm64  ; TECTONIC_TARGET=aarch64-unknown-linux-musl ;;
     *) die "no prebuilt toolchain for ${os}/${arch}. Install uv, pandoc and tectonic yourself, or set UV_TARGET/PANDOC_TARGET/TECTONIC_TARGET." ;;
   esac
 }

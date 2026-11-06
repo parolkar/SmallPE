@@ -9,6 +9,10 @@ same branding as the rest of the app:
 | `sidebar.brand.mark` | `/custom-logo/logo-64.png` | collapsed rail |
 | `sidebar.brand.name` | `/custom-logo/logo-wide.png` | expanded brand row |
 
+The host half also brands the page itself: every tab favicon becomes the square
+logo, the title and the install manifest say **SmallPE**, and the Client half
+swaps the name back whenever DSH rewrites the title for the active session.
+
 ## How it works
 
 The brand is drawn in **two different places**, because the two shells differ:
