@@ -149,10 +149,33 @@ if [ "${DSH_OPEN_BROWSER:-0}" != "1" ]; then
   ARGS+=(--no-open)
 fi
 
+# Which URL to open depends on whether the dsh-ui-auth gateway is installed, so the
+# banner has to ask rather than print a bare http://host:port and hope.
+#
+#   without it (the default)  DSH's own launch token guards the UI, and it is new on
+#                             every start. A browser that has not exchanged it gets
+#                               dsh web authentication required; reopen the URL printed by dsh web.
+#                             and nothing else — which reads as a broken install, not a
+#                             missing token. The only URL that works on a fresh browser
+#                             is the "dsh web: http://…/?token=…" line DSH prints a
+#                             moment after this banner: it sets a cookie, redirects to
+#                             the clean URL, and the bare address works from then on
+#                             until that cookie expires.
+#   with it (./dsh/scripts/enable-auth.sh)
+#                             the gateway owns the listener and serves its own login
+#                             page, replaying the launch-token exchange in-process for
+#                             every request it forwards. There is nothing to copy: open
+#                             the plain address and sign in.
+if [ -d "$DSH_HOME/profiles/web/node_modules/dsh-ui-auth" ]; then
+  _open_hint="http://${DSH_HOST:-127.0.0.1}:${DSH_PORT:-3080}  (dsh-ui-auth login)"
+else
+  _open_hint="the \"dsh web:\" URL printed below — it carries this run's launch token"
+fi
 echo "SmallPE  ·  DeepSeek Harness"
 echo "  workspace : $SMALLPE_TEAM_WORKSPACE"
 echo "  harness   : $DSH_HOME"
-echo "  open      : http://${DSH_HOST:-127.0.0.1}:${DSH_PORT:-3080}"
+echo "  listening : http://${DSH_HOST:-127.0.0.1}:${DSH_PORT:-3080}"
+echo "  open      : $_open_hint"
 echo
 
 exec "$DSH_DIR/node_modules/.bin/dsh" "${ARGS[@]}"

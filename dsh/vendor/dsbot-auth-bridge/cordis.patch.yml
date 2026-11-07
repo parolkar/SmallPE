@@ -1,6 +1,7 @@
 # Mounts the DS Bot gateway bridge beside dsh-ui-auth.
-# The row waits on the `uiAuth` service, so load order between the two bundles does not
-# matter: it activates once dsh-ui-auth has provided the gateway.
+# The row activates unconditionally and waits for the `uiAuth` service on an inner fiber
+# (see index.js), so load order between the two bundles does not matter and an install
+# without dsh-ui-auth — the local default — reports no pending entry.
 - insert:
     - id: dsbot-auth-bridge
       name: '@local/dsbot-auth-bridge'

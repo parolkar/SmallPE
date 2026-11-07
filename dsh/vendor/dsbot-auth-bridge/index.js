@@ -19,22 +19,36 @@
 
 export const name = 'dsbot-auth-bridge'
 
-// Wait for dsh-ui-auth's service. Without it there is no gateway to open a route in, and
-// the plugin stays pending rather than pretending to work.
-export const inject = ['uiAuth']
-
+// NOTE: `uiAuth` is injected on an INNER fiber, not declared as this plugin's own
+// `inject`. The difference is only visible when dsh-ui-auth is absent, which is the
+// default for a local install (`./bin/run.sh` has no login; see dsh/scripts/enable-auth.sh):
+//
+//   * a top-level `inject` leaves the whole loader entry pending for a service nothing
+//     will ever provide, and dsh reports that on every start —
+//       dsh: warning: 1 entry did not activate
+//       dsbot-auth-bridge (@local/dsbot-auth-bridge): pending (waiting for service: uiAuth)
+//     which reads like a broken install and sends people looking for a login page that
+//     this configuration deliberately does not have;
+//   * an inner `ctx.inject` lets the entry activate, and only the child fiber waits. The
+//     loader's activation report covers entries and their subtrees, not fibers a plugin
+//     starts itself, so there is nothing to warn about.
+//
+// The behaviour is otherwise identical: the policy is registered the moment dsh-ui-auth
+// provides the gateway — before or after this plugin loads — and is withdrawn with it.
 export function apply(ctx, config = {}) {
   const pathname = config.pathname ?? '/api/bot'
 
-  ctx.effect(() => ctx.uiAuth.registerPolicy('dsbot-auth-bridge', {
-    http: {
-      // Deliberately narrow: the gateway throws "Ambiguous authorization policy" when two
-      // rules of the same kind match one request, and that fails closed.
-      matches: target => target.method === 'POST' && target.pathname === pathname,
-      // Admin only, matching how dsh-ui-auth already gates its other exact fetch routes.
-      // The gateway has authenticated the request before this rule runs; anything that
-      // gets here is a signed-in principal.
-      authorize: who => who?.role === 'admin',
-    },
-  }), `dsbot-auth-bridge: admit POST ${pathname}`)
+  ctx.inject(['uiAuth'], (ctx) => {
+    ctx.effect(() => ctx.uiAuth.registerPolicy('dsbot-auth-bridge', {
+      http: {
+        // Deliberately narrow: the gateway throws "Ambiguous authorization policy" when two
+        // rules of the same kind match one request, and that fails closed.
+        matches: target => target.method === 'POST' && target.pathname === pathname,
+        // Admin only, matching how dsh-ui-auth already gates its other exact fetch routes.
+        // The gateway has authenticated the request before this rule runs; anything that
+        // gets here is a signed-in principal.
+        authorize: who => who?.role === 'admin',
+      },
+    }), `dsbot-auth-bridge: admit POST ${pathname}`)
+  })
 }

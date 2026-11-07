@@ -13,8 +13,34 @@ it completely.
 git clone <this-repo> SmallPE
 cd SmallPE
 ./bin/install.sh    # one time — installs the harness and the nine agents
-./bin/run.sh        # start it; open http://127.0.0.1:3080
+
+# optional, once — a username/password login instead of the per-start token:
+./dsh/scripts/enable-auth.sh
+
+./bin/run.sh        # start it, then open the URL it prints (see below)
 ```
+
+### Which URL to open
+
+This trips up everyone once, so `bin/run.sh` now tells you in its banner. There are two
+modes, and they want different URLs:
+
+| | open | why |
+|---|---|---|
+| **default** (no `enable-auth.sh`) | the **`dsh web: http://…/?token=…`** line printed a moment after the banner | DSH mints a **new launch token on every start**; only that URL exchanges it for a cookie |
+| **with `./dsh/scripts/enable-auth.sh`** | the plain **<http://127.0.0.1:3080>** | the `dsh-ui-auth` gateway serves a login page and replays the token exchange for you |
+
+In the default mode, opening the plain address before the token URL returns one line of
+text and nothing else:
+
+```
+dsh web authentication required; reopen the URL printed by dsh web.
+```
+
+That is not a broken install — it is a missing token. Open the `dsh web:` line instead; it
+sets a cookie, redirects to the clean URL, and the plain address works from then on until
+the cookie expires (it is signed by a durable secret in `dsh/home/.credentials.yaml`, so it
+survives restarts).
 
 ---
 
@@ -240,8 +266,8 @@ on sending one, so `bin/run.sh` defaults `SMALLPE_LOCAL_API_KEY` to `local`.
 OPENROUTER_API_KEY=sk-or-... ./bin/run.sh
 ```
 
-Prefer the UI? Open <http://127.0.0.1:3080>, go to **Settings → Models**, and paste the key
-there. Keys entered that way land in `dsh/home/.credentials.yaml` — never in this repository.
+Prefer the UI? Open the harness ([which URL?](#which-url-to-open)), go to
+**Settings → Models**, and paste the key there. Keys entered that way land in `dsh/home/.credentials.yaml` — never in this repository.
 DSH also reads keys from the launch environment, `./.env` and `dsh/home/.env`.
 
 ## Zapier
@@ -262,19 +288,44 @@ Advanced (self-hosted endpoint) options live on the same page.
 
 ## Optional: put a login in front of it
 
-The default install listens on `127.0.0.1` only and has **no login**, so it just works.
+The default install listens on `127.0.0.1` only and has **no login** beyond DSH's own
+per-start launch token, so it just works.
 
-If you expose the UI to other people or beyond localhost, enable the auth plugin:
+Enable the auth plugin if you expose the UI to other people or beyond localhost — or simply
+if you would rather sign in once than copy a fresh token URL on every start:
 
 ```bash
-./dsh/scripts/enable-auth.sh
+./dsh/scripts/enable-auth.sh    # once; installs dsh-ui-auth into the 'web' profile
 ./bin/run.sh
 ```
 
-`dsh-ui-auth` then generates an `admin` account and prints a one-time password to the console.
+On that first start `dsh-ui-auth` creates an `admin` account and prints a one-time password.
+**Its log output is Chinese only** — look for the `[dsh-ui-auth]` block and read `用户名` as
+username, `密码` as password. The same credentials are written to
+`agentic-team-for-private-equity/dsh-ui-auth-bootstrap.txt` (gitignored, alongside the
+session and audit files it keeps there). Change the password after you sign in; the
+bootstrap file disappears once you do.
+
+Then open the plain <http://127.0.0.1:3080> — with the gateway installed there is no token
+to copy. It owns the listener, serves its own login page, and mints DSH's native cookie
+server-side for every request it forwards, which is why the Railway deployment never shows
+the token prompt either.
+
 The `@local/dsbot-auth-bridge` plugin is already installed and opens exactly one route
-(`POST /api/bot`) through that gateway, so the DS Bot panels keep working. To expose it behind
-a reverse proxy, set the public URL explicitly:
+(`POST /api/bot`) through that gateway, so the DS Bot panels keep working; without it the
+gateway rejects DS Bot's own request shape and every panel errors with an empty model list.
+With no gateway present the bridge simply sits idle and costs nothing.
+
+To go back to token-only local mode:
+
+```bash
+./dsh/node_modules/.bin/dsh plugin --profile web remove dsh-ui-auth
+```
+
+Both commands only touch `dsh/home/profiles/web/`, which is gitignored; the profile template
+is untouched, so a fresh `./bin/install.sh` still comes up without a login.
+
+To expose it behind a reverse proxy, set the public URL explicitly:
 
 ```bash
 DSH_PUBLIC_URL=https://smallpe.example.com/ DSH_TRUSTED_HOST=smallpe.example.com ./bin/run.sh
@@ -360,8 +411,20 @@ macOS, Linux and Windows or between architectures — `./bin/install.sh` handles
 
 ## Troubleshooting
 
+**The browser shows only `dsh web authentication required; reopen the URL printed by dsh web.`**
+You opened the plain address instead of the token URL. Go back to the terminal and open the
+`dsh web: http://…/?token=…` line — the token is new on every start. See
+[Which URL to open](#which-url-to-open). To stop dealing with tokens, run
+`./dsh/scripts/enable-auth.sh` and sign in instead.
+
 **`./bin/run.sh` starts but nothing appears in the browser, and nothing is printed.**
 Almost always an old Node.js. Run `node --version`; you need ≥ 22.19.
+
+**`dsh: warning: 1 entry did not activate` — `dsbot-auth-bridge … waiting for service: uiAuth`.**
+Stale build. The bridge waits for `dsh-ui-auth` on an inner fiber precisely so an install
+without the login reports nothing; if you still see this, your `dsh/vendor/dsbot-auth-bridge`
+predates that change. The warning is harmless either way — the bridge only has work to do
+when the gateway is installed.
 
 **No agents in the sidebar.**
 Provisioning did not complete. Run `node dsh/scripts/provision-bots.mjs` and read its output.
