@@ -35,8 +35,29 @@ export const name = 'dsbot-auth-bridge'
 //
 // The behaviour is otherwise identical: the policy is registered the moment dsh-ui-auth
 // provides the gateway — before or after this plugin loads — and is withdrawn with it.
+// DS Bot names its operation in the request BODY — it posts `{ endpoint, payload }` to the
+// one route — so authorization has to read the envelope, not the URL. Of its eleven
+// endpoints only three are needed to see the team and work with it; the rest change the
+// roster or install software, and stay with the admin.
+//
+// The SmallPE DS Bots are shared colleagues: every signed-in user must be able to load the
+// team and talk to the agents. Admin-only here is what leaves a non-admin looking at
+// "Setting up your Main Bot…" forever, because `state` never answers.
+const SHARED_ENDPOINTS = new Set([
+  'state',          // the roster and its sessions — the call the UI blocks on at startup
+  'agent-session',  // attach to an agent's session, i.e. actually talk to a colleague
+  'thinking',       // toggle the thinking view on a turn
+])
+
+// Left to the admin on purpose:
+//   add-agent, remove-agent, agent-rename, agent-archive, agent-adopt
+//     — the roster is the team's shape, not one member's to change
+//   update-check, update-install, dsh-update-install
+//     — these install software on the host; a non-admin must never reach them
+
 export function apply(ctx, config = {}) {
   const pathname = config.pathname ?? '/api/bot'
+  const shared = new Set(config.sharedEndpoints ?? SHARED_ENDPOINTS)
 
   ctx.inject(['uiAuth'], (ctx) => {
     ctx.effect(() => ctx.uiAuth.registerPolicy('dsbot-auth-bridge', {
@@ -44,10 +65,20 @@ export function apply(ctx, config = {}) {
         // Deliberately narrow: the gateway throws "Ambiguous authorization policy" when two
         // rules of the same kind match one request, and that fails closed.
         matches: target => target.method === 'POST' && target.pathname === pathname,
-        // Admin only, matching how dsh-ui-auth already gates its other exact fetch routes.
-        // The gateway has authenticated the request before this rule runs; anything that
-        // gets here is a signed-in principal.
-        authorize: who => who?.role === 'admin',
+        // `envelope` is the parsed body, which dsh-ui-auth only supplies once
+        // dsh/scripts/patch-ui-auth-sharing.mjs has run. Without that patch it is
+        // undefined and this falls back to admin-only — the stock behaviour, and the safe
+        // direction: an unpatched gateway must not hand the roster to everyone.
+        authorize: (who, _request, envelope) => {
+          // Require a principal explicitly. The gateway answers 401 before any policy runs
+          // when it cannot identify the caller, so this is belt and braces — but the rule
+          // it replaced was `who?.role === 'admin'`, which denied an absent principal, and
+          // widening a rule must not quietly drop that.
+          if (typeof who?.username !== 'string') return false
+          if (who.role === 'admin') return true
+          const endpoint = envelope?.endpoint
+          return typeof endpoint === 'string' && shared.has(endpoint)
+        },
       },
     }), `dsbot-auth-bridge: admit POST ${pathname}`)
   })

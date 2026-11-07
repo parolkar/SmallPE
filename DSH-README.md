@@ -356,6 +356,36 @@ container image alike. **Re-run it after any `dsh plugin add dsh-ui-auth`.**
 > scope file shares **nothing**, so the failure direction is closed. What is shared is
 > always auditable with `cat $DSH_HOME/smallpe-shared-scope.json`.
 
+### What a non-admin user can do
+
+With the login on, dsh-ui-auth gates almost everything to admins. Three of its defaults
+are wrong for a shared agent team, so `patch-ui-auth-sharing.mjs` adjusts them:
+
+| | Stock dsh-ui-auth | SmallPE |
+|---|---|---|
+| **The team workspace** | owner-only; invisible to everyone else | shared with all users |
+| **DS Bot** | `/api/bot` is admin-only, so the panel hangs on *"Setting up your Main Bot…"* forever | users may call `state`, `agent-session`, `thinking` |
+| **Models** | a user with no model profile of their own gets an empty catalogue and can run nothing | the deployment's routes (`SMALLPE_DEFAULT_PROVIDERS`, default `openrouter`) work for everyone |
+
+**DS Bot.** It posts every operation to the one route `/api/bot`, naming it in the body, so
+the bridge authorizes per operation — which needs the body, which the gateway does not hand
+to an `http` policy. The patch buffers it and replays it to the forward, reusing the
+module's own `bodyOf`/`replay`. Users get the three endpoints that load the team and talk to
+the agents. Roster changes (`add-agent`, `remove-agent`, `agent-rename`, `agent-archive`,
+`agent-adopt`) and host updates (`update-check`, `update-install`, `dsh-update-install`)
+stay with the admin — the last three install software on the host. Adjust the split with
+the row's `sharedEndpoints` config.
+
+**Models.** Set the OpenRouter key once, as the admin, through `OPENROUTER_API_KEY` (or
+Settings → Models). Every user can then pick those models; **none of them can see or change
+the key** — it lives in the deployment environment, and Settings and credentials stay
+administrator-only. A user who adds a model profile of their own keeps it, and it is still
+matched model by model; only the deployment routes are open-ended. Set
+`SMALLPE_DEFAULT_PROVIDERS=` empty to go back to per-user profiles only.
+
+Both are covered by tests in `dsh/vendor/dsbot-auth-bridge/test/`, which run against the
+patched copy and skip when there is no login installed.
+
 ### A note on language
 
 `dsh-ui-auth` is written in Chinese and translates itself in the browser: a MutationObserver
