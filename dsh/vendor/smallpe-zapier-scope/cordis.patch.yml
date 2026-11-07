@@ -1,0 +1,12 @@
+# Per-user Zapier MCP connections.
+#
+# The firm-wide `zapier-mcp` row is untouched: it keeps serving the shared DS Bot agents
+# with the team token. This row adds one connection per user who has stored a token of
+# their own, and gates each one so only that user's sessions can execute it.
+#
+# The row activates unconditionally and waits for `uiAuth` on an inner fiber, so an
+# install without a login does nothing — there are no users, and the single-token
+# behaviour of the stock row is already correct there.
+- insert:
+    - id: smallpe-zapier-scope
+      name: '@local/smallpe-zapier-scope'

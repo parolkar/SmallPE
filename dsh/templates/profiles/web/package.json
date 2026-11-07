@@ -5,6 +5,7 @@
     "@local/dsbot-auth-bridge": "link:../../../vendor/dsbot-auth-bridge",
     "@local/smallpe-brand": "link:../../../vendor/smallpe-brand",
     "@local/smallpe-user-workspaces": "link:../../../vendor/smallpe-user-workspaces",
+    "@local/smallpe-zapier-scope": "link:../../../vendor/smallpe-zapier-scope",
     "ds-bot": "0.2.0",
     "dsh-better-sidebar": "^0.28.0",
     "dsh-browser-use-chromium": "file:../../../vendor/dsh-browser-use-chromium",
@@ -23,6 +24,7 @@
         "@local/smallpe-user-workspaces",
         "dsh-browser-use-chromium",
         "dsh-zapier-mcp",
+        "@local/smallpe-zapier-scope",
         "dsh-better-sidebar",
         "@deepseek-ai/dsh-experimental-agent-team-profile"
       ]

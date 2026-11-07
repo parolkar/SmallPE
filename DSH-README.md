@@ -328,6 +328,40 @@ need a Zapier token from your [hosted MCP server](https://mcp.zapier.com/):
 
 Advanced (self-hosted endpoint) options live on the same page.
 
+### Zapier with more than one user
+
+`dsh-zapier-mcp` is single-tenant: one `credentialRef`, one connection with the token
+baked into the URL, and tools registered on the **root** context so `mcp__zapier__*`
+exists in every session. With a login enabled that means everyone's work runs against
+whoever's token was entered. `@local/smallpe-zapier-scope` fixes that:
+
+| Tools | Token | Who can execute |
+|---|---|---|
+| `mcp__zapier__*` | `ZAPIER_MCP_TOKEN` — the **firm's** token | anyone; this is what the shared DS Bot agents use |
+| `mcp__zapier_<user>__*` | `ZAPIER_MCP_TOKEN__<user>` — that person's own | **only sessions owned by that user** |
+
+A user stores their own token under `ZAPIER_MCP_TOKEN__<username>`; a narrow policy lets
+them write that one reference and nothing else. Verified live: john can set
+`ZAPIER_MCP_TOKEN__john`, and is refused `ZAPIER_MCP_TOKEN__admin`, the firm-wide
+`ZAPIER_MCP_TOKEN`, and `OPENROUTER_API_KEY`.
+
+**The boundary is execution, not visibility.** Tool names are global in DSH — there is no
+per-session registration seam — so every session can *see* every user's Zapier tool names.
+Each personal connection is therefore mounted beneath a fiber that shadows the `tools`
+service, so the MCP client's own registrations pass through a wrapper that checks
+`uiAuth.ownerOfSession(...)` on every call and fails closed when the caller cannot be
+identified.
+
+> **The shared DS Bots deliberately use the firm's token, not yours.** Their sessions are
+> owned by `admin` and shared with everyone, so a call from one carries no evidence of who
+> prompted it — `ownerOfSession` answers `admin` whoever is driving. Per-user tokens and
+> shared agents cannot both hold for the same session, so personal tokens apply to your
+> **own** sessions and the shared team keeps a firm credential. A personal connection
+> invoked from a shared agent is refused rather than silently falling back.
+
+Without dsh-ui-auth the plugin does nothing: there are no users, and the stock
+single-token behaviour is correct.
+
 ---
 
 ## Optional: put a login in front of it
