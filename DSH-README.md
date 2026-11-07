@@ -311,6 +311,25 @@ to copy. It owns the listener, serves its own login page, and mints DSH's native
 server-side for every request it forwards, which is why the Railway deployment never shows
 the token prompt either.
 
+### A note on language
+
+`dsh-ui-auth` is written in Chinese and translates itself in the browser: a MutationObserver
+sweeps its own DOM and substitutes from a 323-entry phrase table. Two consequences:
+
+* **Its console output is never translated** — that sweep is browser-side only. The
+  first-run credentials block is Chinese; read `用户名` as username, `密码` as password.
+* **One dialog escapes the sweep.** The TOTP reminder shown right after sign-in is appended
+  straight to `document.body` without the markers `translateOurDom()` looks for
+  (`.dshua, [role=dialog]`), so it stayed Chinese on an English install.
+  `dsh/scripts/localize-ui-auth.mjs` rewrites its four strings in the installed plugin, and
+  `enable-auth.sh` runs it for you — locally and in the container image alike. It is
+  idempotent, and it fails loudly if a future release rewords the prompt rather than
+  leaving you a half-translated dialog. **Re-run it after any `dsh plugin add dsh-ui-auth`**,
+  which restores the upstream file.
+
+This belongs upstream at [0QwQ0/dsh-ui-auth](https://github.com/0QwQ0/dsh-ui-auth); until it
+lands there, the patch is reapplied on each install.
+
 The `@local/dsbot-auth-bridge` plugin is already installed and opens exactly one route
 (`POST /api/bot`) through that gateway, so the DS Bot panels keep working; without it the
 gateway rejects DS Bot's own request shape and every panel errors with an empty model list.
