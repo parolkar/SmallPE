@@ -1,6 +1,6 @@
 {
   "name": "dsh-zapier-mcp",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Connect your hosted Zapier MCP server (mcp.zapier.com) to DeepSeek Harness with a Settings page for the Zapier MCP token.",
   "type": "module",
   "license": "MIT",

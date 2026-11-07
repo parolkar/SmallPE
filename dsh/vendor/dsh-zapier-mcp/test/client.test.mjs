@@ -81,6 +81,59 @@ const bundle = loaded;
 const mod = bundle.factory(stubRequire);
 
 /* -------------------------------------------------------------------------- *
+ * The host's translate contract
+ * -------------------------------------------------------------------------- */
+
+/**
+ * `t` exactly as DeepSeek Harness implements it.
+ *
+ * This is a faithful copy of `LocaleService.translate` in
+ * `@deepseek-ai/dsh-client-locale/lib/client.js`:
+ *
+ *   translate(ns, key, params) {
+ *     const template = this.lookup(ns, key, chain) ?? ... ?? key
+ *     if (!params) return template
+ *     return template.replace(/\{(\w+)\}/g, (m, name) =>
+ *       name in params ? String(params[name]) : m)
+ *   }
+ *
+ * Copying it matters more than it looks. Every fake `t` in this suite used to
+ * take positional arguments and call a dictionary entry when it was a function
+ * — which is not a contract the harness has ever offered. The tests therefore
+ * agreed with the bug instead of the platform, and v0.1.0 shipped a page that
+ * threw `template.replace is not a function` on first render: a dictionary
+ * value that is a function reaches `.replace()` as soon as any params are
+ * passed. Model the real thing here and that class of bug cannot pass again.
+ *
+ * @param {Record<string, unknown>} dict the dictionary to resolve against
+ * @returns {(key: string, params?: Record<string, unknown>) => string} translator
+ */
+function makeTranslate(dict) {
+	return (key, params) => {
+		const template = dict[key] ?? key;
+		if (!params) {
+			return /** @type {string} */ (template);
+		}
+		return String(template).replace(/\{(\w+)\}/g, (match, name) =>
+			name in params ? String(params[name]) : match,
+		);
+	};
+}
+
+/**
+ * `resolveSlotLabel` as `@deepseek-ai/dsh-client-ui-slots` exports it: a slot
+ * `label` is either display text or a thunk re-read on every projection, so
+ * localized text follows the active locale without re-registering.
+ *
+ * @param {unknown} label the registered label
+ * @returns {string} the projected text, '' when there is none
+ */
+function resolveSlotLabel(label) {
+	const value = typeof label === 'function' ? label() : label;
+	return typeof value === 'string' ? value : '';
+}
+
+/* -------------------------------------------------------------------------- *
  * Fake plugin context
  * -------------------------------------------------------------------------- */
 
@@ -112,19 +165,7 @@ function makeFakeCtx(remote) {
 			},
 			bind(ns) {
 				const entry = localeRegs.find((item) => item.ns === ns);
-				const dict = entry === undefined ? {} : entry.dicts.en;
-				/**
-				 * @param {string} key translation key
-				 * @param {...any} args interpolation arguments
-				 * @returns {string} translated string
-				 */
-				return (key, ...args) => {
-					const value = dict[key];
-					if (typeof value === 'function') {
-						return value(...args);
-					}
-					return value === undefined ? key : value;
-				};
+				return makeTranslate(entry === undefined ? {} : entry.dicts.en);
 			},
 		},
 		slots: {
@@ -278,6 +319,39 @@ test('the section sits directly below Models (order 11)', () => {
 	assert.equal(typeof entry.component, 'function');
 });
 
+test('the registration carries everything the settings shell reads', () => {
+	// Slot reachability, not just slot name. `settings.section` is a general
+	// "add a settings page" seat: ui-settings-general builds its nav generically
+	// from `ctx.slots.entries('settings.section')` with no allowlist, reading
+	// exactly three fields per entry —
+	//
+	//   rows = ctx.slots.entries("settings.section").map((e) => ({
+	//     id: e.options.id ?? "",
+	//     order: e.options.order ?? 0,
+	//     label: resolveSlotLabel(e.options.label) ?? "",
+	//   })).sort((a, b) => a.order - b.order)
+	//     — @deepseek-ai/dsh-client-ui-settings-general/lib/client.js
+	//
+	// An entry missing any of them still registers, but renders as a nav row with
+	// no title or a page the shell cannot address by id. Assert all three, since
+	// a passing suite that never checked this is how an unreachable page ships.
+	const { remote } = makeRemote();
+	const { ctx, registrations } = makeFakeCtx(remote);
+	mod.apply(ctx);
+
+	const { options } = registrations[0];
+	assert.equal(options.name, 'settings.section');
+	assert.equal(typeof options.id, 'string');
+	assert.notEqual(options.id.trim(), '', 'id drives the shell\'s `only` filter');
+	assert.equal(typeof options.order, 'number');
+	assert.ok(Number.isFinite(options.order), 'order drives the nav position');
+	assert.notEqual(
+		resolveSlotLabel(options.label).trim(),
+		'',
+		'label is the nav row title; an empty one renders a blank entry',
+	);
+});
+
 test('label is a thunk resolving a non-empty string', () => {
 	const { remote } = makeRemote();
 	const { ctx, registrations } = makeFakeCtx(remote);
@@ -340,13 +414,40 @@ test('dictionaries cover the same keys in both languages', () => {
 	const zhKeys = Object.keys(zh).sort();
 	assert.deepEqual(zhKeys, enKeys);
 	for (const key of enKeys) {
-		const value = en[key];
-		const isUsable =
-			(typeof value === 'string' && value.trim() !== '') ||
-			typeof value === 'function';
-		assert.ok(isUsable, `en.${key} must be a non-empty string or function`);
 		const other = zh[key];
-		assert.equal(typeof other, typeof value, `zh.${key} type mismatch`);
+		assert.equal(typeof other, typeof en[key], `zh.${key} type mismatch`);
+	}
+});
+
+test('every dictionary value is a plain non-empty string', () => {
+	// The regression that made v0.1.0's settings page unreachable. Five entries
+	// were formatter functions, but the harness resolves a template with
+	// `template.replace(...)` — so the page threw `template.replace is not a
+	// function` on first render and the slot host abdicated the section, leaving
+	// a blank page behind a nav label. The previous version of this test accepted
+	// functions, which is exactly how that shipped.
+	for (const [label, dict] of [['en', en], ['zh', zh]]) {
+		for (const [key, value] of Object.entries(dict)) {
+			assert.equal(
+				typeof value,
+				'string',
+				`${label}.${key} must be a string, not ${typeof value} — the host calls .replace() on it`,
+			);
+			assert.notEqual(value.trim(), '', `${label}.${key} must not be empty`);
+		}
+	}
+});
+
+test('{placeholder} names match between English and Chinese', () => {
+	// A placeholder the other language omits silently renders as literal "{name}".
+	const names = (text) =>
+		[...String(text).matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
+	for (const key of Object.keys(en)) {
+		assert.deepEqual(
+			names(zh[key]),
+			names(en[key]),
+			`zh.${key} placeholders must match en.${key}`,
+		);
 	}
 });
 
@@ -470,10 +571,11 @@ test('statusTone maps each status and unknown values', () => {
 });
 
 test('formatStatusText reports every state', () => {
-	const t = (key, ...args) => {
-		if (key === 'connected') return `connected:${args[0]}`;
-		return key;
-	};
+	// Resolved the way the harness does it, so the {count} placeholder has to be
+	// filled from a params object rather than a positional argument. Only
+	// `connected` is defined: every other key falls back to itself, which is what
+	// lets the assertions below name the key the function picked.
+	const t = makeTranslate({ connected: 'connected:{count}' });
 	const ok = readSnapshot(connectedDocument());
 	assert.equal(formatStatusText(ok, t), 'connected:3');
 	assert.equal(
@@ -660,10 +762,7 @@ test('the section component renders for every status without throwing', () => {
 	// the component body itself never throws and emits the expected anchors.
 	const { remote } = makeRemote();
 	const client = createClient({ remote });
-	const t = (key, ...args) => {
-		const value = en[key];
-		return typeof value === 'function' ? value(...args) : value;
-	};
+	const t = makeTranslate(en);
 	const tree = ZapierSection({ t, client });
 	assert.ok(tree !== null && typeof tree === 'object');
 	assert.equal(tree.type, 'div');
@@ -680,10 +779,7 @@ test('the section component renders for every status without throwing', () => {
 test('the advanced disclosure is collapsed by default and secondary', () => {
 	const { remote } = makeRemote();
 	const client = createClient({ remote });
-	const t = (key, ...args) => {
-		const value = en[key];
-		return typeof value === 'function' ? value(...args) : value;
-	};
+	const t = makeTranslate(en);
 	const tree = ZapierSection({ t, client });
 	/**
 	 * @param {any} node pseudo element
