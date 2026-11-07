@@ -32,8 +32,26 @@ Run the whole agent team as a local web workspace. Requires only **Node.js ≥ 2
 
 ```bash
 ./bin/install.sh    # one time: installs the harness and the 9 agents
-./bin/run.sh        # start it, then open http://127.0.0.1:3080
+./bin/run.sh        # start it
 ```
+
+**Open the `dsh web:` URL that `run.sh` prints**, not a bare `127.0.0.1:3080`:
+
+```
+dsh web: http://127.0.0.1:3080/?token=hRyX5u9fDpN9e26wkL_WlGfsOJuNj0UShtB-iTLw8LY
+```
+
+The harness mints a new launch token on every start, and only that URL exchanges it for a
+browser cookie. Opening the plain address first gets you one line of text —
+`dsh web authentication required; reopen the URL printed by dsh web.` — which looks like a
+broken install but is only a missing token. Once you have used the token URL once, the plain
+address works until the cookie expires.
+
+> Want a real username/password login instead of the per-start token? Run
+> **`./dsh/scripts/enable-auth.sh`** once before `./bin/run.sh` — then you open the plain
+> `http://127.0.0.1:3080` and sign in. It is optional for local use and recommended before
+> exposing the UI to anyone else. See
+> [Optional: put a login in front of it](DSH-README.md#optional-put-a-login-in-front-of-it).
 
 Everything installs inside this folder — the harness, its packages, the agents and their
 conversations. Delete the folder and it is all gone. The Managing Partner and all eight

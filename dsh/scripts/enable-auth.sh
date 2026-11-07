@@ -30,12 +30,23 @@ cd "$ROOT"
 echo "==> Enabling dsh-ui-auth in the 'web' profile"
 "$DSH_DIR/node_modules/.bin/dsh" plugin --profile web add dsh-ui-auth
 
+# dsh-ui-auth is a Chinese plugin that translates itself at run time, but its post-login
+# TOTP reminder is built outside the roots its own localiser sweeps, so it stays Chinese on
+# an English install. Put that one dialog into English; see the script for the detail.
+# Re-running is safe, and it exits 0 when the plugin is absent.
+echo "==> Translating the dsh-ui-auth TOTP reminder"
+node "$DSH_DIR/scripts/localize-ui-auth.mjs"
+
 cat <<'EOF'
 
-Done. Restart the harness with ./bin/run.sh.
+Done. Restart the harness with ./bin/run.sh, then open http://127.0.0.1:3080 —
+with the gateway installed there is no launch-token URL to copy; it serves its
+own login page and does that exchange for you.
 
 On first start, dsh-ui-auth creates an "admin" account and prints its one-time
-password to the console. Keep that password safe — it gates your whole UI.
+password to the console. Its logs are Chinese only: read 用户名 as username and
+密码 as password. The same credentials are written next to the workspace in
+dsh-ui-auth-bootstrap.txt. Keep them safe — they gate your whole UI.
 
 To go back to the no-login local mode: remove the plugin and restart.
   ./dsh/node_modules/.bin/dsh plugin --profile web remove dsh-ui-auth
