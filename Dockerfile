@@ -63,11 +63,20 @@ RUN f=dsh/home/profiles/web/node_modules/dsh-ui-auth/lib/modern-gateway.js \
 # invocation would still fail. System gems also survive the workspace moving onto the
 # volume at boot, which a vendor/ directory inside the tool would have to be copied with.
 #
+# Installed with `gem install`, NOT `bundle install`. The Gemfile.lock files were resolved
+# on Ruby 3.3 with bundler 2.7.1; Debian bookworm ships Ruby 3.1.2 with bundler 2.3.15, and
+# bundler 2.7 requires Ruby >= 3.2, so the image cannot even upgrade itself to satisfy
+# `BUNDLED WITH`. The locks also name platforms (`x86_64-linux-gnu`) that bundler 2.3 does
+# not understand. Since neither script calls `bundler/setup` — both just `require 'thor'`,
+# and the docs invoke them directly — bundler buys nothing at run time, and dropping it
+# removes that whole version coupling. The Gemfiles remain the source of these versions for
+# local development, where a current Ruby makes `bundle install` work normally.
+#
 # The smoke test is part of the build: a missing gem must fail here, not in front of an
 # agent mid-job.
-RUN for tool in pdf_to_markdown excel_to_markdown; do \
-      ( cd "/app/agentic-team-for-private-equity/tools/$tool" && bundle install ) || exit 1; \
-    done \
+RUN gem install --no-document \
+      'pdf-reader:~>2.12' 'thor:~>1.3' 'colorize:~>1.1' 'mini_magick:~>4.12' \
+      'pdftotext:~>0.2' 'table_print:~>1.5' 'roo:~>2.10' \
  && /app/agentic-team-for-private-equity/tools/pdf_to_markdown/pdf2md help convert >/dev/null \
  && /app/agentic-team-for-private-equity/tools/excel_to_markdown/excel2md help convert >/dev/null \
  && echo "ruby tools ready: $(ruby -v)"
