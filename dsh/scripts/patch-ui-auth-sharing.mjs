@@ -171,6 +171,92 @@ const ALLOWED_MODEL_PATCH = {
                 && !scope.models.some(entry => entry.provider === provider)));`,
 }
 
+/**
+ * Fourth patch: stop the gateway choking on binary RPC responses.
+ *
+ * Symptom: the sidebar file viewer cannot open a PDF (or any file read as bytes) and
+ * shows
+ *   Read failed: client api: workspaceFiles/readBytes failed:
+ *   transport failure for /api/workspaceFiles/readBytes: HTTP 502
+ *
+ * `forwardJson` buffers every /api/* RPC response and re-serialises it so ownership can
+ * be projected onto the result:
+ *
+ *   const envelope = JSON.parse(body.toString('utf8'))
+ *
+ * But DSH does not answer every call with JSON. When a result carries bytes it replies
+ * `multipart/form-data`, and DSH's own client branches on exactly that:
+ *
+ *   content-type === 'multipart/form-data' ? parseBinaryResponse(response)
+ *                                          : parseConnectionResponse(await response.json())
+ *     — @deepseek-ai/dsh-client-connection/lib/client.browser.js
+ *
+ * The gateway has no such branch, so `JSON.parse` meets the `--boundary` prefix and dies
+ * with "No number after minus sign in JSON at position 1". The catch turns that into
+ * HTTP 502 "Could not persist or project response".
+ *
+ * This affects EVERY user including the admin — it is not an ownership problem — and any
+ * endpoint whose result carries bytes, not just PDFs.
+ *
+ * The fix forwards a multipart body untouched. Nothing is lost by not projecting it: a
+ * byte range has no ownership fields to filter, and the request was already authorized
+ * before it was forwarded — `workspaceFiles/*` is gated on
+ * `session(principal, args.workspaceFileScopeId)`. Passing the bytes through is also the
+ * only behaviour that can work at all, since re-serialising a multipart body as JSON
+ * would corrupt it.
+ *
+ * The framing headers are kept for a pass-through body, because unlike the JSON path the
+ * bytes are unchanged and content-length still describes them.
+ */
+const BINARY_RESPONSE_PATCH = {
+  what: 'binary response pass-through',
+  from: `                    capture(chunk);
+                    let body = Buffer.concat(chunks);
+                    if (status >= 200 && status < 300) {
+                        const envelope = JSON.parse(body.toString('utf8'));
+                        if (envelope?.result?.ok === true)
+                            envelope.result.value = await transform(envelope.result.value);
+                        body = Buffer.from(JSON.stringify(envelope));
+                    }
+                    restore();
+                    // The body is re-serialized here: framing/encoding headers of the original
+                    // bytes no longer describe it, so they must not survive the projection.
+                    for (const header of ['content-length', 'Content-Length', 'content-encoding', 'Content-Encoding', 'transfer-encoding', 'Transfer-Encoding']) {
+                        delete headers[header];
+                        res.removeHeader?.(header);
+                    }`,
+  to: `                    capture(chunk);
+                    let body = Buffer.concat(chunks);
+                    // SmallPE: DSH answers with multipart/form-data when a result carries
+                    // bytes (workspaceFiles/readBytes and friends). Those cannot be parsed
+                    // as JSON — the boundary prefix throws — and have no ownership fields
+                    // to project, so forward them exactly as received. Authorization has
+                    // already run for this request.
+                    // The content type can arrive either way: as a field passed to
+                    // writeHead (captured in \`headers\`) or set directly on the response
+                    // with setHeader, which the interception above never sees. DSH uses
+                    // the latter, so consulting only \`headers\` silently misses it.
+                    const __smallpeType = String(
+                        headers['content-type'] ?? headers['Content-Type']
+                        ?? res.getHeader?.('content-type') ?? '',
+                    ).split(';', 1)[0].trim().toLowerCase();
+                    const __smallpeBinary = __smallpeType === 'multipart/form-data';
+                    if (status >= 200 && status < 300 && !__smallpeBinary) {
+                        const envelope = JSON.parse(body.toString('utf8'));
+                        if (envelope?.result?.ok === true)
+                            envelope.result.value = await transform(envelope.result.value);
+                        body = Buffer.from(JSON.stringify(envelope));
+                    }
+                    restore();
+                    // The body is re-serialized here: framing/encoding headers of the original
+                    // bytes no longer describe it, so they must not survive the projection.
+                    // A pass-through binary body IS the original bytes, so its framing stands.
+                    if (!__smallpeBinary) for (const header of ['content-length', 'Content-Length', 'content-encoding', 'Content-Encoding', 'transfer-encoding', 'Transfer-Encoding']) {
+                        delete headers[header];
+                        res.removeHeader?.(header);
+                    }`,
+}
+
 /** The predicates as dsh-ui-auth emits them, and the shared-aware replacements. */
 const REPLACEMENTS = [
   {
@@ -247,9 +333,9 @@ const TARGETS = [
   },
   {
     file: 'modern-gateway.js',
-    edits: [HTTP_BODY_PATCH],
+    edits: [HTTP_BODY_PATCH, BINARY_RESPONSE_PATCH],
     prelude: '',
-    summary: 'request body passed to http policies',
+    summary: 'request body passed to http policies, binary responses forwarded intact',
   },
   {
     file: 'index.js',

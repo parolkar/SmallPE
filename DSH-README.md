@@ -525,6 +525,19 @@ Provisioning did not complete. Run `node dsh/scripts/provision-bots.mjs` and rea
 If it reports that the server did not become ready, start `./bin/run.sh` once in another
 terminal and retry — the script reports the server's own log tail on failure.
 
+**The sidebar file viewer cannot open a document: `transport failure for /api/workspaceFiles/readBytes: HTTP 502`.**
+Fixed by `dsh/scripts/patch-ui-auth-sharing.mjs`, which `enable-auth.sh` applies. The
+gateway buffers every `/api/*` RPC response and re-serialises it to project ownership onto
+the result — but DSH answers **`multipart/form-data`** whenever a result carries bytes, and
+DSH's own client branches on exactly that content type. The gateway had no such branch, so
+`JSON.parse` met the `--boundary` prefix and threw *"No number after minus sign in JSON at
+position 1"*, which the catch turned into 502 *"Could not persist or project response"*.
+
+This affected **every user including the admin**, and every endpoint returning bytes — not
+just PDFs. Multipart responses are now forwarded untouched: a byte range carries no
+ownership fields to filter, and the request was already authorized before being forwarded.
+`dsh/scripts/verify-file-reads.mjs` checks the bytes arrive identical to the file on disk.
+
 **An agent shows no "thinking" feedback — nothing happens until the whole reply appears.**
 A DOM-contract skew between `ds-bot@0.2.0` and DSH `0.2.1-rc.2`, fixed by
 `dsh/scripts/patch-dsbot-typing.mjs`, which `./bin/install.sh` runs for you. ds-bot finds
