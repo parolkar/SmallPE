@@ -95,6 +95,16 @@ link_to_volume() {
 }
 link_to_volume "$DSH_DIR/home" "$DATA/home"
 link_to_volume "$WORKSPACE" "$DATA/workspace"
+
+# Seed the tectonic cache from the image before linking the live path at it. The image
+# warms this cache during the build (see the Dockerfile): on a cold cache the first PDF
+# takes ~6 minutes because tectonic fetches the whole LaTeX package set, against ~1.5s
+# warm. Without this the symlink would point at an empty volume directory and the very
+# first document an agent produces would pay that cost again — once per volume, and once
+# more whenever the volume is recreated.
+if [ -d "$DSH_DIR/.tectonic-cache.dist" ]; then
+  copy_missing "$DSH_DIR/.tectonic-cache.dist" "$DATA/cache/tectonic"
+fi
 link_to_volume "$DSH_DIR/.tectonic-cache" "$DATA/cache/tectonic"
 say "harness home: $DSH_DIR/home -> $DATA/home"
 say "workspace   : $WORKSPACE -> $DATA/workspace"
