@@ -30,6 +30,7 @@ window.__ModuleLoader__.load({
 		const useMemo = React.useMemo;
 		const useRef = React.useRef;
 		const useCallback = React.useCallback;
+		const Component = React.Component;
 
 		/** Settings namespace this plugin owns. */
 		const NS = 'zapier-mcp';
@@ -70,14 +71,13 @@ window.__ModuleLoader__.load({
 			removing: 'Removing\u2026',
 			notConfigured: 'Not configured',
 			checking: 'Checking token\u2026',
-			connected: (count) => `Connected \u2014 ${count} tools available`,
+			connected: 'Connected \u2014 {count} tools available',
 			rejected: 'Token rejected',
 			readFailed: 'Could not read status',
 			readFailedHelp:
 				'The settings service did not answer. You can still save a token; retry in a moment.',
-			toolsPartial: (shown, total) =>
-				`Showing ${shown} of ${total} tools.`,
-			checkedAt: (when) => `Last checked ${when}`,
+			toolsPartial: 'Showing {shown} of {total} tools.',
+			checkedAt: 'Last checked {when}',
 			emptyToken: 'Enter a token first.',
 			saveFailed: 'Could not save the token.',
 			removeFailed: 'Could not remove the token.',
@@ -86,12 +86,12 @@ window.__ModuleLoader__.load({
 				'Still checking \u2014 the result will appear here when it finishes.',
 			advanced: 'Advanced',
 			endpointLabel: 'MCP endpoint override',
-			endpointHelp: (url) => `Leave empty to use the Zapier default ${url}.`,
+			endpointHelp: 'Leave empty to use the Zapier default {url}.',
 			endpointSave: 'Save endpoint',
 			endpointSaving: 'Saving\u2026',
 			endpointSaved: 'Endpoint update requested.',
 			endpointFailed: 'Could not save the endpoint.',
-			endpointInUse: (url) => `In use: ${url}`,
+			endpointInUse: 'In use: {url}',
 		};
 
 		/** @type {Record<string, any>} */
@@ -113,12 +113,12 @@ window.__ModuleLoader__.load({
 			removing: '正在移除\u2026',
 			notConfigured: '未配置',
 			checking: '正在检查令牌\u2026',
-			connected: (count) => `已连接 \u2014 可用工具 ${count} 个`,
+			connected: '已连接 \u2014 可用工具 {count} 个',
 			rejected: '令牌被拒绝',
 			readFailed: '无法读取状态',
 			readFailedHelp: '设置服务未响应。仍可保存令牌，请稍后重试。',
-			toolsPartial: (shown, total) => `已列出 ${shown} / ${total} 个工具。`,
-			checkedAt: (when) => `上次检查 ${when}`,
+			toolsPartial: '已列出 {shown} / {total} 个工具。',
+			checkedAt: '上次检查 {when}',
 			emptyToken: '请先输入令牌。',
 			saveFailed: '无法保存令牌。',
 			removeFailed: '无法移除令牌。',
@@ -126,12 +126,12 @@ window.__ModuleLoader__.load({
 			pollTimeout: '仍在检查 \u2014 完成后结果会显示在此处。',
 			advanced: '高级',
 			endpointLabel: 'MCP 端点覆盖',
-			endpointHelp: (url) => `留空则使用 Zapier 默认值 ${url}。`,
+			endpointHelp: '留空则使用 Zapier 默认值 {url}。',
 			endpointSave: '保存端点',
 			endpointSaving: '正在保存\u2026',
 			endpointSaved: '已请求更新端点。',
 			endpointFailed: '无法保存端点。',
-			endpointInUse: (url) => `当前使用：${url}`,
+			endpointInUse: '当前使用：{url}',
 		};
 
 		/* ------------------------------------------------------------------ *
@@ -350,7 +350,7 @@ window.__ModuleLoader__.load({
 				case 'checking':
 					return t('checking');
 				case 'connected':
-					return t('connected', snapshot.toolCount);
+					return t('connected', { count: snapshot.toolCount });
 				case 'error':
 					return t('rejected');
 				case 'unconfigured':
@@ -1105,11 +1105,11 @@ window.__ModuleLoader__.load({
 					? h(
 							'span',
 							{ style: styles.meta },
-							t('toolsPartial', toolNames.length, snapshot.toolCount),
+							t('toolsPartial', { shown: toolNames.length, total: snapshot.toolCount }),
 						)
 					: null,
 				checkedAtText !== ''
-					? h('span', { style: styles.meta }, t('checkedAt', checkedAtText))
+					? h('span', { style: styles.meta }, t('checkedAt', { when: checkedAtText }))
 					: null,
 			);
 
@@ -1225,7 +1225,7 @@ window.__ModuleLoader__.load({
 						h(
 							'span',
 							{ style: styles.help },
-							t('endpointHelp', DEFAULT_ENDPOINT),
+							t('endpointHelp', { url: DEFAULT_ENDPOINT }),
 						),
 					),
 					h(
@@ -1247,7 +1247,7 @@ window.__ModuleLoader__.load({
 					h(
 						'span',
 						{ style: styles.meta },
-						t('endpointInUse', effectiveEndpoint),
+						t('endpointInUse', { url: effectiveEndpoint }),
 					),
 				),
 			);
@@ -1264,6 +1264,78 @@ window.__ModuleLoader__.load({
 				advanced,
 			);
 		}
+
+		/**
+		 * Crash shield for the Settings page.
+		 *
+		 * The slot host's own boundary abdicates a crashed section: the entry
+		 * leaves the content projection while its nav label stays, which reads
+		 * as a silently blank page. This boundary intercepts the throw one level
+		 * down and renders the error text in the DOM instead — a crash is then
+		 * visible, reportable, and recoverable without a page reload.
+		 */
+		const SectionBoundary =
+			typeof Component === 'function'
+				? class extends Component {
+			constructor(props) {
+				super(props);
+				this.state = { error: null };
+			}
+
+			/** @returns {object} next state carrying the caught error. */
+			static getDerivedStateFromError(error) {
+				return { error: error instanceof Error ? error : new Error(String(error)) };
+			}
+
+			/**
+			 * Mirror the crash to the console so the browser DevTools keep the
+			 * original stack.
+			 * @param {Error} error - the thrown error.
+			 * @returns {void}
+			 */
+			componentDidCatch(error) {
+				if (typeof console !== 'undefined' && typeof console.error === 'function') {
+					console.error('[dsh-zapier-mcp] settings page crashed:', error);
+				}
+			}
+
+			/** @returns {any} the page again, or the visible crash banner. */
+			render() {
+				if (this.state.error === null) {
+					return h(ZapierSection, this.props);
+				}
+				const message = this.state.error.message || String(this.state.error);
+				const stack = typeof this.state.error.stack === 'string' ? this.state.error.stack.split('\n').slice(1, 4).join('\n') : '';
+				return h(
+					'div',
+					{ style: styles.root, 'data-zapier-mcp-error': '' },
+					h(
+						'p',
+						{ style: styles.error, role: 'alert' },
+						'dsh-zapier-mcp: the Zapier MCP settings page crashed while rendering.',
+					),
+					h('pre', {
+						style: {
+							...styles.toolList,
+							whiteSpace: 'pre-wrap',
+							userSelect: 'text',
+						},
+					}, message + (stack !== '' ? `\n${stack}` : '')),
+					h(
+						'button',
+						{
+							type: 'button',
+							style: styles.buttonPrimary,
+							onClick: () => this.setState({ error: null }),
+						},
+						'Retry',
+					),
+				);
+			}
+				}
+				// A host React without Component (never seen in practice) still
+				// gets a working page — just without the crash shield.
+				: ZapierSection;
 
 		/** Services this bundle needs before `apply` runs. */
 		const inject = [
@@ -1296,7 +1368,7 @@ window.__ModuleLoader__.load({
 						label: () => t('nav'),
 						inject: () => ({ t, client }),
 					},
-					ZapierSection,
+					SectionBoundary,
 				),
 			);
 		}
@@ -1316,6 +1388,7 @@ window.__ModuleLoader__.load({
 				en,
 				zh,
 				ZapierSection,
+				SectionBoundary,
 				createClient,
 				interpretEnvelope,
 				readSnapshot,
