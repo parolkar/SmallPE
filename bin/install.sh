@@ -196,6 +196,13 @@ else
   die "the DSH CLI is not available; cannot install profile plugins."
 fi
 
+# ds-bot@0.2.0 looks for its activity-indicator portal with a direct-child selector that
+# DSH 0.2.1-rc.2 no longer produces, so an agent appears to do nothing at all until its
+# whole reply lands. Re-applied here because every pnpm install restores the npm copy.
+# It fails loudly rather than guessing if ds-bot changes that code; see the script.
+node "$DSH_DIR/scripts/patch-dsbot-typing.mjs" \
+  || die "patching the ds-bot typing indicator failed. Read dsh/scripts/patch-dsbot-typing.mjs — ds-bot has probably changed how it mounts the indicator."
+
 # --- 4b. the vendored document toolchain ------------------------------------- #
 # Pandoc is mounted as an MCP server, and the agents' own PDF pipeline calls
 # `pandoc` directly, so ./dsh/bin carries uv/uvx, pandoc and tectonic. They are

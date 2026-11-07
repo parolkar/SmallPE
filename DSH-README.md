@@ -525,6 +525,17 @@ Provisioning did not complete. Run `node dsh/scripts/provision-bots.mjs` and rea
 If it reports that the server did not become ready, start `./bin/run.sh` once in another
 terminal and retry — the script reports the server's own log tail on failure.
 
+**An agent shows no "thinking" feedback — nothing happens until the whole reply appears.**
+A DOM-contract skew between `ds-bot@0.2.0` and DSH `0.2.1-rc.2`, fixed by
+`dsh/scripts/patch-dsbot-typing.mjs`, which `./bin/install.sh` runs for you. ds-bot finds
+the indicator's portal container with `[data-chat-flow] > [data-chat-running]`, a
+direct-child selector; this DSH wraps slot contributions, so the element is a grandchild
+(`[data-chat-flow] > [data-slot] > [data-chat-running]`) and the query never matches —
+`useRunningHost` returns null and the component renders nothing. Everything else about it
+already works: measured live 250ms into a turn, `running` is true, nothing is streaming,
+the entrance phase is `in` and the label is picked. Only the container is missing.
+**Re-run that script after any `pnpm install` in the profile**, which restores the npm copy.
+
 **A plugin install fails during `./bin/install.sh`.**
 Run the underlying command to see the raw error:
 `cd dsh/home/profiles/web && ../../node_modules/.bin/pnpm install`.
