@@ -106,6 +106,21 @@ say "workspace   : $WORKSPACE -> $DATA/workspace"
 export SMALLPE_USER_WORKSPACES_ROOT="$DATA/workspaces"
 say "user spaces : $SMALLPE_USER_WORKSPACES_ROOT/<username>"
 
+# Model routes every signed-in user may run, on top of any model profile of their own.
+#
+# dsh-ui-auth decides what a non-admin may use from their own model profiles and the ones
+# an admin shared with them; a user who has configured none gets an empty catalogue and
+# cannot run anything. SmallPE configures OpenRouter once for the whole deployment (see the
+# profile's cordis.patch.yml, keyed by OPENROUTER_API_KEY), which is a route and not a
+# profile — so without this the team signs in to an empty model picker.
+#
+# The key is NOT exposed by this: it stays in the environment, and Settings and credentials
+# remain administrator-only. Users get the route, never the secret. Set it empty to go back
+# to per-user profiles only.
+: "${SMALLPE_DEFAULT_PROVIDERS:=openrouter}"
+export SMALLPE_DEFAULT_PROVIDERS
+say "model routes: ${SMALLPE_DEFAULT_PROVIDERS:-<none — each user needs their own profile>}"
+
 # The agents were provisioned in the image, where the workspace was the real folder
 # $WORKSPACE; DSH stored that path for the workspace and for each session. It is a
 # link now, and DSH compares a session's realpath with the stored path, so new

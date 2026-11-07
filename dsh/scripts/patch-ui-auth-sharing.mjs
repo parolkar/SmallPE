@@ -46,6 +46,131 @@ import { readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
 
+/**
+ * Second patch: let an `http` policy see the request body.
+ *
+ * DS Bot posts every one of its operations to the single route `/api/bot`, naming the
+ * operation in the BODY (`{ endpoint, payload }`), not the URL. The gateway hands an
+ * `http` policy the raw stream and then forwards that same stream, so a policy that read
+ * the body to tell `state` (harmless, and what the UI needs to start) from
+ * `dsh-update-install` (installs software on the host) would consume it and break the
+ * forward. Without this, the only choices are "admins only" — which leaves non-admins
+ * staring at "Setting up your Main Bot…" forever — or "everyone, for everything".
+ *
+ * The fix reuses the module's own machinery: `bodyOf` buffers, `replay` hands the bytes
+ * to the forward, exactly as the RPC path already does a few lines below. The policy then
+ * receives the parsed envelope as a third argument. Policies that ignore it are
+ * unaffected, so this is backwards compatible with any other http policy.
+ */
+const HTTP_BODY_PATCH = {
+  what: 'http policy body',
+  from: `        const rule = extension('http', { pathname, method: req.method });
+        if (rule !== undefined) {
+            if (!(await rule.authorize(who, req)))
+                json(res, 403, { error: 'Access denied' });
+            else
+                forward(req, res);
+            return true;
+        }`,
+  to: `        const rule = extension('http', { pathname, method: req.method });
+        if (rule !== undefined) {
+            // SmallPE: buffer the body so the policy can authorize per operation, then
+            // replay it to the forward. A body that is absent or not JSON authorizes as
+            // before with an undefined envelope; it is never a reason to allow.
+            let __smallpeBody;
+            let __smallpeEnvelope;
+            try {
+                const read = await bodyOf(req);
+                __smallpeBody = read.body;
+                __smallpeEnvelope = read.envelope;
+            }
+            catch {
+                __smallpeBody = undefined;
+                __smallpeEnvelope = undefined;
+            }
+            if (!(await rule.authorize(who, req, __smallpeEnvelope)))
+                json(res, 403, { error: 'Access denied' });
+            else
+                forward(__smallpeBody === undefined ? req : replay(req, __smallpeBody), res);
+            return true;
+        }`,
+}
+
+/**
+ * Third patch: let the deployment's own model routes work for everyone.
+ *
+ * dsh-ui-auth decides what a non-admin may run from their model PROFILES — their own
+ * plus any an admin shared with them. Its own comment is explicit:
+ *
+ *   从未配置任何模型的用户得到空授权（目录为空、切换模型被拒）
+ *   (a user who has never configured a model gets an empty entitlement —
+ *    empty catalog, model switching denied)
+ *
+ * SmallPE configures OpenRouter once, in the profile's cordis.patch.yml, keyed by
+ * OPENROUTER_API_KEY. That is a deployment route, not a per-user profile, so without this
+ * every non-admin signs in to an empty model picker and cannot run anything — while the
+ * key they are meant to share sits right there.
+ *
+ * SMALLPE_DEFAULT_PROVIDERS names the routes everybody may use. It is a floor, not a
+ * ceiling: a user's own profiles and shares are added on top, unchanged. Unset means no
+ * change at all to stock behaviour.
+ *
+ * The matching `allowedModel` change makes a default route allow any model it serves. A
+ * profile-backed route still matches model by model — profiles always register one — so
+ * this loosens nothing that was previously strict.
+ *
+ * The key itself stays out of reach: it lives in the deployment environment, never in a
+ * user-visible profile, and Settings/credentials remain administrator-only in
+ * dsh-ui-auth's own policy. Users get the route, not the secret.
+ */
+const DEFAULT_PROVIDERS_PRELUDE = `// --- SmallPE: deployment-wide model routes (dsh/scripts/patch-ui-auth-sharing.mjs) ---
+// Routes every signed-in user may use, on top of their own profiles and shares. The API
+// key stays in the deployment environment and is never exposed to a non-admin.
+const __smallpeDefaultProviders = String(process.env.SMALLPE_DEFAULT_PROVIDERS ?? "")
+	.split(",").map(entry => entry.trim()).filter(entry => entry !== "");
+// --- end SmallPE -------------------------------------------------------------------
+
+`
+
+const DEFAULT_PROVIDERS_PATCH = {
+  what: 'entitlement fallback',
+  from: `            const uid = await new ProfileStore(store).uidOf(principal.username);
+            if (uid === undefined)
+                return { providers: [], models: [] };
+            const profiles = await service.listProfiles(uid);`,
+  to: `            const uid = await new ProfileStore(store).uidOf(principal.username);
+            if (uid === undefined)
+                // SmallPE: a user with no profiles still gets the deployment's shared routes.
+                return { providers: [...__smallpeDefaultProviders], models: [] };
+            const profiles = await service.listProfiles(uid);`,
+}
+
+const DEFAULT_PROVIDERS_MERGE = {
+  what: 'entitlement result',
+  from: `            return {
+                providers: [...new Set(profiles.map(routeOf))],
+                models: profiles.map(meta => ({ provider: routeOf(meta), model: meta.model })),
+            };`,
+  to: `            return {
+                // SmallPE: deployment routes first, then everything this user owns or was shared.
+                providers: [...new Set([...__smallpeDefaultProviders, ...profiles.map(routeOf)])],
+                models: profiles.map(meta => ({ provider: routeOf(meta), model: meta.model })),
+            };`,
+}
+
+const ALLOWED_MODEL_PATCH = {
+  what: 'allowedModel',
+  from: `    const allowedModel = (scope, provider, model) => nonempty(provider) && nonempty(model)
+        && scope.models.some(entry => entry.provider === provider && entry.model === model);`,
+  to: `    const allowedModel = (scope, provider, model) => nonempty(provider) && nonempty(model)
+        // SmallPE: a route allowed with no model entries of its own is a deployment route —
+        // allow every model it serves. Profile-backed routes always register a model, so
+        // they keep matching exactly as before.
+        && (scope.models.some(entry => entry.provider === provider && entry.model === model)
+            || (scope.providers.includes(provider)
+                && !scope.models.some(entry => entry.provider === provider)));`,
+}
+
 /** The predicates as dsh-ui-auth emits them, and the shared-aware replacements. */
 const REPLACEMENTS = [
   {
@@ -103,47 +228,77 @@ function __smallpeShared() {
 
 `
 
-const MARKER = '__smallpeShared'
+const MARKER = '__smallpe'
 
-const DEFAULT_TARGET = path.resolve(
-  process.env.DSH_HOME ?? path.resolve(import.meta.dirname, '..', 'home'),
-  'profiles/web/node_modules/dsh-ui-auth/lib/modern-policy.js',
+const LIB = path.resolve(
+  process.argv[2] ?? path.resolve(
+    process.env.DSH_HOME ?? path.resolve(import.meta.dirname, '..', 'home'),
+    'profiles/web/node_modules/dsh-ui-auth/lib',
+  ),
 )
 
-const target = process.argv[2] ?? DEFAULT_TARGET
+/** The two files this touches, each with its edits and whether it gets the prelude. */
+const TARGETS = [
+  {
+    file: 'modern-policy.js',
+    edits: [...REPLACEMENTS, ALLOWED_MODEL_PATCH],
+    prelude: PRELUDE,
+    summary: 'shared scope in the session + workspace predicates, deployment routes in allowedModel',
+  },
+  {
+    file: 'modern-gateway.js',
+    edits: [HTTP_BODY_PATCH],
+    prelude: '',
+    summary: 'request body passed to http policies',
+  },
+  {
+    file: 'index.js',
+    edits: [DEFAULT_PROVIDERS_PATCH, DEFAULT_PROVIDERS_MERGE],
+    prelude: DEFAULT_PROVIDERS_PRELUDE,
+    summary: 'deployment model routes added to every user entitlement',
+  },
+]
 
-let source
-try {
-  source = await readFile(target, 'utf8')
-} catch (error) {
-  // The plugin is opt-in; skipping is correct when it is absent.
-  if (error.code === 'ENOENT') {
-    console.log(`[smallpe] dsh-ui-auth is not installed at ${target} — no sharing patch to apply.`)
-    process.exit(0)
+let applied = 0
+let already = 0
+
+for (const { file, edits, prelude, summary } of TARGETS) {
+  const target = path.join(LIB, file)
+  let source
+  try {
+    source = await readFile(target, 'utf8')
+  } catch (error) {
+    // The plugin is opt-in; skipping is correct when it is absent.
+    if (error.code === 'ENOENT') {
+      console.log(`[smallpe] dsh-ui-auth is not installed at ${target} — no sharing patch to apply.`)
+      process.exit(0)
+    }
+    throw error
   }
-  throw error
+
+  if (source.includes(MARKER)) {
+    console.log(`[smallpe] ${file}: already patched (${summary}).`)
+    already += 1
+    continue
+  }
+
+  const missing = edits.filter(({ from }) => source.split(from).length - 1 !== 1)
+  if (missing.length > 0) {
+    console.error(
+      `[smallpe] patch-ui-auth-sharing: expected exactly one ${missing.map((r) => r.what).join(' and ')} in\n`
+      + `          ${target}\n`
+      + '          dsh-ui-auth has reworded this code. Re-read the file and update the patch in\n'
+      + '          dsh/scripts/patch-ui-auth-sharing.mjs before trusting the result.\n'
+      + '          Refusing to patch: a partial match here would silently change who can see what.',
+    )
+    process.exit(1)
+  }
+
+  let patched = source
+  for (const { from, to } of edits) patched = patched.replace(from, to)
+  await writeFile(target, prelude + patched)
+  console.log(`[smallpe] ${file}: patched (${summary}).`)
+  applied += 1
 }
 
-if (source.includes(MARKER)) {
-  console.log('[smallpe] dsh-ui-auth already shares the SmallPE scope.')
-  process.exit(0)
-}
-
-const missing = REPLACEMENTS.filter(({ from }) => source.split(from).length - 1 !== 1)
-if (missing.length > 0) {
-  console.error(
-    `[smallpe] patch-ui-auth-sharing: expected exactly one ${missing.map((r) => r.what).join(' and ')} predicate in\n`
-    + `          ${target}\n`
-    + '          dsh-ui-auth has reworded its policy core. Re-read modern-policy.js and update\n'
-    + '          REPLACEMENTS in dsh/scripts/patch-ui-auth-sharing.mjs before trusting the result.\n'
-    + '          Refusing to patch: a partial match here would silently change who can see what.',
-  )
-  process.exit(1)
-}
-
-let patched = source
-for (const { from, to } of REPLACEMENTS) patched = patched.replace(from, to)
-patched = PRELUDE + patched
-
-await writeFile(target, patched)
-console.log(`[smallpe] dsh-ui-auth now honours ${path.basename(DEFAULT_TARGET) === path.basename(target) ? 'the SmallPE shared scope' : target} (session + workspace predicates).`)
+if (applied === 0 && already > 0) console.log('[smallpe] dsh-ui-auth sharing patches are already in place.')

@@ -60,6 +60,14 @@ export SMALLPE_LOCAL_API_KEY
 : "${SMALLPE_LOCAL_BASE_URL:=http://127.0.0.1:1234/v1}"
 export SMALLPE_LOCAL_BASE_URL
 
+# With the dsh-ui-auth login enabled, these are the model routes every signed-in user may
+# run — on top of any model profile of their own. dsh-ui-auth otherwise gives a user who
+# has configured no profile an empty catalogue, and SmallPE's providers are configured once
+# for the deployment rather than per user. Ignored entirely when there is no login.
+# The API key stays in this environment; users get the route, never the secret.
+: "${SMALLPE_DEFAULT_PROVIDERS:=openrouter,local}"
+export SMALLPE_DEFAULT_PROVIDERS
+
 # Clear the ambient session identity, so the child harness is a fresh independent
 # process rather than a continuation of whatever launched this script.
 unset DSH_PROFILE DSH_PROFILE_DIR DSH_SESSION_ID DSH_WEB_URL DSH_SHELL
