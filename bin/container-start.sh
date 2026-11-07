@@ -39,9 +39,13 @@ if [ ! -d "$DSH_DIR/home.dist" ] || [ ! -d "$WORKSPACE.dist" ]; then
   exit 1
 fi
 
-mkdir -p "$DATA/home" "$DATA/workspace" "$DATA/cache/tectonic"
+# $DATA/workspaces (plural) holds one personal workspace per dsh-ui-auth user, created by
+# @local/smallpe-user-workspaces. It is a SIBLING of $DATA/workspace, never inside it:
+# that one is the shared DS Bot team folder the nine agents work in, so personal folders
+# nested there would land in the agents' tree and in everybody's view of it.
+mkdir -p "$DATA/home" "$DATA/workspace" "$DATA/workspaces" "$DATA/cache/tectonic"
 if ! mountpoint -q "$DATA"; then
-  say "WARNING: no volume is mounted at $DATA — agents, conversations and logins will be lost on every redeploy."
+  say "WARNING: no volume is mounted at $DATA — agents, conversations, logins and every user's workspace will be lost on every redeploy."
 fi
 
 # copy_missing <from> <to> [tar options] — add what <to> lacks, never overwrite.
@@ -94,6 +98,13 @@ link_to_volume "$WORKSPACE" "$DATA/workspace"
 link_to_volume "$DSH_DIR/.tectonic-cache" "$DATA/cache/tectonic"
 say "harness home: $DSH_DIR/home -> $DATA/home"
 say "workspace   : $WORKSPACE -> $DATA/workspace"
+
+# Where @local/smallpe-user-workspaces puts each user's own workspace. Named explicitly
+# rather than left to the plugin's default, because that default is derived from DSH_HOME
+# and DSH_HOME is a symlink here — the plugin would resolve it to a path on the volume
+# either way, but a deployment should not depend on that coincidence.
+export SMALLPE_USER_WORKSPACES_ROOT="$DATA/workspaces"
+say "user spaces : $SMALLPE_USER_WORKSPACES_ROOT/<username>"
 
 # The agents were provisioned in the image, where the workspace was the real folder
 # $WORKSPACE; DSH stored that path for the workspace and for each session. It is a

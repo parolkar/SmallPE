@@ -1,0 +1,11 @@
+# Per-user workspaces, plus the shared DS Bot workspace.
+#
+# The row activates unconditionally and waits for the `uiAuth` service on an inner fiber
+# (see index.js), so an install without dsh-ui-auth reports no pending entry and simply
+# does nothing — there are no users to give workspaces to until a login exists.
+#
+# Defaults come from the environment so the same row works on a laptop and on the volume
+# in the container; override any of them here if you relocate things.
+- insert:
+    - id: smallpe-user-workspaces
+      name: '@local/smallpe-user-workspaces'

@@ -49,3 +49,7 @@ dsh-ui-auth-bootstrap.txt
 # Generated at install time by dsh/scripts/install-tools.sh: absolute font paths
 # for the branded PDF pipeline. Machine-local; regenerate with ./bin/install.sh.
 agentic-team-for-private-equity/templates/brand-fonts.tex
+
+# Personal per-user workspaces on a local install (@local/smallpe-user-workspaces).
+# The container puts these on the volume instead; see bin/container-start.sh.
+/workspaces/

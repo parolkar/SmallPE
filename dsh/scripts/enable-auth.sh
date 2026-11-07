@@ -37,6 +37,13 @@ echo "==> Enabling dsh-ui-auth in the 'web' profile"
 echo "==> Translating the dsh-ui-auth TOTP reminder"
 node "$DSH_DIR/scripts/localize-ui-auth.mjs"
 
+# dsh-ui-auth scopes every workspace to a single owner, but the SmallPE DS Bot team folder
+# has to be visible to the whole team — the nine agents are shared colleagues. Teach its two
+# ownership predicates about a shared scope; @local/smallpe-user-workspaces publishes what
+# is in it. See the script for why this cannot be done through registerPolicy.
+echo "==> Teaching dsh-ui-auth about the shared DS Bot workspace"
+node "$DSH_DIR/scripts/patch-ui-auth-sharing.mjs"
+
 cat <<'EOF'
 
 Done. Restart the harness with ./bin/run.sh, then open http://127.0.0.1:3080 —

@@ -311,6 +311,51 @@ to copy. It owns the listener, serves its own login page, and mints DSH's native
 server-side for every request it forwards, which is why the Railway deployment never shows
 the token prompt either.
 
+### Per-user workspaces
+
+With the gateway on, every account gets **its own workspace**, and the DS Bot team folder
+is **shared by everyone**. `@local/smallpe-user-workspaces` reconciles this at startup and
+then every 30s, so a user who registers with an invite code is provisioned shortly after
+without a restart.
+
+```
+$DATA/workspace             the shared DS Bot team folder — all nine agents, everyone sees it
+$DATA/workspaces/admin      admin's own space
+$DATA/workspaces/john       john's own space, invisible to everyone else
+```
+
+Note the plural: personal workspaces are a **sibling** of the team folder, never inside it.
+Locally the root is `./workspaces/` (gitignored); override with
+`SMALLPE_USER_WORKSPACES_ROOT`, and the interval with `SMALLPE_USER_WORKSPACES_INTERVAL_MS`.
+
+Each pass creates the directory, registers it with DSH, and claims it for that user through
+`uiAuth.claimWorkspace`. Every step is idempotent, and a workspace already owned by somebody
+else is never taken — it logs once and moves on.
+
+**Why the team folder needs a patch.** dsh-ui-auth scopes everything through two predicates
+in `modern-policy.js` (`session` and `workspace`), and ownership is strictly single-owner —
+`claimOwner` throws *"Object already belongs to another user"*. `registerPolicy` cannot help
+either: of the five kinds `PolicyRules` declares, only `http`, `rpc` and `upgrade` are ever
+dispatched, so the `workspace/follow` frame projection that builds the sidebar is
+unreachable and the team workspace would be authorised but invisible.
+`dsh/scripts/patch-ui-auth-sharing.mjs` therefore teaches those two predicates one extra way
+to say yes — an id listed in:
+
+```
+$DSH_HOME/smallpe-shared-scope.json    { "workspaces": [...], "sessions": [...] }
+```
+
+The plugin rewrites that file every pass, so sessions the agents create join the shared set
+within one interval. `enable-auth.sh` applies the patch, covering the local opt-in and the
+container image alike. **Re-run it after any `dsh plugin add dsh-ui-auth`.**
+
+> **This widens access on purpose.** Every signed-in user — not only admins — can read and
+> write every file in the shared team folder and drive all nine agents, model spend
+> included. That is the intent: the DS Bots are shared colleagues. Nothing else changes —
+> unlisted workspaces and sessions stay private to their owner, and a missing or malformed
+> scope file shares **nothing**, so the failure direction is closed. What is shared is
+> always auditable with `cat $DSH_HOME/smallpe-shared-scope.json`.
+
 ### A note on language
 
 `dsh-ui-auth` is written in Chinese and translates itself in the browser: a MutationObserver

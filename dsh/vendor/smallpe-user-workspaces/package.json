@@ -1,0 +1,21 @@
+{
+  "name": "@local/smallpe-user-workspaces",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Gives every dsh-ui-auth user their own workspace, and publishes the shared DS Bot workspace so the whole team sees the same agents.",
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "files": [
+    "index.js",
+    "cordis.patch.yml",
+    "locale/*.json"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}
