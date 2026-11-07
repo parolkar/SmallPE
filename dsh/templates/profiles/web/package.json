@@ -4,6 +4,7 @@
   "dependencies": {
     "@local/dsbot-auth-bridge": "link:../../../vendor/dsbot-auth-bridge",
     "@local/smallpe-brand": "link:../../../vendor/smallpe-brand",
+    "@local/smallpe-user-workspaces": "link:../../../vendor/smallpe-user-workspaces",
     "ds-bot": "0.2.0",
     "dsh-better-sidebar": "^0.28.0",
     "dsh-browser-use-chromium": "file:../../../vendor/dsh-browser-use-chromium",
@@ -19,6 +20,7 @@
         "@local/smallpe-brand",
         "ds-bot",
         "@local/dsbot-auth-bridge",
+        "@local/smallpe-user-workspaces",
         "dsh-browser-use-chromium",
         "dsh-zapier-mcp",
         "dsh-better-sidebar",
