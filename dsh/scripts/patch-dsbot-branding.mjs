@@ -40,7 +40,11 @@ import { readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
 
-const SITE = 'https://www.SmallPE.com'
+/**
+ * Every outward link in the bot UI goes here. Not the marketing root: a user who clicks
+ * "report a problem" or "source code" in a SmallPE deployment wants the support page.
+ */
+const SUPPORT_URL = 'https://smallpe.com/support/'
 
 /**
  * Feedback and About strings, replaced before the global pass because several contain
@@ -82,23 +86,60 @@ const CLIENT_EDITS = [
   ],
   // --- About page ------------------------------------------------------------------ //
   // Upstream promotes starring its repository. A SmallPE install should point at SmallPE.
-  ['Star DS Bot on GitHub', 'SmallPE on the web'],
-  ['在 GitHub 上给 DS Bot 点 Star', 'SmallPE 官网'],
+  ['Star DS Bot on GitHub', 'SmallPE Support'],
+  ['在 GitHub 上给 DS Bot 点 Star', 'SmallPE 支持'],
   [
     'If DS Bot helps you, a star on GitHub helps more people find it.',
-    `SmallPE — ${SITE.replace('https://', '')}`,
+    'Commercial support and help with SmallPE.',
   ],
   [
     '如果 DS Bot 对你有用，欢迎在 GitHub 上点个 Star，让更多人看到它。',
-    `SmallPE — ${SITE.replace('https://', '')}`,
+    'SmallPE 的商业支持与帮助。',
   ],
+  ['Source code', 'SmallPE Support'],
+  ['源代码', 'SmallPE 支持'],
 ]
 
 /** Where "Report a problem" sends people. */
 const HOST_EDITS = [
   [
     "export const ISSUES_URL = 'https://github.com/Fei2411/DS-Bot/issues/new'",
-    `export const ISSUES_URL = '${SITE}'`,
+    `export const ISSUES_URL = '${SUPPORT_URL}'`,
+  ],
+]
+
+/**
+ * The About page builds its outward links from what the host reports, so the upstream
+ * repository has to stop being reported at all — relabelling the client would still
+ * leave a link to github.com/Fei2411/DS-Bot behind it.
+ *
+ * `repoSlug()` itself is deliberately NOT touched: dsh-update.js uses it to find the
+ * verified-DSH manifest, so breaking it would break the update check. Only what reaches
+ * the screen is changed.
+ */
+const HOST_UPDATE_EDITS = [
+  [
+    `const repoUrl = () => {
+  const repo = repoSlug()
+  return repo ? \`https://github.com/\${repo}\` : null
+}`,
+    `const repoUrl = () => '${SUPPORT_URL}' // SmallPE: never surface the upstream repository`,
+  ],
+  [
+    `const releasesUrl = () => {
+  const repo = repoUrl()
+  return repo ? \`\${repo}/releases\` : (PKG.homepage ?? null)
+}`,
+    `const releasesUrl = () => '${SUPPORT_URL}' // SmallPE: "what's new" goes to support too`,
+  ],
+  [
+    `  async function repoStars() {
+    const repo = repoSlug()`,
+    `  async function repoStars() {
+    // SmallPE: the About page must not show the upstream project's star count, and we
+    // make no call to api.github.com for it. Nulling the local binding leaves repoSlug()
+    // working for the DSH update check in dsh-update.js, which depends on it.
+    const repo = null`,
   ],
 ]
 
@@ -109,6 +150,7 @@ const root = process.argv[2] ?? path.resolve(
 
 const clientPath = path.join(root, 'client.js')
 const hostPath = path.join(root, 'src/host/diagnostics.js')
+const updatePath = path.join(root, 'src/host/update.js')
 
 /**
  * Apply one file's edits.
@@ -150,12 +192,13 @@ async function patch(file, edits, after) {
 
 const client = await patch(clientPath, CLIENT_EDITS, (text) => text.split('DS Bot').join('SmallPE'))
 const host = await patch(hostPath, HOST_EDITS)
+const links = await patch(updatePath, HOST_UPDATE_EDITS)
 
-if (client === 'absent' && host === 'absent') {
+if (client === 'absent' && host === 'absent' && links === 'absent') {
   console.log(`[smallpe] ds-bot is not installed at ${root} — nothing to brand.`)
   process.exit(0)
 }
-for (const [what, state] of [['client UI', client], ['feedback URL', host]]) {
+for (const [what, state] of [['client UI', client], ['feedback URL', host], ['About links', links]]) {
   const said = { patched: 'branded as SmallPE', already: 'already branded', absent: 'not present' }[state]
   console.log(`[smallpe] ds-bot ${what}: ${said}.`)
 }
