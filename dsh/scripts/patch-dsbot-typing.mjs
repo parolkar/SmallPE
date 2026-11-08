@@ -64,8 +64,11 @@ try {
   throw error
 }
 
+// ds-bot 0.3.1 ships the descendant selector itself, so from that release on this script
+// is a no-op and simply says so. It is kept because the pin can move and because the
+// explicit check is what tells you which of the two situations you are in.
 if (source.includes(TO)) {
-  console.log('[smallpe] ds-bot typing indicator is already patched.')
+  console.log('[smallpe] ds-bot already uses the descendant selector — nothing to patch.')
   process.exit(0)
 }
 

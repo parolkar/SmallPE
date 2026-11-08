@@ -44,16 +44,38 @@ export const name = 'dsbot-auth-bridge'
 // team and talk to the agents. Admin-only here is what leaves a non-admin looking at
 // "Setting up your Main Bot…" forever, because `state` never answers.
 const SHARED_ENDPOINTS = new Set([
-  'state',          // the roster and its sessions — the call the UI blocks on at startup
-  'agent-session',  // attach to an agent's session, i.e. actually talk to a colleague
-  'thinking',       // toggle the thinking view on a turn
+  'state',                 // the roster and its sessions — the call the UI blocks on at startup
+  'agent-session',         // attach to an agent's session, i.e. actually talk to a colleague
+  'thinking',              // toggle the thinking view on a turn
+  // --- ds-bot 0.3.x ---
+  'bot-new-part',          // start a new session with an agent ("new session" button)
+  'bot-open-part',         // reopen an earlier session ("Open this earlier session")
+  'browser-takeover',      // take the wheel of an agent's browser mid-task
+  'browser-stop',          // stop that browser
+  'browser-give-back',     // hand control back to the agent, with an optional answer
+  'computer-cursor-wait',  // computer-use handshake; the client polls this on a loop
+  'computer-user-active',  // idle/presence ping, sent automatically by the client
+  'learning-answer',       // approve or reject a learning card
 ])
 
 // Left to the admin on purpose:
 //   add-agent, remove-agent, agent-rename, agent-archive, agent-adopt
 //     — the roster is the team's shape, not one member's to change
+//   local-agent-add, local-agent-remove, local-agent-update            (ds-bot 0.3.x)
+//     — same reasoning: these define which local agents the team has
 //   update-check, update-install, dsh-update-install
 //     — these install software on the host; a non-admin must never reach them
+//
+// Two of the shared entries are not user gestures but client housekeeping:
+// `computer-cursor-wait` is polled in a loop and `computer-user-active` reports idle
+// time. Denying them does not protect anything — they carry no authority — and leaves a
+// non-admin's UI retrying against a 403 forever.
+//
+// WHEN UPGRADING ds-bot: re-derive this list. 0.2.0 served 11 endpoints and 0.3.1 serves
+// 22; anything new is denied to non-admins until it is classified here, which is the safe
+// default but shows up as a feature that silently does nothing for them. The list lives
+// in the client as `call("<endpoint>"`:
+//   grep -oh 'call("[a-zA-Z._/-]*"' client.js | sort -u
 
 export function apply(ctx, config = {}) {
   const pathname = config.pathname ?? '/api/bot'

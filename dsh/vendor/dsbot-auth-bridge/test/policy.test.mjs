@@ -11,6 +11,9 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
+import { existsSync, readFileSync } from 'node:fs'
+import path from 'node:path'
+
 import * as bridge from '../index.js'
 
 /** Drive `apply` with a stub context and hand back the policy it registered. */
@@ -30,12 +33,22 @@ function registeredPolicy(config) {
   return registered
 }
 
-/** Endpoints every signed-in user needs to see the team and work with it. */
-const SHARED = ['state', 'agent-session', 'thinking']
+/**
+ * Endpoints every signed-in user needs to see the team and work with it.
+ * Derived from ds-bot 0.3.1's client (`grep -oh 'call("[a-zA-Z._/-]*"' client.js`).
+ */
+const SHARED = [
+  'state', 'agent-session', 'thinking',
+  'bot-new-part', 'bot-open-part',
+  'browser-takeover', 'browser-stop', 'browser-give-back',
+  'computer-cursor-wait', 'computer-user-active',
+  'learning-answer',
+]
 
 /** Roster changes and host software updates: admin only. */
 const ADMIN_ONLY = [
   'add-agent', 'remove-agent', 'agent-rename', 'agent-archive', 'agent-adopt',
+  'local-agent-add', 'local-agent-remove', 'local-agent-update',
   'update-check', 'update-install', 'dsh-update-install',
 ]
 
@@ -89,4 +102,21 @@ test('the shared set is configurable', () => {
   const { authorize } = registeredPolicy({ sharedEndpoints: ['state'] }).http
   assert.equal(authorize(john, {}, { endpoint: 'state' }), true)
   assert.equal(authorize(john, {}, { endpoint: 'agent-session' }), false)
+})
+
+test('every endpoint ds-bot serves is classified', () => {
+  // The upgrade hazard: a new ds-bot release adds endpoints, they fall through to
+  // admin-only, and the feature silently does nothing for everyone else. This asserts the
+  // two lists together cover exactly what the installed client calls, so the next bump
+  // fails here instead of in front of a user.
+  const client = path.resolve(
+    process.env.DSH_HOME ?? path.resolve(import.meta.dirname, '../../../home'),
+    'profiles/web/node_modules/ds-bot/client.js',
+  )
+  if (!existsSync(client)) { console.log('# ds-bot not installed — skipping'); return }
+  const served = [...readFileSync(client, 'utf8').matchAll(/call\("([a-zA-Z._/-]+)"/g)]
+    .map((m) => m[1]).sort()
+  const classified = new Set([...SHARED, ...ADMIN_ONLY])
+  const unclassified = [...new Set(served)].filter((e) => !classified.has(e))
+  assert.deepEqual(unclassified, [], `unclassified ds-bot endpoints: ${unclassified.join(', ')}`)
 })

@@ -616,6 +616,19 @@ just PDFs. Multipart responses are now forwarded untouched: a byte range carries
 ownership fields to filter, and the request was already authorized before being forwarded.
 `dsh/scripts/verify-file-reads.mjs` checks the bytes arrive identical to the file on disk.
 
+**Upgrading ds-bot.** Two things must be re-derived on every bump, because both fail
+quietly rather than loudly:
+
+* **The `/api/bot` endpoint allow-list** in `dsh/vendor/dsbot-auth-bridge/index.js`.
+  DS Bot names its operation in the request body, so the bridge decides per endpoint —
+  and anything unclassified falls through to admin-only, which looks to a non-admin like
+  a feature that does nothing. 0.2.0 served 11 endpoints; 0.3.1 serves 22. A test in
+  `dsh/vendor/dsbot-auth-bridge/test/policy.test.mjs` greps the installed client and
+  fails if any endpoint is unclassified, so the next bump surfaces this immediately.
+* **`dsh/scripts/patch-dsbot-typing.mjs`.** ds-bot 0.3.1 ships the descendant selector
+  upstream, so the script now reports "nothing to patch" and exits 0. It is kept for
+  older pins and because the explicit check tells you which case you are in.
+
 **An agent shows no "thinking" feedback — nothing happens until the whole reply appears.**
 A DOM-contract skew between `ds-bot@0.2.0` and DSH `0.2.1-rc.2`, fixed by
 `dsh/scripts/patch-dsbot-typing.mjs`, which `./bin/install.sh` runs for you. ds-bot finds

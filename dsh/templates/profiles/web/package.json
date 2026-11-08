@@ -6,7 +6,7 @@
     "@local/smallpe-brand": "link:../../../vendor/smallpe-brand",
     "@local/smallpe-user-workspaces": "link:../../../vendor/smallpe-user-workspaces",
     "@local/smallpe-zapier-scope": "link:../../../vendor/smallpe-zapier-scope",
-    "ds-bot": "0.2.0",
+    "ds-bot": "0.3.1",
     "dsh-better-sidebar": "^0.28.0",
     "dsh-browser-use-chromium": "file:../../../vendor/dsh-browser-use-chromium",
     "dsh-custom-logo": "^1.0.2",
