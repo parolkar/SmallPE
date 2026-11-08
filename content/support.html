@@ -1,0 +1,227 @@
+---
+title: SmallPE Support
+description: Commercial support for SmallPE — tell us what you need and we will get back to you.
+keywords: SmallPE support, SmallPE commercial support, Private Equity AI support
+og_title: SmallPE Support
+og_description: Do you need commercial support for SmallPE? Send us the details.
+og_url: https://www.smallpe.com/support/
+---
+
+<!-- Hero Section -->
+<section class="relative py-20 bg-gradient-to-r from-blue-900 to-blue-700">
+  <div class="container mx-auto px-4">
+    <div class="text-center">
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-4" data-aos="fade-up">SmallPE Support</h1>
+      <div class="w-24 h-1 bg-white mx-auto mb-6"></div>
+      <p class="text-xl text-white/90 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+        Do you need commercial support for SmallPE?
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Support Request Form -->
+<section class="py-20 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="max-w-2xl mx-auto" data-aos="fade-up">
+
+      <p class="text-gray-600 mb-10 text-center">
+        Tell us a little about what you need. Submitting opens your own email program with
+        the message ready to send to
+        <a href="mailto:commercialsupport@smallpe.com" class="text-blue-600 hover:underline">commercialsupport@smallpe.com</a>
+        — nothing is sent from this page, and nothing is stored here.
+      </p>
+
+      <form id="support-form" class="bg-gray-50 rounded-lg shadow-sm p-6 md:p-8 space-y-6" novalidate>
+
+        <!-- Email address -->
+        <div>
+          <label for="support-email" class="block text-sm font-semibold text-gray-800 mb-2">
+            Your email address <span class="text-red-600" aria-hidden="true">*</span>
+          </label>
+          <input
+            type="email"
+            id="support-email"
+            name="email"
+            required
+            autocomplete="email"
+            placeholder="you@yourfirm.com"
+            aria-describedby="support-email-error"
+            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+          />
+          <p id="support-email-error" class="hidden mt-2 text-sm text-red-600" role="alert"></p>
+        </div>
+
+        <!-- Commercial support plan -->
+        <fieldset aria-describedby="support-plan-error">
+          <legend class="block text-sm font-semibold text-gray-800 mb-2">
+            Are you on a SmallPE Commercial Support plan? <span class="text-red-600" aria-hidden="true">*</span>
+          </legend>
+          <div class="flex items-center gap-6">
+            <label class="inline-flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="plan" value="Yes" required
+                     class="w-4 h-4 text-blue-600 focus:ring-blue-600 border-gray-300" />
+              <span class="text-gray-800">Yes</span>
+            </label>
+            <label class="inline-flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="plan" value="No"
+                     class="w-4 h-4 text-blue-600 focus:ring-blue-600 border-gray-300" />
+              <span class="text-gray-800">No</span>
+            </label>
+          </div>
+          <p id="support-plan-error" class="hidden mt-2 text-sm text-red-600" role="alert"></p>
+        </fieldset>
+
+        <!-- What support is required -->
+        <div>
+          <label for="support-details" class="block text-sm font-semibold text-gray-800 mb-2">
+            What support do you need? <span class="text-red-600" aria-hidden="true">*</span>
+          </label>
+          <textarea
+            id="support-details"
+            name="details"
+            rows="4"
+            required
+            maxlength="1200"
+            placeholder="Two or three lines is plenty — what is happening, and what you expected."
+            aria-describedby="support-details-hint support-details-error"
+            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+          ></textarea>
+          <p id="support-details-hint" class="mt-2 text-sm text-gray-500">
+            <span id="support-details-count">0</span>/1200 characters
+          </p>
+          <p id="support-details-error" class="hidden mt-2 text-sm text-red-600" role="alert"></p>
+        </div>
+
+        <div class="pt-2">
+          <button type="submit"
+                  class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-md transition">
+            <i class="fa-solid fa-envelope mr-2" aria-hidden="true"></i>Open email to send
+          </button>
+        </div>
+
+        <!-- Shown after submit: some browsers silently ignore mailto: when no mail
+             program is registered, so always leave a way to carry on by hand. -->
+        <div id="support-fallback" class="hidden rounded-md bg-blue-50 border border-blue-200 p-4 text-sm text-gray-700" role="status">
+          <p class="mb-2">
+            Your email program should have opened with the message ready. If nothing
+            happened, send it yourself to
+            <a href="mailto:commercialsupport@smallpe.com" class="text-blue-600 hover:underline font-semibold">commercialsupport@smallpe.com</a>.
+          </p>
+          <button type="button" id="support-copy"
+                  class="inline-flex items-center gap-2 text-blue-700 hover:underline font-semibold">
+            <i class="fa-regular fa-copy" aria-hidden="true"></i><span id="support-copy-label">Copy the message instead</span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    'use strict';
+
+    var SUPPORT_ADDRESS = 'commercialsupport@smallpe.com';
+
+    var form = document.getElementById('support-form');
+    if (!form) return;
+
+    var emailField = document.getElementById('support-email');
+    var detailsField = document.getElementById('support-details');
+    var counter = document.getElementById('support-details-count');
+    var fallback = document.getElementById('support-fallback');
+    var copyButton = document.getElementById('support-copy');
+    var copyLabel = document.getElementById('support-copy-label');
+
+    // The body we hand to the mail client, kept so "copy instead" offers the same text.
+    var lastMessage = '';
+
+    function showError(id, message) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = message;
+      el.classList.toggle('hidden', !message);
+    }
+
+    function clearErrors() {
+      showError('support-email-error', '');
+      showError('support-plan-error', '');
+      showError('support-details-error', '');
+    }
+
+    function selectedPlan() {
+      var chosen = form.querySelector('input[name="plan"]:checked');
+      return chosen ? chosen.value : '';
+    }
+
+    detailsField.addEventListener('input', function () {
+      counter.textContent = String(detailsField.value.length);
+    });
+
+    form.addEventListener('submit', function (event) {
+      // Always handled here: the page has no server to post to.
+      event.preventDefault();
+      clearErrors();
+
+      var email = emailField.value.trim();
+      var plan = selectedPlan();
+      var details = detailsField.value.trim();
+      var firstInvalid = null;
+
+      // Deliberately light validation. `type="email"` already rejects the obvious cases,
+      // and a stricter pattern would reject addresses that are perfectly valid.
+      if (!email || email.indexOf('@') < 1 || email.indexOf('.', email.indexOf('@')) < 0) {
+        showError('support-email-error', 'Please enter the email address we should reply to.');
+        firstInvalid = firstInvalid || emailField;
+      }
+      if (!plan) {
+        showError('support-plan-error', 'Please tell us whether you are on a Commercial Support plan.');
+        firstInvalid = firstInvalid || form.querySelector('input[name="plan"]');
+      }
+      if (!details) {
+        showError('support-details-error', 'Please describe the support you need.');
+        firstInvalid = firstInvalid || detailsField;
+      }
+      if (firstInvalid) {
+        firstInvalid.focus();
+        return;
+      }
+
+      var subject = 'SmallPE commercial support request'
+        + (plan === 'Yes' ? ' (Commercial Support plan)' : '');
+
+      lastMessage = [
+        'Email address: ' + email,
+        'On a SmallPE Commercial Support plan: ' + plan,
+        '',
+        'Support required:',
+        details
+      ].join('\n');
+
+      // encodeURIComponent on each part: it escapes the characters that would otherwise
+      // end the mailto or start another header — &, #, ?, newlines — which is what keeps
+      // a pasted address or a stray "&" from truncating the message.
+      var mailto = 'mailto:' + SUPPORT_ADDRESS
+        + '?subject=' + encodeURIComponent(subject)
+        + '&body=' + encodeURIComponent(lastMessage);
+
+      fallback.classList.remove('hidden');
+      window.location.href = mailto;
+    });
+
+    copyButton.addEventListener('click', function () {
+      var text = 'To: ' + SUPPORT_ADDRESS + '\n\n' + lastMessage;
+      function done(ok) {
+        copyLabel.textContent = ok ? 'Copied' : 'Could not copy — select the text manually';
+        window.setTimeout(function () { copyLabel.textContent = 'Copy the message instead'; }, 2500);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
+      } else {
+        done(false);
+      }
+    });
+  })();
+</script>
