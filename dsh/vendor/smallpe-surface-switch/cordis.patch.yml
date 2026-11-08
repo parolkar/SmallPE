@@ -1,0 +1,10 @@
+# A "Classic mode" button beside Settings at the foot of the sidebar.
+#
+# DS Bot can hand the window back to DSH's classic Agent interface, but only through
+# Settings -> General -> Mode -> Switch. This surfaces the same switch one click away.
+#
+# Browser-only: the row carries no Host half, it just registers into the shipped
+# `sidebar.footer.action` seat ("Optional actions beside Settings at the sidebar foot").
+- insert:
+    - id: smallpe-surface-switch
+      name: '@local/smallpe-surface-switch'

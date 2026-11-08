@@ -464,6 +464,26 @@ matched model by model; only the deployment routes are open-ended. Set
 Both are covered by tests in `dsh/vendor/dsbot-auth-bridge/test/`, which run against the
 patched copy and skip when there is no login installed.
 
+### Classic mode from the sidebar
+
+DS Bot can hand the window back to DSH's classic Agent interface, but only through
+Settings → General → Mode → Switch. `@local/smallpe-surface-switch` puts the same switch
+beside the account icon at the foot of the sidebar, in the shipped
+`sidebar.footer.action` seat — no patching of ds-bot, just a registration.
+
+It reuses ds-bot's own `bt-return` class, the one its mirror-image "back to bot" control
+uses in the same seat, so the two are laid out by identical rules rather than by styles
+of our own. In bot mode the seat always renders rail-style, so the button is an icon with
+a "Classic mode" tooltip.
+
+**It reloads the page, and the Settings switch does not.** `setSurface` is private to
+ds-bot's React tree — `globalThis.dsBotApp` is the desktop bridge, not the UI — so this
+writes the same value ds-bot reads at startup (`localStorage["ds-bot:surface"]`) and
+restarts the window. ds-bot's `storage` listener syncs only reactions and unread marks,
+and the surface store is built once from `readMode()`, so a live window would not notice
+the change otherwise. The end state is the same: the settings switch closes every panel
+on the way out too.
+
 ### A note on language
 
 `dsh-ui-auth` is written in Chinese and translates itself in the browser: a MutationObserver
