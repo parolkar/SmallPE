@@ -616,6 +616,23 @@ just PDFs. Multipart responses are now forwarded untouched: a byte range carries
 ownership fields to filter, and the request was already authorized before being forwarded.
 `dsh/scripts/verify-file-reads.mjs` checks the bytes arrive identical to the file on disk.
 
+**SmallPE branding in the DS Bot UI.** `dsh/scripts/patch-dsbot-branding.mjs`, run by
+`bin/install.sh`, rewrites the bundled UI so a SmallPE install does not say "DS Bot":
+the settings nav ("About DS Bot" → "About SmallPE"), the Recent-errors source labels,
+the update banners, and the Feedback page, whose "Report on GitHub" button pointed at the
+upstream repository and now reads "Send to SmallPE" and opens <https://www.SmallPE.com>.
+
+Text and that one destination only — no element is removed and no handler changes. It
+deliberately leaves alone the **GitHub connector** strings (`GitHub token`, `Create a
+token on GitHub`, …), which describe a real integration rather than upstream branding,
+and runtime text such as `update to ds-bot@0.3.1 failed`, which names the npm package
+actually being updated. Verified against the 1.6 MB bundle the browser is served: zero
+occurrences of "DS Bot".
+
+> Because feedback now opens www.SmallPE.com instead of a GitHub issue form, the
+> prefilled diagnostics are no longer consumed by anything. Put a form at that URL if you
+> want the reports to land somewhere.
+
 **Upgrading ds-bot.** Two things must be re-derived on every bump, because both fail
 quietly rather than loudly:
 

@@ -203,6 +203,13 @@ fi
 node "$DSH_DIR/scripts/patch-dsbot-typing.mjs" \
   || die "patching the ds-bot typing indicator failed. Read dsh/scripts/patch-dsbot-typing.mjs — ds-bot has probably changed how it mounts the indicator."
 
+# This install is a SmallPE adaptation, but ds-bot's bundled UI still says "DS Bot" in the
+# settings nav, the error-source labels, the update banners and the Feedback page — which
+# also offers to file a bug on the upstream repository. Text and feedback destination only;
+# no element or handler is touched. Re-applied here because pnpm restores the npm copy.
+node "$DSH_DIR/scripts/patch-dsbot-branding.mjs" \
+  || die "re-branding the ds-bot UI failed. Read dsh/scripts/patch-dsbot-branding.mjs — ds-bot has probably reworded its UI."
+
 # --- 4b. the vendored document toolchain ------------------------------------- #
 # Pandoc is mounted as an MCP server, and the agents' own PDF pipeline calls
 # `pandoc` directly, so ./dsh/bin carries uv/uvx, pandoc and tectonic. They are
