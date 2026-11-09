@@ -70,7 +70,8 @@ volume, the public domain and the health check:
 1. Click **Deploy on Railway**, type the **admin password** you want into
    `SMALLPE_ADMIN_PASSWORD` (8+ characters, mixing letters with digits or symbols), and click
    **Deploy**. The first build takes about five minutes.
-2. Open the generated `*.up.railway.app` address and sign in as **`admin`** with that password.
+2. Open the generated `*.up.railway.app` address and sign in as **`admin`** with the password you
+   typed into that field — its value, not the name `SMALLPE_ADMIN_PASSWORD`.
 3. Add your model key: the gear at the foot of the sidebar → **Models and API keys**, or set
    `OPENROUTER_API_KEY` in the service's **Variables** on Railway.
 

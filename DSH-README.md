@@ -637,7 +637,9 @@ provisioned agents, with the login switched on — and sets up everything the se
    `admin` account. It needs 8–128 characters with at least two of lower-case, upper-case,
    digits and symbols. Click **Deploy**; the first build takes about five minutes.
 2. **Sign in.** Open the service's generated domain (on its card, or **Settings → Networking**)
-   and sign in as **`admin`** with that password. The interface is in English.
+   and sign in as **`admin`** with the password you typed into that field — its value, not the
+   name `SMALLPE_ADMIN_PASSWORD`. The interface is in English. To look the value up later, open
+   the service's **Variables** on Railway.
 3. **Add a model key.** Click the gear at the foot of the sidebar → **Models and API keys** and
    paste it there (stored on the volume), or set `OPENROUTER_API_KEY` in the service's
    **Variables** on Railway (it redeploys).
