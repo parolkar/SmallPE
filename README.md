@@ -62,18 +62,20 @@ login before exposing it publicly, and troubleshooting.
 
 ### Option B — one-click deploy on Railway (for a team)
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/Us9ZyG?utm_medium=integration&utm_source=button&utm_campaign=smallpe)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/tgOYSP?utm_medium=integration&utm_source=button&utm_campaign=smallpe)
 
 The same harness, hosted, with a login in front. The template already includes the persistent
 volume, the public domain and the health check:
 
-1. Click **Deploy on Railway**, type the **admin password** you want into
-   `SMALLPE_ADMIN_PASSWORD` (8+ characters, mixing letters with digits or symbols), and click
-   **Deploy**. The first build takes about five minutes.
+1. Click **Deploy on Railway**. The form asks for two values:
+   - `SMALLPE_ADMIN_PASSWORD` — the password you want for the `admin` account (8+ characters,
+     mixing letters with digits or symbols);
+   - `OPENROUTER_API_KEY` — your model key, from [openrouter.ai/keys](https://openrouter.ai/keys).
+
+   Click **Deploy**. The first build takes about five minutes.
 2. Open the generated `*.up.railway.app` address and sign in as **`admin`** with the password you
    typed into that field — its value, not the name `SMALLPE_ADMIN_PASSWORD`.
-3. Add your model key: the gear at the foot of the sidebar → **Models and API keys**, or set
-   `OPENROUTER_API_KEY` in the service's **Variables** on Railway.
+3. Talk to the Managing Partner: the agents already use your OpenRouter key.
 
 Change the password any time: switch to **Classic mode** (the ⇄ button at the foot of the sidebar), then
 **Settings → User management → Change password**.

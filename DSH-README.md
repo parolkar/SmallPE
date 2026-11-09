@@ -618,7 +618,7 @@ Without those variables no external authority is trusted, which is the correct d
 
 ## Deploying to Railway
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/Us9ZyG?utm_medium=integration&utm_source=button&utm_campaign=smallpe)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/tgOYSP?utm_medium=integration&utm_source=button&utm_campaign=smallpe)
 
 The one-click template builds this repository's `Dockerfile` — a finished `./bin/install.sh`:
 the harness, its plugins, the document toolchain, Chromium for the browser tools and the nine
@@ -632,21 +632,25 @@ provisioned agents, with the login switched on — and sets up everything the se
 
 ### Step by step
 
-1. **Choose the admin password and deploy.** Click **Deploy on Railway** above and sign in to
-   Railway. The form asks for one value, `SMALLPE_ADMIN_PASSWORD`: the password for the
-   `admin` account. It needs 8–128 characters with at least two of lower-case, upper-case,
-   digits and symbols. Click **Deploy**; the first build takes about five minutes.
+1. **Fill in the form and deploy.** Click **Deploy on Railway** above and sign in to Railway.
+   The form asks for two values:
+   - `SMALLPE_ADMIN_PASSWORD` — the password for the `admin` account: 8–128 characters with at
+     least two of lower-case, upper-case, digits and symbols;
+   - `OPENROUTER_API_KEY` — the model key the agents use, from
+     [openrouter.ai/keys](https://openrouter.ai/keys).
+
+   Click **Deploy**; the first build takes about five minutes.
 2. **Sign in.** Open the service's generated domain (on its card, or **Settings → Networking**)
    and sign in as **`admin`** with the password you typed into that field — its value, not the
-   name `SMALLPE_ADMIN_PASSWORD`. The interface is in English. To look the value up later, open
-   the service's **Variables** on Railway.
-3. **Add a model key.** Click the gear at the foot of the sidebar → **Models and API keys** and
-   paste it there (stored on the volume), or set `OPENROUTER_API_KEY` in the service's
-   **Variables** on Railway (it redeploys).
+   name `SMALLPE_ADMIN_PASSWORD`. The interface is in English. To look either value up later,
+   open the service's **Variables** on Railway.
+3. **Pick a model.** The Managing Partner asks for one on first use; the three recommended
+   OpenRouter models are listed. To change the key later, edit `OPENROUTER_API_KEY` in the
+   service's **Variables** (Railway redeploys), or paste another under the gear at the foot of
+   the sidebar → **Models and API keys**.
 4. **Start working.** The Managing Partner and the eight specialists are already in the sidebar.
    To add teammates, create **Invite codes** under **Settings → User management** (see below for
-   where that is) and send them
-   one each.
+   where that is) and send them one each.
 
 **Changing the admin password.** Account settings live in the classic interface: click
 **Classic mode** (the ⇄ button at the foot of the sidebar, beside the gear), then **Settings**
@@ -681,6 +685,7 @@ repository**. Then set the three things the template would have, once:
 | **Volume** | mount path `/data` — without it, users and agents are reset on every deploy, and the log warns about it |
 | **Settings → Networking → Generate Domain** | port `8080` |
 | **Variables → `SMALLPE_ADMIN_PASSWORD`** *(recommended)* | the password for the first `admin` account |
+| **Variables → `OPENROUTER_API_KEY`** *(recommended)* | the model key the agents use |
 | **Settings → Healthcheck path** *(optional)* | `/auth/login` |
 
 The same image runs anywhere Docker does:
