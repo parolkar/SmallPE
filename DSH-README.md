@@ -574,28 +574,60 @@ Without those variables no external authority is trusted, which is the correct d
 
 ## Deploying to Railway
 
-The repository root carries a `Dockerfile`, so Railway builds it with no other
-configuration: **New Project → Deploy from GitHub repo → this repository**. The image is a
-finished `./bin/install.sh` — the harness, its plugins, the document toolchain, Chromium for
-the browser tools, the nine provisioned agents — with the login switched on.
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/KAvoQK?utm_medium=integration&utm_source=button&utm_campaign=smallpe)
 
-Then set three things on the service, once:
+The one-click template builds this repository's `Dockerfile` — a finished `./bin/install.sh`:
+the harness, its plugins, the document toolchain, Chromium for the browser tools and the nine
+provisioned agents, with the login switched on — and sets up everything the service needs:
 
-| Setting | Value | Why |
-|---|---|---|
-| **Volume** | mount path `/data` | conversations, the agent roster, logins, keys and everything the agents write live here. Without it, every redeploy starts from scratch (the log says so). |
-| **Networking → Generate Domain** | | the start script trusts `RAILWAY_PUBLIC_DOMAIN` automatically. |
-| **Healthcheck path** *(optional)* | `/auth/login` | the one page that answers 200 before anyone signs in. |
+| Included | Why |
+|---|---|
+| **Volume at `/data`** | users, logins, the agent roster, conversations, model keys and everything the agents write live here, so they survive every redeploy. Without it, each deploy starts from scratch. |
+| **Public domain** (port 8080) | the start script trusts the generated `*.up.railway.app` domain automatically. |
+| **Health check** `/auth/login` | the one page that answers 200 before anyone signs in. |
 
-**First sign-in.** On the first boot the deploy log prints a `[dsh-ui-auth]` block with the
-`admin` username (用户名) and a one-time password (密码). Sign in at the public domain and change
-it; until you do, it also sits in `/data/workspace/dsh-ui-auth-bootstrap.txt`.
+### Step by step
 
-**Model key.** Add `OPENROUTER_API_KEY` as a service variable, or paste the key in
-**Settings → Models** after signing in (it is stored on the volume).
+1. **Deploy.** Click **Deploy on Railway** above, sign in to Railway, and click **Deploy**. The
+   template asks for no settings. The first build takes about five minutes.
+2. **Get the admin password.** Open the `smallpe` service → **Deployments** → the active
+   deployment → **View logs**. On the first boot the login plugin creates an `admin` account and
+   prints its one-time password; the plugin logs in Chinese, so look for:
+
+   ```
+   [dsh-ui-auth]   用户名: admin              ← username
+   [dsh-ui-auth]   密码:   <one-time password> ← password
+   ```
+
+   A few lines earlier, a `[smallpe]` line from the start script explains those labels in
+   English.
+3. **Sign in.** Open the service's generated domain (on its card, or **Settings → Networking**),
+   sign in as `admin`, and **change the password** in **Settings → User management**. Until you
+   do, the password also sits in `/data/workspace/dsh-ui-auth-bootstrap.txt`, which is deleted
+   once it has been changed.
+4. **Add a model key.** Either set `OPENROUTER_API_KEY` in the service's **Variables** (Railway
+   redeploys), or paste the key in **Settings → Models** inside the harness, which stores it on
+   the volume.
+5. **Start working.** The Managing Partner and the eight specialists are already in the sidebar.
+   To add teammates, create **Invite codes** under **Settings → User management** and send them
+   one each.
+
+Redeploys and updates keep everything on `/data`: users, agents and conversations survive. The
+volume can be grown later from the service's **Volume** settings, but not shrunk.
 
 **A custom domain** needs the two variables from the section above, for example
 `DSH_PUBLIC_URL=https://smallpe.example.com/` and `DSH_TRUSTED_HOST=smallpe.example.com`.
+
+### Without the template
+
+Railway also builds the repository as-is: **New Project → Deploy from GitHub repo → this
+repository**. Then set the three things the template would have, once:
+
+| Setting | Value |
+|---|---|
+| **Volume** | mount path `/data` — without it, users and agents are reset on every deploy, and the log warns about it |
+| **Settings → Networking → Generate Domain** | port `8080` |
+| **Settings → Healthcheck path** *(optional)* | `/auth/login` |
 
 The same image runs anywhere Docker does:
 
