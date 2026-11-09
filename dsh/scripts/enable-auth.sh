@@ -52,6 +52,16 @@ node "$DSH_DIR/scripts/patch-ui-auth-sharing.mjs"
 echo "==> Branding the dsh-ui-auth sign-in pages"
 node "$DSH_DIR/scripts/patch-ui-auth-branding.mjs"
 
+# `dsh plugin add dsh-ui-auth` above is a pnpm install (56 packages), and pnpm restores
+# node_modules/ds-bot/client.js from its store when it materialises the profile again.
+# That silently undoes every ds-bot patch install.sh applied — no error, each script
+# having already reported success — which is how the Classic mode button and the
+# SmallPE re-branding went missing from the container image while working locally.
+# See dsh/scripts/patch-dsbot.sh for the evidence. Idempotent, so this costs nothing
+# when nothing was lost.
+echo "==> Re-applying the ds-bot patches (the plugin install above restores its npm copy)"
+"$DSH_DIR/scripts/patch-dsbot.sh"
+
 cat <<'EOF'
 
 Done. Restart the harness with ./bin/run.sh, then open http://127.0.0.1:3080 —

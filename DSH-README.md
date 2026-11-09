@@ -493,6 +493,50 @@ makes, with no page reload and no writing to ds-bot's localStorage behind its ba
 borrows `bt-round`, the class ds-bot gives the other round icon buttons in that foot, so
 the chrome matches its neighbours.
 
+### Patches and pnpm: run `patch-dsbot.sh` after every install
+
+All three ds-bot patches live behind `dsh/scripts/patch-dsbot.sh`, and **it must run after
+any pnpm install that touches the web profile.** pnpm restores
+`node_modules/ds-bot/client.js` from its store whenever it materialises the profile again,
+which undoes them.
+
+This failure is quiet and worth recognising, because it cost a release. The Classic mode
+button worked locally and was missing from the container, while the build log plainly said
+
+```
+[smallpe] ds-bot: Classic mode button added beside the account control.
+```
+
+Nothing failed. The Dockerfile runs `install.sh` (which patches) and then
+`enable-auth.sh`, whose first line is `dsh plugin --profile web add dsh-ui-auth` — a
+56-package pnpm install that rewrote the file afterwards. The proof was in the image's
+mtimes:
+
+```
+01:49:47  ds-bot/package.json     <- the install.sh install
+01:49:47  ds-bot/index.js         <- the install.sh install
+01:51:05  ds-bot/client.js        <- rewritten 78 seconds later
+01:51:05  .modules.yaml           <- pnpm writes this when an install finishes
+```
+
+Only the patched file was rewritten, in the second pnpm finished adding dsh-ui-auth.
+
+**A local install does not reproduce this.** The patch is written through pnpm's hardlink
+into the local store, so a later install restores bytes that are already patched; a fresh
+container store holds the pristine copy. Reproducing it locally by removing and re-adding
+dsh-ui-auth does not work either — the add reports the same `Packages: +56` and the patch
+still survives. Checking the built image is the only reliable test:
+
+```console
+$ docker build -t smallpe-verify . && docker run --rm --entrypoint sh smallpe-verify -c \
+    'grep -c smallpe-classic-mode /app/dsh/home.dist/profiles/web/node_modules/ds-bot/client.js'
+1
+```
+
+`enable-auth.sh` now calls `patch-dsbot.sh` as its last step for this reason. The same trap
+applies to anything else patched into an installed plugin: the dsh-ui-auth patches are safe
+only because nothing installs after them.
+
 ### A note on language
 
 `dsh-ui-auth` is written in Chinese and translates itself in the browser: a MutationObserver

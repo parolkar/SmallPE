@@ -196,25 +196,13 @@ else
   die "the DSH CLI is not available; cannot install profile plugins."
 fi
 
-# ds-bot@0.2.0 looks for its activity-indicator portal with a direct-child selector that
-# DSH 0.2.1-rc.2 no longer produces, so an agent appears to do nothing at all until its
-# whole reply lands. Re-applied here because every pnpm install restores the npm copy.
-# It fails loudly rather than guessing if ds-bot changes that code; see the script.
-node "$DSH_DIR/scripts/patch-dsbot-typing.mjs" \
-  || die "patching the ds-bot typing indicator failed. Read dsh/scripts/patch-dsbot-typing.mjs — ds-bot has probably changed how it mounts the indicator."
-
-# This install is a SmallPE adaptation, but ds-bot's bundled UI still says "DS Bot" in the
-# settings nav, the error-source labels, the update banners and the Feedback page — which
-# also offers to file a bug on the upstream repository. Text and feedback destination only;
-# no element or handler is touched. Re-applied here because pnpm restores the npm copy.
-node "$DSH_DIR/scripts/patch-dsbot-branding.mjs" \
-  || die "re-branding the ds-bot UI failed. Read dsh/scripts/patch-dsbot-branding.mjs — ds-bot has probably reworded its UI."
-
-# A "Classic mode" button beside the account control at the sidebar foot. ds-bot paints
-# its own column over the shell's sidebar, so the documented `sidebar.footer.action` seat
-# is invisible in bot mode and the button has to be rendered inside ds-bot's component.
-node "$DSH_DIR/scripts/patch-dsbot-classic-switch.mjs" \
-  || die "adding the ds-bot Classic mode button failed. Read dsh/scripts/patch-dsbot-classic-switch.mjs — ds-bot has probably changed its sidebar foot."
+# The patches SmallPE makes to ds-bot's bundled UI: the typing indicator, the "DS Bot"
+# re-branding and the Classic mode button. They live in one script because pnpm restores
+# `node_modules/ds-bot/client.js` from its store on every install, so they have to be
+# re-applied after each one — enable-auth.sh calls this again for that reason. The
+# script explains the failure it is guarding against.
+"$DSH_DIR/scripts/patch-dsbot.sh" \
+  || die "patching the ds-bot UI failed. See the message above; dsh/scripts/patch-dsbot.sh names the script to read."
 
 # --- 4b. the vendored document toolchain ------------------------------------- #
 # Pandoc is mounted as an MCP server, and the agents' own PDF pipeline calls
