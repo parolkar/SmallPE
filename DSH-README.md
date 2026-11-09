@@ -661,6 +661,11 @@ the password is changed.
 Redeploys and updates keep everything on `/data`: users, agents and conversations survive. The
 volume can be grown later from the service's **Volume** settings, but not shrunk.
 
+**Updating.** A template deployment is pinned to the commit that was current when you deployed;
+it does not follow this repository on its own. To take the latest version, open the service's
+**Settings → Source** and connect it to this repository's `main` branch (or apply the update
+Railway offers for the template). Railway then rebuilds, and redeploys on every new commit.
+
 **A custom domain** needs the two variables from the section above, for example
 `DSH_PUBLIC_URL=https://smallpe.example.com/` and `DSH_TRUSTED_HOST=smallpe.example.com`.
 
