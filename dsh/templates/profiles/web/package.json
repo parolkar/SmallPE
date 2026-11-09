@@ -4,7 +4,6 @@
   "dependencies": {
     "@local/dsbot-auth-bridge": "link:../../../vendor/dsbot-auth-bridge",
     "@local/smallpe-brand": "link:../../../vendor/smallpe-brand",
-    "@local/smallpe-surface-switch": "link:../../../vendor/smallpe-surface-switch",
     "@local/smallpe-user-workspaces": "link:../../../vendor/smallpe-user-workspaces",
     "@local/smallpe-zapier-scope": "link:../../../vendor/smallpe-zapier-scope",
     "ds-bot": "0.3.1",
@@ -20,7 +19,6 @@
         "@deepseek-ai/dsh-web-app",
         "dsh-custom-logo",
         "@local/smallpe-brand",
-        "@local/smallpe-surface-switch",
         "ds-bot",
         "@local/dsbot-auth-bridge",
         "@local/smallpe-user-workspaces",

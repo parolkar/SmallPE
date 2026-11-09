@@ -210,6 +210,12 @@ node "$DSH_DIR/scripts/patch-dsbot-typing.mjs" \
 node "$DSH_DIR/scripts/patch-dsbot-branding.mjs" \
   || die "re-branding the ds-bot UI failed. Read dsh/scripts/patch-dsbot-branding.mjs — ds-bot has probably reworded its UI."
 
+# A "Classic mode" button beside the account control at the sidebar foot. ds-bot paints
+# its own column over the shell's sidebar, so the documented `sidebar.footer.action` seat
+# is invisible in bot mode and the button has to be rendered inside ds-bot's component.
+node "$DSH_DIR/scripts/patch-dsbot-classic-switch.mjs" \
+  || die "adding the ds-bot Classic mode button failed. Read dsh/scripts/patch-dsbot-classic-switch.mjs — ds-bot has probably changed its sidebar foot."
+
 # --- 4b. the vendored document toolchain ------------------------------------- #
 # Pandoc is mounted as an MCP server, and the agents' own PDF pipeline calls
 # `pandoc` directly, so ./dsh/bin carries uv/uvx, pandoc and tectonic. They are

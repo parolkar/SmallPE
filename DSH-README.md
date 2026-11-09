@@ -467,22 +467,31 @@ patched copy and skip when there is no login installed.
 ### Classic mode from the sidebar
 
 DS Bot can hand the window back to DSH's classic Agent interface, but only through
-Settings → General → Mode → Switch. `@local/smallpe-surface-switch` puts the same switch
-beside the account icon at the foot of the sidebar, in the shipped
-`sidebar.footer.action` seat — no patching of ds-bot, just a registration.
+Settings → General → Mode → Switch, four clicks deep.
+`dsh/scripts/patch-dsbot-classic-switch.mjs` puts a round button beside the account
+control at the foot of the sidebar that makes the same call one click away. It runs from
+`bin/install.sh`, is idempotent, and refuses to apply if ds-bot rewords the foot.
 
-It reuses ds-bot's own `bt-return` class, the one its mirror-image "back to bot" control
-uses in the same seat, so the two are laid out by identical rules rather than by styles
-of our own. In bot mode the seat always renders rail-style, so the button is an icon with
-a "Classic mode" tooltip.
+**Why a patch, having tried not to.** The shell documents a seat for exactly this —
+`sidebar.footer.action`, "optional actions beside Settings at the sidebar foot" — and a
+plugin registering there was the first attempt. It does not work in bot mode: ds-bot
+paints its own left column over the shell's sidebar, and measured at the seat's own
+coordinates the stack is `DIV.bt-list` / `DIV.bt-side` / `DIV.bt-leftcol`, the last
+opaque at z-index 25, with the seat's occupant laid out underneath at 28×36 and perfectly
+invisible. A second attempt injected a sibling of `.bt-account` with a MutationObserver;
+that node measured correctly at (42, 805) and still painted nothing, because the subtree
+belongs to ds-bot's React tree. ds-bot declares no extension point of its own, so
+rendering inside its component is the only way for the button to appear.
 
-**It reloads the page, and the Settings switch does not.** `setSurface` is private to
-ds-bot's React tree — `globalThis.dsBotApp` is the desktop bridge, not the UI — so this
-writes the same value ds-bot reads at startup (`localStorage["ds-bot:surface"]`) and
-restarts the window. ds-bot's `storage` listener syncs only reactions and unread marks,
-and the surface store is built once from `readMode()`, so a live window would not notice
-the change otherwise. The end state is the same: the settings switch closes every panel
-on the way out too.
+Both failures passed DOM assertions while showing the user nothing. **Screenshot anything
+you add to this UI** — `getBoundingClientRect()` is not evidence that a control is
+visible.
+
+Patching also buys the better behaviour: `actions` is in scope at the patch site, so the
+button calls `setSurface("agent")` directly — the same instant switch the settings row
+makes, with no page reload and no writing to ds-bot's localStorage behind its back. It
+borrows `bt-round`, the class ds-bot gives the other round icon buttons in that foot, so
+the chrome matches its neighbours.
 
 ### A note on language
 
