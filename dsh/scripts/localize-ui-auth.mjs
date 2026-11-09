@@ -98,6 +98,15 @@ const LITERALS = [
   // A stored value rather than a label, so no sweep can reach it: the first admin was named
   // "管理员" (administrator) and showed up that way in My account.
   { what: 'first admin display name', file: 'index', from: "displayName: '管理员'", to: "displayName: 'Admin'" },
+  // Error messages are translated per request from res.dshuaLocale, but handleAuthPath only
+  // sets it after dispatching /auth/login, so every sign-in error ("Wrong username or
+  // password", lock-outs) came back in Chinese although the table translates them.
+  {
+    what: 'sign-in error language',
+    file: 'index',
+    from: "if (pathname === '/auth/login') {\n            await handleLogin(req, res);",
+    to: "if (pathname === '/auth/login') {\n            res.dshuaLocale = requestLocale(req);\n            await handleLogin(req, res);",
+  },
 ]
 
 const DEFAULT_TARGET = path.resolve(
