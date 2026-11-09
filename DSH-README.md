@@ -512,6 +512,42 @@ sweeps its own DOM and substitutes from a 323-entry phrase table. Two consequenc
 This belongs upstream at [0QwQ0/dsh-ui-auth](https://github.com/0QwQ0/dsh-ui-auth); until it
 lands there, the patch is reapplied on each install.
 
+### The sign-in page
+
+`dsh-ui-auth` renders the login, register and register-success pages itself, in the host,
+each headed `<div class="brand">DeepSeek Harness</div>`. No branding plugin can reach
+them: `dsh-custom-logo` only restyles the in-app sidebar, and `@local/smallpe-brand` taps
+`index.html` — the SPA shell, which a signed-out visitor never receives, because the
+gateway redirects them to `/auth/login` first.
+`dsh/scripts/patch-ui-auth-branding.mjs` puts the configured logo on all three, and
+`enable-auth.sh` runs it. **Re-run it after any `dsh plugin add dsh-ui-auth`.**
+
+**The logo is inlined, not linked**, because the gateway treats exactly one prefix as
+public — `pathname === '/auth' || pathname.startsWith('/auth/')` — and answers every other
+path to an unauthenticated caller with 401, assets included:
+
+```console
+$ curl -o /dev/null -w '%{http_code}\n' localhost:3080/custom-logo/logo-wide.png
+401
+```
+
+So the patch reads `<DSH_HOME>/branding/logo-wide.png` in the host — the same file
+dsh-custom-logo serves — and emits it as a `data:` URI, re-reading when its size or mtime
+changes. The sign-in page and the sidebar therefore always show the one configured logo,
+including one uploaded through dsh-custom-logo's admin panel. With no branding directory
+it falls back to a "SmallPE" wordmark. Inlining is safe against the page's own
+`translateHtml()`, which substitutes over the whole HTML string: every phrase in its table
+is Chinese and base64 is ASCII, so nothing can land inside the payload.
+
+The three tab titles are rewritten in the same pass. They were `登录 · DeepSeek Harness`
+and friends, and none of those Chinese words are in the phrase table, so the tab stayed
+Chinese even on an English install.
+
+Two upstream names are deliberately left alone, since both are stored with enrolled
+credentials rather than merely displayed: the WebAuthn relying-party name (override it
+with `DSH_AUTH_RP_NAME`) and the TOTP issuer, which authenticator apps have already
+recorded for anyone enrolled.
+
 The `@local/dsbot-auth-bridge` plugin is already installed and opens exactly one route
 (`POST /api/bot`) through that gateway, so the DS Bot panels keep working; without it the
 gateway rejects DS Bot's own request shape and every panel errors with an empty model list.

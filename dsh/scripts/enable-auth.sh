@@ -44,6 +44,14 @@ node "$DSH_DIR/scripts/localize-ui-auth.mjs"
 echo "==> Teaching dsh-ui-auth about the shared DS Bot workspace"
 node "$DSH_DIR/scripts/patch-ui-auth-sharing.mjs"
 
+# dsh-ui-auth renders its own sign-in pages in the host, headed "DeepSeek Harness", and no
+# branding plugin can reach them: dsh-custom-logo only restyles the in-app sidebar, and
+# @local/smallpe-brand taps index.html, which a signed-out visitor never receives. Put the
+# configured logo on them. It is inlined rather than linked because the gateway 401s every
+# path outside /auth/*; see the script.
+echo "==> Branding the dsh-ui-auth sign-in pages"
+node "$DSH_DIR/scripts/patch-ui-auth-branding.mjs"
+
 cat <<'EOF'
 
 Done. Restart the harness with ./bin/run.sh, then open http://127.0.0.1:3080 —
