@@ -618,28 +618,63 @@ Without those variables no external authority is trusted, which is the correct d
 
 ## Deploying to Railway
 
-The repository root carries a `Dockerfile`, so Railway builds it with no other
-configuration: **New Project → Deploy from GitHub repo → this repository**. The image is a
-finished `./bin/install.sh` — the harness, its plugins, the document toolchain, Chromium for
-the browser tools, the nine provisioned agents — with the login switched on.
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/Us9ZyG?utm_medium=integration&utm_source=button&utm_campaign=smallpe)
 
-Then set three things on the service, once:
+The one-click template builds this repository's `Dockerfile` — a finished `./bin/install.sh`:
+the harness, its plugins, the document toolchain, Chromium for the browser tools and the nine
+provisioned agents, with the login switched on — and sets up everything the service needs:
 
-| Setting | Value | Why |
-|---|---|---|
-| **Volume** | mount path `/data` | conversations, the agent roster, logins, keys and everything the agents write live here. Without it, every redeploy starts from scratch (the log says so). |
-| **Networking → Generate Domain** | | the start script trusts `RAILWAY_PUBLIC_DOMAIN` automatically. |
-| **Healthcheck path** *(optional)* | `/auth/login` | the one page that answers 200 before anyone signs in. |
+| Included | Why |
+|---|---|
+| **Volume at `/data`** | users, logins, the agent roster, conversations, model keys and everything the agents write live here, so they survive every redeploy. Without it, each deploy starts from scratch. |
+| **Public domain** (port 8080) | the start script trusts the generated `*.up.railway.app` domain automatically. |
+| **Health check** `/auth/login` | the one page that answers 200 before anyone signs in. |
 
-**First sign-in.** On the first boot the deploy log prints a `[dsh-ui-auth]` block with the
-`admin` username (用户名) and a one-time password (密码). Sign in at the public domain and change
-it; until you do, it also sits in `/data/workspace/dsh-ui-auth-bootstrap.txt`.
+### Step by step
 
-**Model key.** Add `OPENROUTER_API_KEY` as a service variable, or paste the key in
-**Settings → Models** after signing in (it is stored on the volume).
+1. **Choose the admin password and deploy.** Click **Deploy on Railway** above and sign in to
+   Railway. The form asks for one value, `SMALLPE_ADMIN_PASSWORD`: the password for the
+   `admin` account. It needs 8–128 characters with at least two of lower-case, upper-case,
+   digits and symbols. Click **Deploy**; the first build takes about five minutes.
+2. **Sign in.** Open the service's generated domain (on its card, or **Settings → Networking**)
+   and sign in as **`admin`** with that password. The interface is in English.
+3. **Add a model key.** Click the gear at the foot of the sidebar → **Models and API keys** and
+   paste it there (stored on the volume), or set `OPENROUTER_API_KEY` in the service's
+   **Variables** on Railway (it redeploys).
+4. **Start working.** The Managing Partner and the eight specialists are already in the sidebar.
+   To add teammates, create **Invite codes** under **Settings → User management** (see below for
+   where that is) and send them
+   one each.
+
+**Changing the admin password.** Account settings live in the classic interface: click
+**Classic mode** (the ⇄ button at the foot of the sidebar, beside the gear), then **Settings**
+(bottom left) → **User management** → **Change password**. You can do this at any
+time. `SMALLPE_ADMIN_PASSWORD` only replaces the first, one-time password: once the password has
+been changed, redeploys leave it alone, and editing the variable later has no effect.
+
+**Without `SMALLPE_ADMIN_PASSWORD`** (an older template, or the manual setup below) the login
+plugin creates `admin` with a random one-time password instead and prints it in the deploy log —
+**Deployments → View logs**, the `[dsh-ui-auth]` block, labelled in Chinese: `用户名` is the
+username and `密码` the password. It is also in `/data/workspace/dsh-ui-auth-bootstrap.txt` until
+the password is changed.
+
+Redeploys and updates keep everything on `/data`: users, agents and conversations survive. The
+volume can be grown later from the service's **Volume** settings, but not shrunk.
 
 **A custom domain** needs the two variables from the section above, for example
 `DSH_PUBLIC_URL=https://smallpe.example.com/` and `DSH_TRUSTED_HOST=smallpe.example.com`.
+
+### Without the template
+
+Railway also builds the repository as-is: **New Project → Deploy from GitHub repo → this
+repository**. Then set the three things the template would have, once:
+
+| Setting | Value |
+|---|---|
+| **Volume** | mount path `/data` — without it, users and agents are reset on every deploy, and the log warns about it |
+| **Settings → Networking → Generate Domain** | port `8080` |
+| **Variables → `SMALLPE_ADMIN_PASSWORD`** *(recommended)* | the password for the first `admin` account |
+| **Settings → Healthcheck path** *(optional)* | `/auth/login` |
 
 The same image runs anywhere Docker does:
 

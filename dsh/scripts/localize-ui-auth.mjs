@@ -71,6 +71,35 @@ const REPLACEMENTS = [
 /** The exact assignment showTotpReminder emits, which is what we match and rewrite. */
 const assignment = (binding, text) => `${binding}.textContent = ${JSON.stringify(text)}`
 
+/**
+ * Hard-coded strings the phrase table does not cover (or only half covers) elsewhere in
+ * Settings → User management, and the display name the host gives the first admin. Each is
+ * matched as a whole code snippet that occurs exactly once, so a reworded release fails the
+ * build instead of being half-translated.
+ */
+const LITERALS = [
+  {
+    what: 'add-user label',
+    file: 'client',
+    from: 'React.createElement("label", null, "新增用户：用户名")',
+    to: 'React.createElement("label", null, "Add user: username")',
+  },
+  {
+    what: 'username placeholder',
+    file: 'client',
+    from: 'placeholder: "2-32 位字母、数字、_ . -"',
+    to: 'placeholder: "2-32 letters, digits, _ . -"',
+  },
+  // Passkey counters: the sweep translates the words around the number and leaves "个".
+  { what: 'passkey count column', file: 'client', from: '(u.passkeyCount || 0) + " 个")', to: 'String(u.passkeyCount || 0))' },
+  { what: 'passkey count badge', file: 'client', from: '"通行密钥 " + pk.list.length + " 个"', to: '"Passkeys: " + pk.list.length' },
+  { what: 'bound passkeys badge', file: 'client', from: '"已绑定 " + pk.list.length + " 个"', to: '"Bound: " + pk.list.length' },
+  { what: 'passkey limit note', file: 'client', from: '"已达上限 " + pk.max + " 个"', to: '"Limit reached: " + pk.max' },
+  // A stored value rather than a label, so no sweep can reach it: the first admin was named
+  // "管理员" (administrator) and showed up that way in My account.
+  { what: 'first admin display name', file: 'index', from: "displayName: '管理员'", to: "displayName: 'Admin'" },
+]
+
 const DEFAULT_TARGET = path.resolve(
   process.env.DSH_HOME ?? path.resolve(import.meta.dirname, '..', 'home'),
   'profiles/web/node_modules/dsh-ui-auth/lib/client.js',
@@ -90,48 +119,57 @@ try {
   throw error
 }
 
+// The host half sits beside the client bundle.
+const hostTarget = path.join(path.dirname(target), 'index.js')
+const hostSource = await readFile(hostTarget, 'utf8')
+
 let patched = source
+let hostPatched = hostSource
 const applied = []
 const already = []
 const missing = []
 
-for (const { what, binding, zh, en } of REPLACEMENTS) {
-  const from = assignment(binding, zh)
-  const to = assignment(binding, en)
-  const occurrences = patched.split(from).length - 1
+const edits = [
+  ...REPLACEMENTS.map(({ what, binding, zh, en }) => ({ what, file: 'client', from: assignment(binding, zh), to: assignment(binding, en) })),
+  ...LITERALS,
+]
+for (const { what, file, from, to } of edits) {
+  const text = file === 'index' ? hostPatched : patched
+  const occurrences = text.split(from).length - 1
   if (occurrences === 1) {
-    patched = patched.replace(from, to)
+    if (file === 'index') hostPatched = text.replace(from, to)
+    else patched = text.replace(from, to)
     applied.push(what)
   } else if (occurrences > 1) {
-    // One dialog, one assignment. More than one means the file is not shaped as expected.
+    // One snippet, one occurrence. More than one means the file is not shaped as expected.
     missing.push(`${what} (matched ${occurrences} times, expected 1)`)
-  } else if (patched.includes(to)) {
+  } else if (text.includes(to)) {
     already.push(what)
   } else {
     missing.push(what)
   }
 }
 
-// Fail loudly rather than leaving a half-translated dialog: a dsh-ui-auth release that
-// rewords this prompt should be noticed here, not by a user meeting Chinese after login.
+// Fail loudly rather than leaving a half-translated screen: a dsh-ui-auth release that
+// rewords one of these strings should be noticed here, not by a user meeting Chinese.
 if (missing.length > 0) {
   console.error(
     `[smallpe] localize-ui-auth: could not find the ${missing.join(', ')} string(s) in\n`
-    + `          ${target}\n`
-    + '          dsh-ui-auth has probably reworded its TOTP reminder. Update REPLACEMENTS in\n'
+    + `          ${path.dirname(target)}\n`
+    + '          dsh-ui-auth has probably reworded them. Update REPLACEMENTS / LITERALS in\n'
     + '          dsh/scripts/localize-ui-auth.mjs to match the new text.',
   )
   process.exit(1)
 }
 
 if (applied.length === 0) {
-  console.log('[smallpe] dsh-ui-auth TOTP reminder is already in English.')
+  console.log('[smallpe] dsh-ui-auth is already localised.')
   process.exit(0)
 }
 
-// The three short strings are also phrase-table keys. Losing one would quietly stop the
-// run-time sweep translating that word everywhere else, which is invisible until someone
-// meets a Chinese button in another dialog — so prove the table survived.
+// The three short TOTP-reminder strings are also phrase-table keys. Losing one would quietly
+// stop the run-time sweep translating that word everywhere else, which is invisible until
+// someone meets a Chinese button in another dialog — so prove the table survived.
 const tableKeys = REPLACEMENTS.filter(({ zh }) => source.split(JSON.stringify(zh)).length - 1 > 1)
 const clobbered = tableKeys.filter(({ zh }) => !patched.includes(JSON.stringify(zh)))
 if (clobbered.length > 0) {
@@ -143,8 +181,9 @@ if (clobbered.length > 0) {
   process.exit(1)
 }
 
-await writeFile(target, patched)
+if (patched !== source) await writeFile(target, patched)
+if (hostPatched !== hostSource) await writeFile(hostTarget, hostPatched)
 console.log(
-  `[smallpe] dsh-ui-auth TOTP reminder translated (${applied.join(', ')})`
+  `[smallpe] dsh-ui-auth localised (${applied.join(', ')})`
   + `${already.length > 0 ? `; already English: ${already.join(', ')}` : ''}.`,
 )

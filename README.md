@@ -60,11 +60,27 @@ specialist agents are created for you on first install, each working in its own 
 See **[DSH-README.md](DSH-README.md)** for setup details, adding your model key, enabling a
 login before exposing it publicly, and troubleshooting.
 
-To host it for a team instead, deploy this repository on Railway: the `Dockerfile` at the root
-builds the same harness with a login in front. See
+### Option B — one-click deploy on Railway (for a team)
+
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/Us9ZyG?utm_medium=integration&utm_source=button&utm_campaign=smallpe)
+
+The same harness, hosted, with a login in front. The template already includes the persistent
+volume, the public domain and the health check:
+
+1. Click **Deploy on Railway**, type the **admin password** you want into
+   `SMALLPE_ADMIN_PASSWORD` (8+ characters, mixing letters with digits or symbols), and click
+   **Deploy**. The first build takes about five minutes.
+2. Open the generated `*.up.railway.app` address and sign in as **`admin`** with that password.
+3. Add your model key: the gear at the foot of the sidebar → **Models and API keys**, or set
+   `OPENROUTER_API_KEY` in the service's **Variables** on Railway.
+
+Change the password any time: switch to **Classic mode** (the ⇄ button at the foot of the sidebar), then
+**Settings → User management → Change password**.
+
+Step-by-step guide, custom domains and the manual setup:
 **[Deploying to Railway](DSH-README.md#deploying-to-railway)**.
 
-### Option B — the Replit template or Grok Bot
+### Option C — the Replit template or Grok Bot
 
 The easiest way to start using the Agentic Team is via the Replit Template:
 [SmallPE Replit Template](https://replit.com/@inloop/SmallPE-replit?v=1#README.md)

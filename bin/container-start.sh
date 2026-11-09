@@ -158,17 +158,31 @@ if [ -n "${RAILWAY_PUBLIC_DOMAIN:-}" ]; then
   export DSH_PUBLIC_URL DSH_TRUSTED_HOST DSH_AUTH_TRUST_PROXY
 fi
 
-if [ -f "$DATA/workspace/dsh-ui-auth-bootstrap.txt" ]; then
+# The deployer's choice of password for the first admin. Kept out of the harness's
+# environment: agents run shell commands under it, and anyone allowed to chat with one
+# could otherwise read the admin password back.
+admin_password="${SMALLPE_ADMIN_PASSWORD:-}"
+unset SMALLPE_ADMIN_PASSWORD
+
+if [ -f "$DATA/workspace/dsh-ui-auth-bootstrap.txt" ] && [ -z "$admin_password" ]; then
   say "the initial admin password has not been changed yet; it is in $DATA/workspace/dsh-ui-auth-bootstrap.txt"
-else
+elif [ -z "$admin_password" ]; then
   # dsh-ui-auth logs only in Chinese. When it has no account yet it creates one.
   say "if a [dsh-ui-auth] block follows, it is the first admin account: 用户名 = username, 密码 = one-time password."
+  say "set SMALLPE_ADMIN_PASSWORD to choose that password instead."
 fi
 
 node "$DSH_DIR/scripts/forward-port.mjs" &
 forward=$!
 "$ROOT/bin/run.sh" &
 harness=$!
+
+# Replace the admin's one-time password with SMALLPE_ADMIN_PASSWORD. Best effort, in the
+# background, and a no-op once that password has been changed (here or in the UI).
+if [ -n "$admin_password" ]; then
+  SMALLPE_ADMIN_PASSWORD="$admin_password" \
+    node "$DSH_DIR/scripts/set-admin-password.mjs" "$DATA/workspace/dsh-ui-auth-bootstrap.txt" &
+fi
 
 stop() { kill -TERM "$harness" "$forward" 2>/dev/null || true; }
 trap stop TERM INT
