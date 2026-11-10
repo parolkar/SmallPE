@@ -35,7 +35,7 @@ function registeredPolicy(config) {
 
 /**
  * Endpoints every signed-in user needs to see the team and work with it.
- * Derived from ds-bot 0.3.1's client (`grep -oh 'call("[a-zA-Z._/-]*"' client.js`).
+ * Derived from ds-bot 0.3.1's client (`grep -ohE '\bcall[0-9]*\("[a-zA-Z._/-]+"' client.js`).
  */
 const SHARED = [
   'state', 'agent-session', 'thinking',
@@ -43,14 +43,50 @@ const SHARED = [
   'browser-takeover', 'browser-stop', 'browser-give-back',
   'computer-cursor-wait', 'computer-user-active',
   'learning-answer',
+  'earlier', 'exchange', 'exchange-text', 'file-text', 'room-progress',
+  'send', 'answer-question', 'view-reply', 'approval-answer',
+  'dismiss-question', 'dismiss-view', 'resume', 'btw-delete',
+  'side-new', 'side-ask', 'side-cancel', 'side-close',
+  'stop-member-work', 'stop-room-work', 'goal-draft', 'goal-control',
+  'computer-takeover', 'computer-handback', 'computer-stop', 'computer-hold-answer', 'computer-shot',
 ]
 
-/** Roster changes and host software updates: admin only. */
+/** The team's shape, host-wide settings, other people's data and host updates: admin only. */
 const ADMIN_ONLY = [
   'add-agent', 'remove-agent', 'agent-rename', 'agent-archive', 'agent-adopt',
-  'local-agent-add', 'local-agent-remove', 'local-agent-update',
+  'local-agents', 'local-agent-refresh', 'local-agent-add', 'local-agent-remove', 'local-agent-update',
+  'create-bot', 'update-bot', 'duplicate-bot', 'delete-bot', 'set-main', 'set-flags', 'private-release',
+  'create-room', 'update-room', 'delete-room', 'team-workspace',
+  'folders', 'folder-pick', 'folder-list',
+  'avatar-library', 'avatar-import', 'avatar-delete',
+  'models', 'efforts', 'providers', 'provider-key', 'provider-add', 'provider-models', 'provider-remove',
+  'secret-set', 'secret-allow', 'secret-cancel', 'secret-update', 'secret-delete',
+  'connector-connect', 'connector-disconnect', 'connector-retry', 'connector-sign-in-code',
+  'connector-cancel', 'connector-client', 'connector-set', 'connector-add', 'connector-remove',
+  'connector-import-scan', 'connector-import', 'connector-request-cancel',
+  'mail-account-add', 'mail-account-remove', 'mail-rule-set', 'mail-send-answer', 'mail-sign-in-code',
+  'im-add', 'im-update', 'im-remove', 'im-pair', 'im-unpair', 'im-chat', 'im-retry',
+  'im-login-start', 'im-login-wait',
+  'capability-save', 'capability-delete', 'capability-approve', 'bot-capability',
+  'schedules', 'schedule-create', 'schedule-delete',
+  'memory-view', 'memory-ask', 'memory-forget', 'memory-history', 'memory-restore',
+  'usage', 'diagnostics', 'diagnostics-log', 'diagnostics-clear', 'set-prefs', 'repo-stars',
+  'computer-set-enabled', 'computer-set-level', 'computer-revoke-app', 'computer-provider-retry',
+  'computer-system-status', 'computer-permission', 'computer-allow-foreground', 'computer-app-answer',
   'update-check', 'update-install', 'dsh-update-install',
 ]
+
+/**
+ * Every endpoint the installed ds-bot client posts. The bundle calls the route through
+ * more than one minified alias (`call`, `call2`, …); matching `call("` alone saw 22 of
+ * ~130 and left `send` unclassified, so non-admins got a 403 on every message to a Bot.
+ * Two more are named through a variable (`load("local-agents")`).
+ */
+function clientEndpoints(source) {
+  const called = [...source.matchAll(/\bcall\d*\("([a-zA-Z._/-]+)"/g)].map((m) => m[1])
+  const loaded = [...source.matchAll(/\bload\("(local-agent[a-z-]*)"/g)].map((m) => m[1])
+  return [...new Set([...called, ...loaded])].sort()
+}
 
 const admin = { role: 'admin', username: 'admin' }
 const john = { role: 'user', username: 'john' }
@@ -114,9 +150,21 @@ test('every endpoint ds-bot serves is classified', () => {
     'profiles/web/node_modules/ds-bot/client.js',
   )
   if (!existsSync(client)) { console.log('# ds-bot not installed — skipping'); return }
-  const served = [...readFileSync(client, 'utf8').matchAll(/call\("([a-zA-Z._/-]+)"/g)]
-    .map((m) => m[1]).sort()
+  const served = clientEndpoints(readFileSync(client, 'utf8'))
   const classified = new Set([...SHARED, ...ADMIN_ONLY])
-  const unclassified = [...new Set(served)].filter((e) => !classified.has(e))
+  const unclassified = served.filter((e) => !classified.has(e))
   assert.deepEqual(unclassified, [], `unclassified ds-bot endpoints: ${unclassified.join(', ')}`)
+})
+
+test('the endpoint scan sees every minified alias of the client call', () => {
+  // ds-bot 0.3.1 posts most operations through `call2`; a scan for `call("` alone missed
+  // them, `send` among them.
+  const source = 'call("state"); call2("send", { text }); call12("side-ask"); recall("no"); load("local-agents")'
+  assert.deepEqual(clientEndpoints(source), ['local-agents', 'send', 'side-ask', 'state'])
+})
+
+test('a user can send a message to a Bot', async () => {
+  // The regression behind non-admins' 403 on every chat message.
+  const { authorize } = registeredPolicy().http
+  assert.equal(await authorize(john, {}, { endpoint: 'send', payload: { sessionId: 'b1', text: 'hi' } }), true)
 })

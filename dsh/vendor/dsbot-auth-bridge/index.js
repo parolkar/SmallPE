@@ -36,9 +36,9 @@ export const name = 'dsbot-auth-bridge'
 // The behaviour is otherwise identical: the policy is registered the moment dsh-ui-auth
 // provides the gateway — before or after this plugin loads — and is withdrawn with it.
 // DS Bot names its operation in the request BODY — it posts `{ endpoint, payload }` to the
-// one route — so authorization has to read the envelope, not the URL. Of its eleven
-// endpoints only three are needed to see the team and work with it; the rest change the
-// roster or install software, and stay with the admin.
+// one route — so authorization has to read the envelope, not the URL. What a user needs to
+// see the team and talk to it is shared; what changes the team, its settings or the host
+// stays with the admin.
 //
 // The SmallPE DS Bots are shared colleagues: every signed-in user must be able to load the
 // team and talk to the agents. Admin-only here is what leaves a non-admin looking at
@@ -56,13 +56,45 @@ const SHARED_ENDPOINTS = new Set([
   'computer-cursor-wait',  // computer-use handshake; the client polls this on a loop
   'computer-user-active',  // idle/presence ping, sent automatically by the client
   'learning-answer',       // approve or reject a learning card
+  // Reading a chat
+  'earlier',               // scroll back through a Bot's chat
+  'exchange',              // the messages two Bots passed each other
+  'exchange-text',         // one of those messages in full
+  'file-text',             // "Show all" on a long post
+  'room-progress',         // who is speaking in a group chat right now
+  // Talking in it
+  'send',                  // send a message to a Bot or a group chat
+  'answer-question',       // answer a Bot's ask_user card
+  'view-reply',            // submit a form a Bot showed
+  'approval-answer',       // allow or deny a tool call the Bot asked about
+  'dismiss-question',      // close a question card unanswered
+  'dismiss-view',          // close a form unanswered
+  'resume',                // "Retry" after a failed turn
+  'btw-delete',            // delete a by-the-way card
+  'side-new',              // side chats: an aside next to a Bot's chat
+  'side-ask',
+  'side-cancel',
+  'side-close',
+  // Steering work in progress
+  'stop-member-work',      // stop one Bot in a group chat
+  'stop-room-work',        // stop the whole group chat
+  'goal-draft',            // set a group chat's goal
+  'goal-control',          // pause, resume or stop that goal
+  'computer-takeover',     // the computer-use counterparts of the browser-* entries above
+  'computer-handback',
+  'computer-stop',
+  'computer-hold-answer',
+  'computer-shot',         // a screenshot the Bot took, shown in its chat
 ])
 
-// Left to the admin on purpose:
-//   add-agent, remove-agent, agent-rename, agent-archive, agent-adopt
-//     — the roster is the team's shape, not one member's to change
-//   local-agent-add, local-agent-remove, local-agent-update            (ds-bot 0.3.x)
-//     — same reasoning: these define which local agents the team has
+// Everything else ds-bot serves is left to the admin on purpose. By kind:
+//   roster and group chats: add-agent, remove-agent, agent-*, create-bot, update-bot,
+//     duplicate-bot, delete-bot, set-main, set-flags, private-release, create-room,
+//     update-room, delete-room, team-workspace, folder*, avatar-*, local-agent*
+//     — the team's shape, not one member's to change
+//   providers, models, secrets, connectors, mail, IM, capabilities, schedules, memory,
+//   usage, diagnostics, set-prefs, repo-stars and the remaining computer-* settings
+//     — host-wide configuration, other people's data, or the deployment's spend
 //   update-check, update-install, dsh-update-install
 //     — these install software on the host; a non-admin must never reach them
 //
@@ -71,11 +103,13 @@ const SHARED_ENDPOINTS = new Set([
 // time. Denying them does not protect anything — they carry no authority — and leaves a
 // non-admin's UI retrying against a 403 forever.
 //
-// WHEN UPGRADING ds-bot: re-derive this list. 0.2.0 served 11 endpoints and 0.3.1 serves
-// 22; anything new is denied to non-admins until it is classified here, which is the safe
-// default but shows up as a feature that silently does nothing for them. The list lives
-// in the client as `call("<endpoint>"`:
-//   grep -oh 'call("[a-zA-Z._/-]*"' client.js | sort -u
+// WHEN UPGRADING ds-bot: re-derive this list; test/policy.test.mjs fails on anything
+// unclassified. Anything new is denied to non-admins until it is classified here, which
+// is the safe default but shows up as a feature that silently does nothing for them, or
+// as a 403. The client calls the route through more than one minified alias (`call`,
+// `call2`), so match them all:
+//   grep -ohE '\bcall[0-9]*\("[a-zA-Z._/-]+"' client.js | sort -u
+// plus `local-agents` and `local-agent-refresh`, which it names through a variable.
 
 export function apply(ctx, config = {}) {
   const pathname = config.pathname ?? '/api/bot'
