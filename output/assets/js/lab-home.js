@@ -58,6 +58,14 @@
       anchor: hero.querySelector('.hero-logo-anchor'),
       // Wide enough to lead the page, short enough to leave the headline room below it.
       width: function (w, h, portrait) { return portrait ? 0.84 * w : Math.min(0.5 * w, 0.56 * h); },
+      // During the story the arch sits in the clear last third of the console's frame (below its
+      // title bar); on phones, in the frame's upper part above the text.
+      story: function (w, h, portrait) {
+        if (portrait) return { x: w / 2, y: 0.37 * h, arch: 0.68 * w };
+        var gutter = Math.min(64, Math.max(20, 0.05 * w));
+        var area = w - 2 * gutter;
+        return { x: w - gutter - area / 6, y: h / 2 + 16, arch: Math.min(0.27 * area, 0.5 * h) };
+      },
     });
 
     var acts = Array.prototype.slice.call(hero.querySelectorAll('.act'));
@@ -119,7 +127,7 @@
     box.className = 'console';
     box.setAttribute('aria-hidden', 'true');
     box.innerHTML =
-      '<div class="console-bar"><span></span><span></span><span></span><b>managing-partner \u2014 smallpe</b></div>' +
+      '<div class="console-bar"><span></span><span></span><span></span><b>managing-partner \u2014 smallpe</b><i>8 agents \u00b7 thesis \u2192 close</i></div>' +
       '<div class="console-body">' +
       '<p class="console-cmd"><span class="console-prompt">mp \u203a</span> <span class="console-typed"></span><span class="console-caret"></span></p>' +
       '<p class="console-num"></p><p class="console-name"></p><p class="console-role"></p><p class="console-text"></p>' +

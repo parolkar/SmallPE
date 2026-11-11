@@ -21,6 +21,8 @@
   ];
   var UNIT = 4 / VIEW.w; // the logo spans four world units
   var MASK_SCALE = 3;
+  // The arch's share of the logo's width, dot edge to dot edge.
+  var ARCH_SHARE = (DOTS[7][0] + DOTS[7][2] - (DOTS[0][0] - DOTS[0][2])) / VIEW.w;
   // Where the camera centres once the story zooms in on the arch, in world units.
   var ARCH_FOCUS = (VIEW.y + VIEW.h / 2 - 146) * UNIT;
 
@@ -275,7 +277,8 @@
   /**
    * Mounts the field on a canvas. Options: quality ('auto' | 'low' | 'high'), anchor (element the
    * logo centres on), wordmark (false for the arch alone), width(cssW, cssH, portrait) (the logo's
-   * on-screen width in CSS px), logoSrc (URL of the tight logo SVG).
+   * on-screen width in CSS px), story(cssW, cssH, portrait) (where the arch sits during the story:
+   * { x, y, arch } with its centre and width in CSS px), logoSrc (URL of the tight logo SVG).
    * Returns null when WebGL2 is unavailable, leaving the CSS background as the fallback.
    */
   function mountLogoField(canvas, opts) {
@@ -457,7 +460,10 @@
       var portrait = cssW < cssH * 0.8;
       var logoWidth = opts.width ? opts.width(cssW, cssH, portrait) : 0.6 * cssW;
       var fit = logoWidth / (0.846 * cssH);
-      var zoom = 1 + (portrait ? 0.55 : 0.75) * easeInOut(acts);
+      var stage = opts.story
+        ? opts.story(cssW, cssH, portrait)
+        : { x: cssW / 2, y: cssH / 2, arch: logoWidth * ARCH_SHARE * 1.6 };
+      var zoom = 1 + (stage.arch / (logoWidth * ARCH_SHARE) - 1) * easeInOut(acts);
       var nx = Math.max(-1, Math.min(1, (mouse.x - center.x) / (cssW / 2)));
       var ny = Math.max(-1, Math.min(1, (mouse.y - center.y) / (cssH / 2)));
 
@@ -476,18 +482,18 @@
       );
       gl.uniform2f(uniforms.uMouse, mouse.x, mouse.y);
       gl.uniform1f(uniforms.uMouseOn, mouse.on);
-      // During the story the arch moves to its own spot beside (or above) the captions.
+      // During the story the arch moves to the spot the page gives it beside (or above) the captions.
       gl.uniform2f(
         uniforms.uCenter,
-        center.x + ((portrait ? 0.5 : 0.7) * cssW - center.x) * acts,
-        center.y + ((portrait ? 0.34 : 0.47) * cssH - center.y) * acts
+        center.x + (stage.x - center.x) * acts,
+        center.y + (stage.y - center.y) * acts
       );
       gl.uniform1f(uniforms.uScale, fit * zoom);
       // Without the wordmark the arch is the whole picture, so it stays centred.
       gl.uniform1f(uniforms.uFocus, withWordmark ? ARCH_FOCUS * easeInOut(acts) : ARCH_FOCUS);
       gl.uniform1f(uniforms.uActs, acts);
       gl.uniform1f(uniforms.uStep, step);
-      gl.uniform1f(uniforms.uWord, 1 - 0.95 * acts);
+      gl.uniform1f(uniforms.uWord, 1 - acts);
       gl.drawArrays(gl.POINTS, 0, count);
       if (count) canvas.parentElement && canvas.parentElement.setAttribute('data-ready', '');
 
