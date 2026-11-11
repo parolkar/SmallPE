@@ -1,0 +1,392 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Abhishek Parolkar" />
+    
+    <meta name="description" content="SmallPE is an open-source blueprint of an AI-first private equity firm - a Managing Partner orchestrating eight specialist agents from thesis to close. Deploy your own in minutes." />
+    <meta content='NOINDEX, NOFOLLOW' name='ROBOTS' />
+    <meta name="theme-color" content="#070b16" />
+    <title>SmallPE - Nine AI agents. One private equity firm.</title>
+
+    
+    
+    
+    
+    <meta property="og:type"        content="website" />
+    <meta property="og:site_name"   content="SmallPE" />
+    <meta property="og:title"       content="SmallPE - Nine AI agents. One private equity firm." />
+    <meta property="og:description" content="SmallPE is an open-source blueprint of an AI-first private equity firm - a Managing Partner orchestrating eight specialist agents from thesis to close. Deploy your own in minutes." />
+    <meta property="og:url"         content="https://www.smallpe.com" />
+    <meta property="og:image"       content="https://smallpe.com/assets/images/pitch-video-poster.jpg" />
+    <meta property="og:image:width"  content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:logo"         content="https://smallpe.com/assets/images/smallpe_logo.jpg" />
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content="SmallPE - Nine AI agents. One private equity firm." />
+    <meta name="twitter:description" content="SmallPE is an open-source blueprint of an AI-first private equity firm - a Managing Partner orchestrating eight specialist agents from thesis to close. Deploy your own in minutes." />
+    <meta name="twitter:image"       content="https://smallpe.com/assets/images/pitch-video-poster.jpg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+    <link rel="stylesheet" href="/assets/css/lab-home.css">
+    <link rel="preload" href="/assets/images/smallpe_logo_tight.svg" as="fetch" crossorigin>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KMNQ171NC4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-KMNQ171NC4');
+    </script>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
+    <script defer src="/assets/js/logo-field.js"></script>
+    <script defer src="/assets/js/lab-home.js"></script>
+    <meta name="generator" content="Nanoc 4.13.5">
+  </head>
+  <body class="lab">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <nav class="site-nav" aria-label="Main">
+        <a class="brand" href="/">SmallPE</a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Menu">
+          <span></span><span></span>
+        </button>
+        <div class="nav-links" id="nav-links">
+          <a href="#agents">Agents</a>
+          <a href="#deploy">Deploy</a>
+          <a href="#demos">Demos</a>
+          <a href="#open-source">Open source</a>
+          <a href="/docs/">Docs</a>
+          <a class="nav-github" href="https://github.com/parolkar/SmallPE" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+            GitHub
+          </a>
+        </div>
+      </nav>
+    </header>
+
+    <main id="main">
+      <!-- Lab redesign of the home page for the SmallPE agentic team launch; noindex until it replaces /. -->
+
+<!-- Hero: the particles condense into the SmallPE logo, then the stage pins and walks through the agents. -->
+<section class="hero" data-act="0" aria-labelledby="hero-title">
+  <span class="agents-anchor" id="agents"></span>
+  <div class="hero-stage">
+    <div class="field" aria-hidden="true">
+      <canvas data-quality="auto"></canvas>
+    </div>
+    <div class="hero-logo-anchor" aria-hidden="true"></div>
+
+    <div class="hero-copy">
+      <p class="kicker reveal-in" style="--d:0">[ Open-source · AI-first private equity ]</p>
+      <h1 id="hero-title" class="reveal-in" style="--d:1">Nine AI agents.<br><em>One private equity firm.</em></h1>
+      <p class="lede reveal-in" style="--d:2">
+        SmallPE is a community-built blueprint of an AI-first PE firm: a Managing Partner orchestrating eight specialists, from thesis to close. Run your own in minutes.
+      </p>
+      <div class="actions reveal-in" style="--d:3">
+        <a class="btn btn-primary" href="https://railway.com/new/template/tgOYSP?utm_medium=integration&amp;utm_source=button&amp;utm_campaign=smallpe" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg>
+          Deploy on Railway
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/parolkar/SmallPE" target="_blank" rel="noopener noreferrer">Star on GitHub</a>
+      </div>
+    </div>
+
+    <!-- The team list feeds the console captions and stays readable for screen readers. -->
+    <div class="team">
+      <h2>The team: one Managing Partner and eight specialists</h2>
+      <ol class="acts">
+        <li class="act" data-stage="Thesis">
+          <h3 class="act-name">Oracle</h3>
+          <p class="act-role">Investment thesis &amp; macro trends</p>
+          <p class="act-body">Synthesises macroeconomic, technology and social trends into defensible theses, so the fund invests ahead of the curve.</p>
+        </li>
+        <li class="act" data-stage="Sourcing">
+          <h3 class="act-name">Helios</h3>
+          <p class="act-role">Deal sourcing &amp; screening</p>
+          <p class="act-body">Turns Oracle's theses into a qualified, proprietary pipeline in the lower-middle market.</p>
+        </li>
+        <li class="act" data-stage="Diligence">
+          <h3 class="act-name">Athena</h3>
+          <p class="act-role">Due diligence orchestrator</p>
+          <p class="act-body">Runs diligence as a structured, data-driven exercise, with Prometheus and Themis reporting in.</p>
+        </li>
+        <li class="act" data-stage="Diligence">
+          <h3 class="act-name">Prometheus</h3>
+          <p class="act-role">Business evaluation</p>
+          <p class="act-body">Writes growth-oriented evaluations that surface value-creation opportunities and name the challenges honestly.</p>
+        </li>
+        <li class="act" data-stage="Diligence">
+          <h3 class="act-name">Themis</h3>
+          <p class="act-role">Evidence verification</p>
+          <p class="act-body">Checks every claim in the evaluation against documented, verifiable evidence. No hopeful assumptions.</p>
+        </li>
+        <li class="act" data-stage="Valuation">
+          <h3 class="act-name">Logos</h3>
+          <p class="act-role">Financial modelling &amp; valuation</p>
+          <p class="act-body">Moves models from static spreadsheets to probabilistic scenarios, so the range of outcomes is visible before the bid.</p>
+        </li>
+        <li class="act" data-stage="Closing">
+          <h3 class="act-name">Hermes</h3>
+          <p class="act-role">Financing &amp; deal closing</p>
+          <p class="act-body">Compares lender proposals, automates the routine closing work and keeps the deal on schedule.</p>
+        </li>
+        <li class="act" data-stage="Every stage">
+          <h3 class="act-name">Iris</h3>
+          <p class="act-role">Impact investing</p>
+          <p class="act-body">Engages at every stage and measures impact with IRIS+, so the firm never claims what it cannot measure.</p>
+        </li>
+      </ol>
+    </div>
+    <div class="rail" aria-hidden="true">
+      <span data-act="1"></span><span data-act="2"></span><span data-act="3"></span><span data-act="4"></span>
+      <span data-act="5"></span><span data-act="6"></span><span data-act="7"></span><span data-act="8"></span>
+    </div>
+    <p class="hint" aria-hidden="true">Scroll to meet the team</p>
+  </div>
+</section>
+
+<!-- Manifesto -->
+<section class="section manifesto">
+  <div class="wrap">
+    <p class="kicker reveal">[ Why SmallPE ]</p>
+    <p class="scroll-words">SmallPE exists to prove that a small, AI-native team can outperform traditional private equity in the lower-middle market.</p>
+    <div class="manifesto-grid">
+      <div class="reveal">
+        <h3>Deal velocity over bureaucracy</h3>
+        <p>Automate the routine. Spend human judgment where it matters.</p>
+      </div>
+      <div class="reveal" style="--reveal-delay:120ms">
+        <h3>Evidence over opinion</h3>
+        <p>Every decision rests on verified, documented evidence, and every IC report defends itself.</p>
+      </div>
+      <div class="reveal" style="--reveal-delay:240ms">
+        <h3>Impact integrity</h3>
+        <p>Impact as a competitive advantage, not marketing. Nothing claimed that cannot be measured.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Deploy -->
+<section class="section deploy" id="deploy">
+  <div class="wrap">
+    <p class="kicker reveal">[ Deploy your own ]</p>
+    <h2 class="section-title reveal">Your own AI-first firm,<br><em>live in about five minutes.</em></h2>
+
+    <div class="deploy-grid">
+      <article class="deploy-card deploy-railway reveal">
+        <span class="badge">For a team · hosted</span>
+        <h3>One click on Railway</h3>
+        <ol class="steps">
+          <li><strong>Click Deploy.</strong> The form asks for an admin password and your <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer">OpenRouter key</a>.</li>
+          <li><strong>Wait for the first build</strong>, about five minutes. Volume, domain and health check come with the template.</li>
+          <li><strong>Sign in as <code>admin</code></strong> and talk to the Managing Partner.</li>
+        </ol>
+        <a class="btn btn-primary" href="https://railway.com/new/template/tgOYSP?utm_medium=integration&amp;utm_source=button&amp;utm_campaign=smallpe" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg>
+          Deploy on Railway
+        </a>
+      </article>
+
+      <article class="deploy-card deploy-local reveal" style="--reveal-delay:120ms">
+        <span class="badge">On your machine · Node.js 22.19+</span>
+        <h3>Run it locally</h3>
+        <div class="terminal" role="group" aria-label="Install commands">
+          <div class="terminal-bar"><span></span><span></span><span></span><button class="copy" type="button" data-copy="terminal-code">Copy</button></div>
+<pre id="terminal-code"><code><span class="prompt">$</span> git clone https://github.com/parolkar/SmallPE
+<span class="prompt">$</span> cd SmallPE
+<span class="prompt">$</span> ./bin/install.sh   <span class="comment"># the harness + all 9 agents</span>
+<span class="prompt">$</span> ./bin/run.sh       <span class="comment"># open the dsh web: URL it prints</span></code></pre>
+        </div>
+        <p class="note">Everything installs inside the folder. Delete it and it is all gone.</p>
+      </article>
+    </div>
+
+    <p class="deploy-more reveal">
+      Prefer something else? Start from the <a href="https://replit.com/@inloop/SmallPE-replit?v=1#README.md" target="_blank" rel="noopener noreferrer">Replit template</a>,
+      try the <a href="https://x.ai/bot/Opp17hS9gyOg8xEsQIcU8" target="_blank" rel="noopener noreferrer">SmallPE Grok Bot</a>,
+      or read the <a href="https://github.com/parolkar/SmallPE/blob/main/DSH-README.md#deploying-to-railway" target="_blank" rel="noopener noreferrer">full deployment guide</a>.
+    </p>
+  </div>
+</section>
+
+<!-- Demos: the pitch and the agent demos fit one screen, and each plays in the same modal. -->
+<section class="demos" id="demos">
+  <div class="wrap">
+    <p class="kicker reveal">[ See it in action ]</p>
+    <h2 class="section-title reveal">Watch the agents work.</h2>
+
+    <div class="demo-layout">
+      <button type="button" class="video-feature reveal" data-video="/assets/videos/smallpe-pitch.mp4" data-poster="/assets/images/pitch-video-poster.jpg" aria-label="Play: the SmallPE pitch">
+        <img src="/assets/images/pitch-video-poster.jpg" alt="" width="1280" height="720" loading="lazy">
+        <span class="play" aria-hidden="true"><svg viewBox="0 0 24 24" width="28" height="28"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></span>
+      </button>
+      <ul class="demo-list">
+        <li class="reveal" style="--reveal-delay:100ms">
+          <button type="button" class="demo" data-youtube="n-p6x93xePA" aria-label="Play: Building a fund thesis &amp; sourcing deals">
+            <span class="demo-thumb">
+              <img src="https://i.ytimg.com/vi/n-p6x93xePA/hqdefault.jpg" alt="" width="480" height="360" loading="lazy">
+              <span class="play" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></span>
+            </span>
+            <span class="demo-text">
+              <span class="demo-title">Building a fund thesis &amp; sourcing deals</span>
+              <span class="demo-desc">The AI General Partner builds a comprehensive fund thesis and sources deals with precision.</span>
+            </span>
+          </button>
+        </li>
+        <li class="reveal" style="--reveal-delay:200ms">
+          <button type="button" class="demo" data-youtube="CW6vRiMotfQ" aria-label="Play: Smarter deal decisions">
+            <span class="demo-thumb">
+              <img src="https://i.ytimg.com/vi/CW6vRiMotfQ/hqdefault.jpg" alt="" width="480" height="360" loading="lazy">
+              <span class="play" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></span>
+            </span>
+            <span class="demo-text">
+              <span class="demo-title">Smarter deal decisions</span>
+              <span class="demo-desc">AI simulates investment committee meetings to drive systematic, data-backed decisions.</span>
+            </span>
+          </button>
+        </li>
+        <li class="reveal" style="--reveal-delay:300ms">
+          <button type="button" class="demo" data-youtube="bQsWppc9d5U" aria-label="Play: Impact investing, with an AI co-GP">
+            <span class="demo-thumb">
+              <img src="https://i.ytimg.com/vi/bQsWppc9d5U/hqdefault.jpg" alt="" width="480" height="360" loading="lazy">
+              <span class="play" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></span>
+            </span>
+            <span class="demo-text">
+              <span class="demo-title">Impact investing, with an AI co-GP</span>
+              <span class="demo-desc">Iris institutionalises impact investing, moving beyond checkboxes to measurable outcomes.</span>
+            </span>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div id="video-modal" class="video-modal" role="dialog" aria-modal="true" aria-label="Video" hidden>
+  <button type="button" class="video-close" aria-label="Close video">&times;</button>
+  <div class="video-frame"></div>
+</div>
+
+<!-- Open source -->
+<section class="section open-source" id="open-source">
+  <div class="wrap">
+    <p class="kicker reveal">[ Built in the open ]</p>
+    <h2 class="section-title reveal">Fork the firm.<br><em>Make it better.</em></h2>
+    <p class="section-lede reveal">The agents, their prompts, the playbooks and the research are all public. Practitioners, engineers and the curious build SmallPE together.</p>
+
+    <div class="os-grid">
+      <a class="os-card os-card-wide reveal" href="https://github.com/parolkar/SmallPE" target="_blank" rel="noopener noreferrer">
+        <span class="os-path">parolkar/SmallPE</span>
+        <h3>The whole firm is a repository</h3>
+        <p>Each agent is a folder with its own instructions and workspace. Read them, change them, send a pull request.</p>
+        <span class="os-tree" aria-hidden="true">agents/<b>oracle</b> · <b>helios</b> · <b>athena</b> · <b>prometheus</b> · <b>themis</b> · <b>logos</b> · <b>hermes</b> · <b>iris</b></span>
+      </a>
+      <a class="os-card reveal" style="--reveal-delay:80ms" href="/fund1/">
+        <span class="os-path">/fund1</span>
+        <h3>Fund 1</h3>
+        <p>The Fund 1 thesis, target companies, sourcing plan and value-creation playbook.</p>
+      </a>
+      <a class="os-card reveal" style="--reveal-delay:160ms" href="/docs/research/">
+        <span class="os-path">/docs/research</span>
+        <h3>Research</h3>
+        <p>Independent research, including where the moats are in AI.</p>
+      </a>
+      <a class="os-card reveal" style="--reveal-delay:240ms" href="https://www.meetup.com/smallpe/" target="_blank" rel="noopener noreferrer">
+        <span class="os-path">meetup.com/smallpe</span>
+        <h3>Meetup community</h3>
+        <p>Meet the people building it, online and in person.</p>
+      </a>
+      <a class="os-card reveal" style="--reveal-delay:320ms" href="/support/">
+        <span class="os-path">/support</span>
+        <h3>Commercial support</h3>
+        <p>Running SmallPE for real deals? Get help from the team.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Closing CTA: the arch returns as a constellation behind a single statement. -->
+<section class="cta">
+  <div class="field" aria-hidden="true">
+    <canvas data-quality="low"></canvas>
+  </div>
+  <div class="cta-arch-anchor" aria-hidden="true"></div>
+  <div class="cta-copy">
+    <p class="kicker">[ Join the initiative ]</p>
+    <h2>Build the future of<br><em>intelligent capital.</em></h2>
+    <p>Developers, analysts, data scientists and the curious: there is a place for you on the team.</p>
+    <div class="actions">
+      <a class="btn btn-primary magnet" href="https://railway.com/new/template/tgOYSP?utm_medium=integration&amp;utm_source=button&amp;utm_campaign=smallpe" target="_blank" rel="noopener noreferrer"><span>Deploy on Railway</span></a>
+      <a class="btn btn-ghost" href="https://github.com/parolkar/SmallPE" target="_blank" rel="noopener noreferrer">Contribute on GitHub</a>
+    </div>
+  </div>
+</section>
+
+<!-- Supporters -->
+<section class="section supporters">
+  <div class="wrap">
+    <p class="kicker reveal">[ Supporters ]</p>
+    <div class="supporter-grid">
+      <a class="supporter reveal" href="https://inloop.studio/" target="_blank" rel="noopener noreferrer">
+        <h3>inloop.studio</h3>
+        <p>Strategic clarity for business in one week, with Human+AI collaboration.</p>
+      </a>
+      <a class="supporter supporter-you reveal" style="--reveal-delay:120ms" href="https://www.meetup.com/smallpe/" target="_blank" rel="noopener noreferrer">
+        <h3>(You)</h3>
+        <p>Become a supporter and help shape the future of AI-first private equity.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+    </main>
+
+    <section class="newsletter" id="newsletter">
+      <div class="wrap">
+        <p class="kicker">[ Stay in the loop ]</p>
+        <h2>New agents, demos and releases, in your inbox.</h2>
+        <iframe
+          src="https://abhishek.parolkar.com/embed?minimal=true"
+          class="newsletter-frame"
+          frameborder="0" scrolling="no" loading="lazy"
+          title="SmallPE mailing list signup">
+        </iframe>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="wrap footer-grid">
+        <div>
+          <img src="/assets/images/smallpe_logo_tight.svg" alt="SmallPE" width="96" height="48">
+          <p>An open-source blueprint for an AI-first private equity firm.</p>
+        </div>
+        <div>
+          <h3>Explore</h3>
+          <a href="#agents">The agent team</a>
+          <a href="#deploy">Deploy your own</a>
+          <a href="/see_it_in_action/">Demos</a>
+          <a href="/docs/">Docs &amp; research</a>
+          <a href="/fund1/">Fund 1</a>
+        </div>
+        <div>
+          <h3>Community</h3>
+          <a href="https://github.com/parolkar/SmallPE" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="https://www.meetup.com/smallpe/" target="_blank" rel="noopener noreferrer">Meetup</a>
+          <a href="/conference/">Conference</a>
+          <a href="/support/">Commercial support</a>
+        </div>
+      </div>
+      <p class="wrap footer-legal">© 2026 SmallPE Model community. All rights reserved.</p>
+    </footer>
+  </body>
+</html>
