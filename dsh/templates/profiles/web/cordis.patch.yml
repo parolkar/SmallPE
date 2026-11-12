@@ -48,28 +48,31 @@
   name: '@deepseek-ai/dsh-llm-pi-ai'
   config:
     providers:
+      # NO `!!js` ANYWHERE IN THIS ROW. When Settings -> Models saves, llm-pi-ai
+      # validates the row's raw config before the loader evaluates `!!js`, so a
+      # single expression here (even under another provider) rejects every save
+      # with "$.providers.local.baseURL expected string but got [object Object]".
+      #
       # A model server running on this machine (LM Studio, Ollama's
-      # OpenAI-compatible endpoint, llama.cpp, vLLM, MLX, …). Point it anywhere
-      # without editing this file:
-      #   SMALLPE_LOCAL_BASE_URL=http://127.0.0.1:11434/v1 ./bin/run.sh
+      # OpenAI-compatible endpoint, llama.cpp, vLLM, MLX, …), or any other
+      # OpenAI-compatible endpoint. Change the base URL and model id in
+      # Settings -> Models, or here.
       # The API key is a placeholder: bin/run.sh defaults SMALLPE_LOCAL_API_KEY
       # to "local" because OpenAI-compatible clients insist on sending one.
       local:
         displayName: Local
         apiKeyEnv: SMALLPE_LOCAL_API_KEY
         api: openai-completions
-        baseURL: !!js "process.env.SMALLPE_LOCAL_BASE_URL || 'http://127.0.0.1:1234/v1'"
+        baseURL: http://127.0.0.1:1234/v1
         # Nothing describes a local server's models but you, so this is the one
         # route that needs a number. Both defaults are deliberately conservative:
         # overshooting makes the harness overflow upstream with a confusing
-        # provider error instead of compacting in time. Override them without
-        # editing this file:
-        #   SMALLPE_LOCAL_CONTEXT=131072 SMALLPE_LOCAL_MAX_TOKENS=8192 ./bin/run.sh
-        # Settings -> Models can also interrogate the endpoint and fill them in.
-        defaultContextWindow: !!js "Number(process.env.SMALLPE_LOCAL_CONTEXT || 32768)"
-        defaultMaxTokens: !!js "Number(process.env.SMALLPE_LOCAL_MAX_TOKENS || 8192)"
+        # provider error instead of compacting in time. Settings -> Models can
+        # interrogate the endpoint and fill in the real values.
+        defaultContextWindow: 32768
+        defaultMaxTokens: 8192
         models:
-          - id: !!js "process.env.SMALLPE_LOCAL_MODEL || 'local-model'"
+          - id: local-model
             name: Local model
             input: [text]
             reasoningEfforts: false

@@ -235,9 +235,11 @@ enables) for anyone exposing the UI publicly.
 * set the `bot` row's `config.workspace` to the team workspace — use
   `!!js` / env so the absolute path is computed at run time, not baked in;
 * configure exactly **two** providers on the `llm-pi-ai` row — `local` (a hand-declared,
-  OpenAI-compatible route whose base URL and model id come from `SMALLPE_LOCAL_BASE_URL` /
-  `SMALLPE_LOCAL_MODEL`) and `openrouter`. A hand-declared route is not in DSH's model catalog,
-  so `local` **must** list at least one model or the route reports a configuration error;
+  OpenAI-compatible route, default `http://127.0.0.1:1234/v1`) and `openrouter`. A
+  hand-declared route is not in DSH's model catalog, so `local` **must** list at least one model
+  or the route reports a configuration error. That row must hold **no `!!js`**: llm-pi-ai
+  validates its raw config before the loader evaluates expressions, so one expression makes
+  every Settings → Models save fail (`expected string but got [object Object]`);
 * disable the vendor's own routes and the modal that fronts them:
   `llm-deepseek` (API-key provider), `llm-deepseek-account`, and `ui-settings-account` (the
   account surface that owns the "Get started / Sign in to DeepSeek" dialog), and repoint

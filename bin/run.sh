@@ -18,13 +18,9 @@
 #   DSH_TRUSTED_HOST=example.com  set (can repeat, comma-separated) with DSH_PUBLIC_URL
 #   DSH_OPEN_BROWSER=1            open a browser window on start
 #   SMALLPE_DSH_HOME=...          override the harness home (defaults to ./dsh/home)
-#   SMALLPE_LOCAL_BASE_URL=...    OpenAI-compatible local model server
-#                                 (default http://127.0.0.1:1234/v1)
 #   SMALLPE_LOCAL_API_KEY=...     key for the local server; defaults to a
 #                                 placeholder because the client always sends one
-#   SMALLPE_LOCAL_MODEL=...        model id your local server serves (default local-model)
-#   SMALLPE_LOCAL_CONTEXT=...      that model's context window (default 32768)
-#   SMALLPE_LOCAL_MAX_TOKENS=...   its max output tokens (default 8192)
+#                                 (its base URL and model are set in Settings -> Models)
 #   OPENROUTER_API_KEY=...        no default — get one at https://openrouter.ai/keys
 
 set -euo pipefail
@@ -50,15 +46,13 @@ export SMALLPE_TEAM_WORKSPACE="$ROOT/agentic-team-for-private-equity"
 #
 #   * The local route talks to an OpenAI-compatible server on this machine,
 #     which normally ignores the key — but OpenAI-compatible clients insist on
-#     sending one, so default it to a harmless placeholder. Point the server
-#     anywhere with SMALLPE_LOCAL_BASE_URL (default http://127.0.0.1:1234/v1).
+#     sending one, so default it to a harmless placeholder. Point the route at
+#     your server in Settings -> Models (default http://127.0.0.1:1234/v1).
 #   * OpenRouter deliberately has NO default: export OPENROUTER_API_KEY, or add
 #     the key in Settings -> Models. Without it, that provider simply cannot
 #     authenticate.
 : "${SMALLPE_LOCAL_API_KEY:=local}"
 export SMALLPE_LOCAL_API_KEY
-: "${SMALLPE_LOCAL_BASE_URL:=http://127.0.0.1:1234/v1}"
-export SMALLPE_LOCAL_BASE_URL
 
 # With the dsh-ui-auth login enabled, these are the model routes every signed-in user may
 # run — on top of any model profile of their own. dsh-ui-auth otherwise gives a user who

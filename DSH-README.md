@@ -285,21 +285,18 @@ Change the default in **Settings → Models**, or in `dsh/home/profiles/web/cord
 
 ### Using a local model server
 
-```bash
-SMALLPE_LOCAL_BASE_URL=http://127.0.0.1:11434/v1 \
-SMALLPE_LOCAL_MODEL=qwen3:8b \
-SMALLPE_LOCAL_CONTEXT=131072 \
-./bin/run.sh
-```
-
-All optional. Defaults: base URL `http://127.0.0.1:1234/v1`, model id `local-model`, context
-window `32768`, max output `8192`.
+Open **Settings → Models → Local** and set your server's base URL (for Ollama,
+`http://127.0.0.1:11434/v1`), then **Fetch models** to pick the model it serves. Defaults: base
+URL `http://127.0.0.1:1234/v1`, model id `local-model`, context window `32768`, max output
+`8192`. You can also edit them on the `llm-pi-ai` row of `dsh/home/profiles/web/cordis.patch.yml`
+— as plain values only: a `!!js` expression on that row makes every save from Settings →
+Models fail with `$.providers.local.baseURL expected string but got [object Object]`.
 
 A local server is the one case where nothing can be automatic — no catalog describes the
-models you have downloaded — so those two numbers are declared conservatively. **Set
-`SMALLPE_LOCAL_CONTEXT` to your model's real context window**: too high and the harness
-overflows upstream with a confusing provider error instead of compacting in time. **Settings →
-Models** can also interrogate your endpoint and fill them in.
+models you have downloaded — so those two numbers are declared conservatively. **Set the
+context window to your model's real one**: too high and the harness overflows upstream with a
+confusing provider error instead of compacting in time. **Settings → Models** can interrogate
+your endpoint and fill them in.
 
 The API key is a placeholder: a local server ignores it, but OpenAI-compatible clients insist
 on sending one, so `bin/run.sh` defaults `SMALLPE_LOCAL_API_KEY` to `local`.
