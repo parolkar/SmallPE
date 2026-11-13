@@ -410,6 +410,8 @@ html[data-header-scrolled] .site-header {
   min-height: min(560px, calc(100svh - 160px));
   transform: translateY(-50%);
   opacity: var(--acts);
+  /* Captions only: while it is still fading in, the hero buttons under it must take the clicks. */
+  pointer-events: none;
   border-radius: 24px;
   background: linear-gradient(90deg, rgba(7, 11, 22, 0.84), rgba(7, 11, 22, 0.74) 50%, rgba(7, 11, 22, 0.16) 72%, rgba(7, 11, 22, 0.04));
   box-shadow:
