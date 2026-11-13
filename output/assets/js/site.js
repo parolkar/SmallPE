@@ -1,5 +1,5 @@
-// /lab/home behaviour: the pinned agent story, scroll reveals, the magnetic CTA, video players and
-// the header. Plain JS, loaded with defer after logo-field.js.
+// smallpe.com behaviour: the header and scroll reveals on every page, and the home page's pinned agent
+// story, magnetic CTA and video players. Plain JS, loaded with defer after logo-field.js.
 (function () {
   'use strict';
 
@@ -207,6 +207,11 @@
   }, { rootMargin: '0px 0px -12% 0px' });
   root.classList.add('reveal-ready');
   document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+  // Older pages carry AOS attributes; they reveal the same way, keeping their delays.
+  document.querySelectorAll('[data-aos]').forEach(function (el) {
+    if (el.dataset.aosDelay) el.style.setProperty('--reveal-delay', el.dataset.aosDelay + 'ms');
+    io.observe(el);
+  });
 
   // Manifesto: words light up as the statement scrolls through the viewport.
   document.querySelectorAll('.scroll-words').forEach(function (el) {

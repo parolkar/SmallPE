@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
 
 compile '/**/*.html' do
-  # Pages may pick another layout in their front matter, e.g. `layout: lab`.
-  layout "/#{item[:layout] || 'default'}.*"
+  layout '/default.*'
 
   if item.identifier =~ '**/index.*'
     write item.identifier.to_s

@@ -1,4 +1,4 @@
-// WebGL2 particle field for /lab/home: scattered points condense into the SmallPE logo, the eight
+// WebGL2 particle field for smallpe.com: scattered points condense into the SmallPE logo, the eight
 // dots of its arch stand for the eight specialist agents, and energy runs along the arch the way
 // work runs down the pipeline. Ported from inloop-public-web's loop-field.ts; every particle is
 // animated in the vertex shader, the CPU only uploads uniforms.

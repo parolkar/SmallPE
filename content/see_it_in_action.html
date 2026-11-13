@@ -1,154 +1,80 @@
 ---
 title: See It In Action
+tailwind: false
+description: Watch the SmallPE agents at work - building a fund thesis and sourcing deals, simulating an investment committee, and making impact investing measurable.
+og_url: https://www.smallpe.com/see_it_in_action/
 ---
 
-<!-- Hero Section -->
-<section class="relative py-20 bg-gradient-to-r from-blue-900 to-blue-700">
-  <div class="container mx-auto px-4">
-    <div class="text-center">
-      <h1 class="text-4xl md:text-5xl font-bold text-white mb-4" data-aos="fade-up">See It In Action</h1>
-      <div class="w-24 h-1 bg-white mx-auto mb-6"></div>
-      <p class="text-xl text-white/90 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
-        Watch our AI-powered agents in action as they revolutionize private equity operations—from building fund theses to smarter deal decisions and impact investing.
-      </p>
+<section class="page-hero">
+  <div class="field" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="kicker">[ See it in action ]</p>
+    <h1>Watch the agents <em>work.</em></h1>
+    <p class="lede">From building a fund thesis to smarter deal decisions and impact investing: the SmallPE agents at work on real private equity tasks.</p>
+  </div>
+</section>
+
+<!-- One demo per row; each video plays in the shared modal. -->
+<section class="section">
+  <div class="wrap showcase">
+    <div class="showcase-row" id="demo">
+      <div class="showcase-text reveal">
+        <p class="kicker">01 · Thesis &amp; sourcing</p>
+        <h2 class="section-title">Building a fund thesis &amp; sourcing deals</h2>
+        <p class="section-lede">Watch the General Partner agent build a fund thesis and source the deals to match it.</p>
+        <a class="btn btn-primary" href="/docs/SmallPE-Fund-1-thesis.pdf" target="_blank" rel="noopener noreferrer">Read the Fund 1 thesis (PDF)</a>
+        <p class="note">The investment thesis written during the demo.</p>
+      </div>
+      <button type="button" class="video-feature reveal" style="--reveal-delay:120ms" data-youtube="n-p6x93xePA" aria-label="Play: Building a fund thesis &amp; sourcing deals">
+        <img src="https://i.ytimg.com/vi/n-p6x93xePA/hqdefault.jpg" alt="" width="480" height="360" loading="lazy">
+        <span class="play" aria-hidden="true"><svg viewBox="0 0 24 24" width="28" height="28"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></span>
+      </button>
+    </div>
+
+    <div class="showcase-row" id="decisions">
+      <div class="showcase-text reveal">
+        <p class="kicker">02 · Investment committee</p>
+        <h2 class="section-title">Smarter deal decisions</h2>
+        <p class="section-lede">The agents simulate an investment committee meeting with the research the team has gathered, so a deal is weighed systematically, with less bias and on the data.</p>
+      </div>
+      <button type="button" class="video-feature reveal" style="--reveal-delay:120ms" data-youtube="CW6vRiMotfQ" aria-label="Play: Smarter deal decisions">
+        <img src="https://i.ytimg.com/vi/CW6vRiMotfQ/hqdefault.jpg" alt="" width="480" height="360" loading="lazy">
+        <span class="play" aria-hidden="true"><svg viewBox="0 0 24 24" width="28" height="28"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></span>
+      </button>
+    </div>
+
+    <div class="showcase-row" id="impact">
+      <div class="showcase-text reveal">
+        <p class="kicker">03 · Impact</p>
+        <h2 class="section-title">Impact investing is hard. <em>Let AI be your co-GP on it.</em></h2>
+        <p class="section-lede">Most PE firms struggle to move beyond a few checkboxes. Iris, SmallPE's impact investing strategist and accountability partner, turns good intentions into measurable outcomes.</p>
+      </div>
+      <button type="button" class="video-feature reveal" style="--reveal-delay:120ms" data-youtube="bQsWppc9d5U" aria-label="Play: Impact investing, with an AI co-GP">
+        <img src="https://i.ytimg.com/vi/bQsWppc9d5U/hqdefault.jpg" alt="" width="480" height="360" loading="lazy">
+        <span class="play" aria-hidden="true"><svg viewBox="0 0 24 24" width="28" height="28"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></span>
+      </button>
     </div>
   </div>
 </section>
 
-<!-- Demo Video Section -->
-<section id="demo" class="py-20 bg-white">
-  <div class="container mx-auto px-4">
-    <div class="text-center mb-16">
-      <h2 class="text-4xl font-bold mb-4" data-aos="fade-up">Building Fund Thesis & Sourcing Deals</h2>
-      <div class="w-24 h-1 bg-blue-600 mx-auto"></div>
-      <p class="text-gray-600 mt-6 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">
-        Watch our General Partner (AI-Agent) in action, building fund thesis & sourcing deals.
-      </p>
-    </div>
+<div id="video-modal" class="video-modal" role="dialog" aria-modal="true" aria-label="Video" hidden>
+  <button type="button" class="video-close" aria-label="Close video">&times;</button>
+  <div class="video-frame"></div>
+</div>
 
-    <div class="max-w-4xl mx-auto" data-aos="fade-up" data-aos-delay="200">
-      <div class="relative rounded-lg overflow-hidden shadow-2xl bg-white p-4">
-        <div class="aspect-video">
-          <iframe
-            width="100%"
-            height="100%"
-            src="https://www.youtube.com/embed/n-p6x93xePA?si=rA9g70Jxp7tPOmj_"
-            title="SmallPE Demo - AI-First Private Equity Model"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allowfullscreen
-            class="rounded-md">
-          </iframe>
-        </div>
-      </div>
-    </div>
-
-    <div class="text-center mt-8" data-aos="fade-up" data-aos-delay="300">
-      <a href="https://smallpe.com/docs/SmallPE-Fund-1-thesis.pdf"
-         target="_blank"
-         rel="noopener noreferrer"
-         class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-md text-lg transition-colors duration-300 shadow-lg hover:shadow-xl">
-        <i class="fas fa-file-pdf mr-2"></i>
-        View Fund Thesis Generated in Demo
-      </a>
-      <p class="text-gray-600 text-sm mt-2">
-        See the actual Fund 1 investment thesis document created during the demonstration
-      </p>
-    </div>
+<!-- Closing CTA, as on the home page. -->
+<section class="cta">
+  <div class="field" aria-hidden="true">
+    <canvas data-quality="low"></canvas>
   </div>
-</section>
-
-<!-- Investment Committee Simulation Section -->
-<section id="decisions" class="py-20 bg-gray-50">
-  <div class="container mx-auto px-4">
-    <div class="text-center mb-16">
-      <h2 class="text-4xl font-bold mb-4" data-aos="fade-up">Smarter Deal Decisions</h2>
-      <div class="w-24 h-1 bg-blue-600 mx-auto"></div>
-      <p class="text-gray-600 mt-6 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">
-        Discover how private equity firms can make smarter deal decisions by simulating investment committee meetings with insights and research that AI-Agent Team has gathered.
-      </p>
-    </div>
-
-    <div class="max-w-4xl mx-auto" data-aos="fade-up" data-aos-delay="200">
-      <div class="relative rounded-lg overflow-hidden shadow-2xl bg-white p-4">
-        <div class="aspect-video">
-          <iframe
-            width="100%"
-            height="100%"
-            src="https://www.youtube.com/embed/CW6vRiMotfQ"
-            title="Investment Committee Meeting Simulation - Smarter PE Deal Decisions"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allowfullscreen
-            class="rounded-md">
-          </iframe>
-        </div>
-      </div>
-    </div>
-
-    <div class="text-center mt-8" data-aos="fade-up" data-aos-delay="300">
-      <p class="text-gray-600 text-sm max-w-2xl mx-auto">
-        Learn how AI-driven simulations can help investment committees evaluate deals more systematically, reduce bias, and make data-backed decisions that drive superior returns.
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- Impact Investing Section -->
-<section id="impact" class="py-20 bg-white">
-  <div class="container mx-auto px-4">
-    <div class="text-center mb-16">
-      <h2 class="text-4xl font-bold mb-4" data-aos="fade-up">Impact Investing is Hard, Let AI be your Co-GP on it.</h2>
-      <div class="w-24 h-1 bg-blue-600 mx-auto"></div>
-      <p class="text-gray-600 mt-6 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">
-        Impact investing isn't just about good intentions—it's about delivering measurable outcomes while generating superior returns. Most PE firms struggle to move beyond few checkboxes when it comes to Impact Investing. Meet Iris: SmallPE's specialised agent which acts as Impact Investing Strategist and Accountability Partner.
-      </p>
-    </div>
-
-    <div class="max-w-4xl mx-auto" data-aos="fade-up" data-aos-delay="200">
-      <div class="relative rounded-lg overflow-hidden shadow-2xl bg-white p-4">
-        <div class="aspect-video">
-          <iframe
-            width="100%"
-            height="100%"
-            src="https://www.youtube.com/embed/bQsWppc9d5U"
-            title="Impact Investing is Hard, Let AI be your Co-GP on it."
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allowfullscreen
-            class="rounded-md">
-          </iframe>
-        </div>
-      </div>
-    </div>
-
-    <div class="text-center mt-8" data-aos="fade-up" data-aos-delay="300">
-      <p class="text-gray-600 text-sm max-w-2xl mx-auto">
-        See how Iris institutionalizes impact investing within PE firms, helping you move from good intentions to measurable outcomes.
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- Call to Action -->
-<section class="py-20 bg-gray-50">
-  <div class="container mx-auto px-4">
-    <div class="max-w-3xl mx-auto text-center">
-      <h2 class="text-3xl font-bold mb-6" data-aos="fade-up">Ready to Join the Revolution?</h2>
-      <p class="text-xl text-gray-600 mb-8" data-aos="fade-up" data-aos-delay="100">
-        Be part of the community building the future of AI-first private equity.
-      </p>
-      <div data-aos="fade-up" data-aos-delay="200">
-        <a href="/#newsletter" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-8 rounded-md text-lg transition-colors duration-300 mx-2">
-          Stay Updated
-        </a>
-        <a href="/" class="inline-block bg-transparent border-2 border-blue-600 hover:bg-blue-50 text-blue-600 font-medium py-3 px-8 rounded-md text-lg transition-colors duration-300 mx-2">
-          Back to Home
-        </a>
-      </div>
+  <div class="cta-arch-anchor" aria-hidden="true"></div>
+  <div class="cta-copy">
+    <p class="kicker">[ Run your own ]</p>
+    <h2>Put the team to work<br><em>on your deals.</em></h2>
+    <p>Deploy SmallPE in minutes, or join the community building it.</p>
+    <div class="actions">
+      <a class="btn btn-primary magnet" href="https://railway.com/new/template/tgOYSP?utm_medium=integration&amp;utm_source=button&amp;utm_campaign=smallpe" target="_blank" rel="noopener noreferrer"><span>Deploy on Railway</span></a>
+      <a class="btn btn-ghost" href="https://github.com/parolkar/SmallPE" target="_blank" rel="noopener noreferrer">Contribute on GitHub</a>
     </div>
   </div>
 </section>

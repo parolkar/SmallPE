@@ -1,4 +1,5 @@
-/* /lab/home: the SmallPE launch page. Plain CSS, no framework; the dark stages host the particle field. */
+/* smallpe.com: the home page and the header, heroes and footer every page shares. Plain CSS, no
+   framework; the dark stages host the particle field. Older page bodies add Tailwind on top. */
 
 :root {
   --ink: #070b16;
@@ -17,6 +18,7 @@
   --serif: 'Instrument Serif', Georgia, serif;
   --mono: 'JetBrains Mono', ui-monospace, monospace;
   --gutter: clamp(20px, 5vw, 64px);
+  --header-h: 68px;
 }
 
 *,
@@ -1121,6 +1123,9 @@ body.modal-open {
   z-index: -1;
   background: radial-gradient(closest-side, rgba(7, 11, 22, 0.72), transparent);
 }
+main > .cta:last-child {
+  margin-bottom: 16px;
+}
 .cta .kicker {
   color: var(--amber);
 }
@@ -1265,7 +1270,89 @@ body.modal-open {
   }
 }
 
-/* Reveal-on-scroll; content stays visible until the script has run. */
+/* Pages without a dark hero keep the header solid and start below it. */
+.has-solid-header .site-header {
+  background: rgba(7, 11, 22, 0.94);
+}
+.has-solid-header main {
+  padding-top: var(--header-h);
+}
+
+/* Page hero: the inner pages open on the home page's dark field. */
+.page-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: calc(var(--header-h) + clamp(56px, 9vw, 112px)) 0 clamp(64px, 8vw, 112px);
+  background: var(--ink);
+  color: #fff;
+  text-align: center;
+}
+.page-hero .kicker {
+  color: var(--amber);
+}
+.page-hero h1 {
+  margin: 20px auto 0;
+  max-width: 20ch;
+  font-size: clamp(38px, 6vw, 76px);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+.page-hero h1 em {
+  color: var(--sky);
+}
+.page-hero .lede {
+  margin: 22px auto 0;
+  max-width: 60ch;
+  font-size: clamp(16px, 1.5vw, 20px);
+  color: var(--on-dark);
+}
+.page-hero .actions {
+  margin-top: 36px;
+}
+
+/* Showcase: one demo per row, the copy beside its video. */
+.showcase {
+  display: grid;
+  gap: clamp(72px, 10vw, 128px);
+}
+.showcase-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+}
+.showcase-row:nth-child(even) .showcase-text {
+  order: 2;
+}
+.showcase-text .section-title {
+  font-size: clamp(30px, 3.6vw, 48px);
+}
+.showcase-text .section-lede {
+  margin-top: 16px;
+}
+.showcase-text .btn {
+  margin-top: 28px;
+}
+.showcase-text .note {
+  margin-top: 12px;
+}
+.showcase .video-feature {
+  max-width: none;
+}
+@media (max-width: 900px) {
+  .showcase-row {
+    grid-template-columns: 1fr;
+  }
+  .showcase-row:nth-child(even) .showcase-text {
+    order: 0;
+  }
+}
+
+/* Reveal-on-scroll; content stays visible until the script has run. Older pages mark their
+   blocks with data-aos and reveal the same way. */
+html.reveal-ready [data-aos],
 html.reveal-ready .reveal {
   opacity: 0;
   transform: translate3d(0, 32px, 0);
@@ -1273,6 +1360,7 @@ html.reveal-ready .reveal {
     opacity 1s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms),
     transform 1.2s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms);
 }
+html.reveal-ready [data-aos].is-in,
 html.reveal-ready .reveal.is-in {
   opacity: 1;
   transform: none;
@@ -1293,6 +1381,7 @@ html.reveal-ready .reveal.is-in {
     opacity: 1;
     transition: none;
   }
+  html.reveal-ready [data-aos],
   html.reveal-ready .reveal {
     opacity: 1;
     transform: none;
